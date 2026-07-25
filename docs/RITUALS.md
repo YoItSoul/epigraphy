@@ -1,14 +1,15 @@
 # Rituals & Infusion
 
-> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): a **backlash** system
-> (D3) will be added — mis-assembled or untranslated ritual attempts risk area
-> effects, anomaly spawns, and item loss. Pedestal/glyph handling may shift with
-> open question **Q1** (whether glyph tablets are physically placed at the altar).
-
 The back half of the loop: the altar, the pedestals, the infusion fluid, and the
 environmental conditions that turn a glyph sentence into an actual crafting event.
-This document specifies the multiblock, the full JSON recipe schema, and worked
-examples.
+This document specifies the multiblock, the full JSON recipe schema, the backlash
+system, and worked examples.
+
+Two decisions shape this doc: glyphs are a **research** layer, **not** physical
+altar ingredients (D5) — pedestals only ever hold catalyst items, and the altar
+reads the player's *learned* glyphs from their knowledge capability. And every
+ritual runs entirely **in-world** with no menu (D1): you build it, trigger it, and
+watch it transform in the world.
 
 ---
 
@@ -135,17 +136,50 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
 ### Matching algorithm (what the altar core does)
 1. On activation, read: altar tier, the multiset of pedestal items, the input in
    the pool, the fluid + amount available, and evaluate all condition types for
-   the current world/position.
+   the current world/position. (Glyphs are **not** read from the world — they live
+   in the player's research, step 3.)
 2. Filter recipes to those whose `altar`, `pedestals`, `input`, `fluid`,
-   `fluid_amount`, and required `conditions` all match.
-3. Apply the **knowledge gate** (`KNOWLEDGE.md` §4): does this player know the
-   ritual's glyphs well enough to attempt it? If not, the altar sputters with a
-   "the symbols mean nothing to you yet" message.
-4. If exactly one recipe matches, run it: consume fluid/pedestal items over
-   `duration_ticks` with particles, then consume the input and spawn `result`.
-5. On success, promote the player's ritual page to **Tier 3** and record the
-   result item's recipe to JEI (obtaining the item does the same via an inventory
-   hook, so buying/trading the item also unlocks the recipe).
+   `fluid_amount`, and required `conditions` all match the physical setup.
+3. Apply the **research check** (`KNOWLEDGE.md` §4b) against the triggering player:
+   - **Learned all** the recipe's glyphs → **clean** run.
+   - **Some glyphs unlearned/unknown** → a **blind attempt**: it still fires (the
+     build is physically correct) but triggers **backlash** (§4.1) scaled by the
+     number of untranslated glyphs.
+   - **No physical match at all** → the altar sputters (in-world particles/sound),
+     nothing is consumed.
+4. Run it: consume fluid/pedestal items over `duration_ticks` with in-world
+   particles, then consume the input and produce `result` in the world.
+5. On a successful, *understood* run, **master** the ritual (`KNOWLEDGE.md` §6):
+   its exact recipe is written to the in-game documentation and JEI. Obtaining the
+   result item by any means does the same via an inventory hook, so trading/looting
+   the item also unlocks its reference entry.
+
+### 4.1 Backlash (D3)
+A **blind attempt** (step 3) does not fail silently — it *bites*. Severity is a
+per-recipe base amplified by how many of its glyphs the player hasn't learned and
+by the player's accrued `instability` (`KNOWLEDGE.md` §5). Escalating effects:
+
+- **Minor:** the input and some pedestal items are consumed for nothing; a puff of
+  corrupt particles.
+- **Moderate:** an **anomaly/hostile** spawns at the altar (thematically tied to
+  the ritual — a Chaos wisp for chaotic rites, a shade for dark ones).
+- **Severe:** lingering **area corruption** the world remembers (a decay block /
+  status field around the altar), plus a bump to the player's `instability` that
+  makes the next reckless attempt worse.
+
+Optional per-recipe tuning via a `backlash` field:
+
+```jsonc
+"backlash": {
+  "base": "moderate",           // minor | moderate | severe
+  "anomaly": "epigraphy:chaos_wisp",   // what spawns on moderate+
+  "corruption": "epigraphy:chaos_scar" // block/field left on severe
+}
+```
+
+If omitted, a sensible default is derived from the rarest glyph in the recipe
+(rare glyphs → harsher backlash). A pack can set `require_learning_to_attempt` to
+make blind attempts simply fizzle instead (`KNOWLEDGE.md` §4).
 
 ---
 
@@ -230,6 +264,8 @@ pedestals + fluid + a single condition before Chaos Ingot demands a thunderstorm
 | `epigraphy:chaos_ingot` | Item | Flagship ritual output; crafting reagent |
 | `epigraphy:illuminated_stone` | Block | Intro ritual output (light source) |
 | `epigraphy:umbral_shard` | Item | Example dark-ritual output |
+| `epigraphy:chaos_wisp` | Entity | Example backlash anomaly (moderate) |
+| `epigraphy:chaos_scar` | Block/field | Example lingering corruption (severe backlash) |
 
 ---
 
@@ -242,7 +278,10 @@ pedestals + fluid + a single condition before Chaos Ingot demands a thunderstorm
 - **One-recipe determinism.** If two recipes match the same setup, that's an
   authoring bug; the altar refuses to fire and logs it. Conditions exist precisely
   so similar rituals disambiguate by weather/time/etc.
-- **Obtaining ≠ only crafting.** The Tier-3 unlock hook watches *inventory
+- **Obtaining ≠ only crafting.** The Tier-3 (master) hook watches *inventory
   acquisition* of ritual results, so trading, loot, or creative-giving the item
-  also unlocks its JEI page — "you have held the thing, now you may read how it's
-  made."
+  also unlocks its reference entry (in-game documentation + JEI) — "you have held
+  the thing, now you may read how it's made."
+- **Glyphs stay out of the altar.** Per D5, you never place glyph tablets on
+  pedestals; pedestals are for catalyst items only. Whether you *understand* the
+  ritual is a property of your research, checked at trigger time.

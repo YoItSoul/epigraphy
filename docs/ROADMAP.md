@@ -12,9 +12,12 @@ bridge from "what we want" to "what to write, in what order."
 - **Java:** 17.
 - **Required at runtime:** none beyond Forge.
 - **Soft/optional deps:**
-  - **JEI** — recipe browser + the knowledge-gated plugin (`KNOWLEDGE.md` §5).
-  - (later) **Patchouli** could back the Codex, but v1 uses a custom screen so the
-    three-tier rendering is fully under our control.
+  - **JEI** — recipe browser + the knowledge-gated plugin (`KNOWLEDGE.md` §6). The
+    mod functions fully without it.
+  - **Patchouli** is a *candidate* backing for the read-only in-game documentation
+    (D6, `DECISIONS.md` Q5). It is reference-only and never gates gameplay, so
+    using it does not violate the no-GUI rule (D1); the alternative is an in-world
+    lectern projection. Undecided — see Q5.
 
 ---
 
@@ -37,9 +40,14 @@ com.epigraphy
 │   ├─ condition/  (Condition, WeatherCondition, TimeCondition, …)
 │   └─ AltarBlockEntity · RitualRunner
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
-├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation logic
-├─ client/                        // CodexScreen, renderers, translated-text resolver
+├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
+├─ doc/                           // in-game documentation model, populated from knowledge
+├─ client/                        // in-world renderers (readable carvings, sky projection,
+│                                 //   ritual FX), translated-text resolver, doc reader
 └─ compat/jei/                    // EpigraphyJeiPlugin (gated category)
+
+// Note (D1): no container/menu screens for gameplay. `client/` holds in-world
+// renderers and at most the read-only documentation reader (D6).
 ```
 
 ---
@@ -50,14 +58,18 @@ com.epigraphy
   loading `data/*/glyphs/*.json`; a client-side translated-text resolver.
 - **Discovery** (`DISCOVERY.md`): `GlyphCarvingBlock` + BE; a `ConfiguredFeature`/
   `PlacedFeature` for carvings; Global Loot Modifiers for tablet drops; the Codex
-  item + record interaction; Lectern of Study block; Observatory/Astrolabe.
+  item + on-carving record interaction (no screen); Lectern of Study block;
+  Observatory (in-world constellation projection) / Astrolabe.
 - **Rituals** (`RITUALS.md`): a custom `RecipeType`/serializer for
   `epigraphy:infusion`; a `Condition` registry with the v1 condition types; altar
-  + pedestal block-entities; `RitualRunner` (match → animate → produce → unlock).
+  + pedestal block-entities; `RitualRunner` (match → research check → animate →
+  produce → master, or → backlash on a blind attempt).
 - **Knowledge** (`KNOWLEDGE.md`): the capability + provider + NBT persistence;
-  bidirectional packets; derivation + mutation helpers; inventory-acquisition hook.
-- **JEI** (`KNOWLEDGE.md` §5): `compat/jei` plugin registering the infusion
-  category and filtering by unlock state.
+  bidirectional packets; derivation + mutation helpers; inventory-acquisition hook;
+  backlash resolution + `instability` decay tick.
+- **Reference layer** (`KNOWLEDGE.md` §6, D6): an in-game documentation model
+  populated from knowledge (read-only reader, no gameplay menu) + a `compat/jei`
+  plugin registering the infusion category and filtering by mastered state.
 
 ---
 
@@ -73,31 +85,37 @@ creative tab. Goal: `runClient` opens a world with the mod present.
 `Glyph` object + datapack loader; ship the starter lexicon JSON (`GLYPHS.md` §2);
 `/epigraphy glyphs` debug command lists loaded glyphs. No gameplay yet.
 
-**Phase 2 — Knowledge capability.**
-`PlayerKnowledge` + persistence + sync; debug commands to grant/inspect
-sightings/translations. Codex item opens a screen that lists glyphs at their tier.
-This is the spine everything hangs on — build it early.
+**Phase 2 — Knowledge capability (research spine).**
+`PlayerKnowledge` + persistence + sync; derived tiers; debug commands to
+grant/inspect sightings/learns. In-world/on-item surfacing stub: tablet tooltips
+reflect tier. **No screen** (D1). This is the spine everything hangs on — build it
+early.
 
-**Phase 3 — Discovery.**
-`GlyphCarvingBlock` + record action; Lectern of Study + inscribed tablets; carving
-worldgen feature; tablet loot GLMs. Now knowledge can be *earned* in-world.
-(Constellations/Observatory can trail into a 3b — sky reading is the most novel and
-riskiest UI, so it should not block the ritual loop.)
+**Phase 3 — Discovery (incl. sky, D4).**
+`GlyphCarvingBlock` + on-carving record action (charcoal rubbing → inscribed
+rubbing item); Lectern of Study + inscribed tablets; carving worldgen feature;
+tablet loot GLMs. **Observatory + Astrolabe sky reading ships here** (D4) — the
+in-world constellation projection is v1 identity, so it's core, not deferred. Now
+research can be *earned* in-world.
 
 **Phase 4 — Rituals.**
 Infusion `RecipeType` + serializer + condition registry; Stone/Blackstone altars +
-pedestals + `RitualRunner`; `liquid_starlight` fluid; ship Illuminated Stone (T1)
-and Chaos Ingot (T2) recipes + the `chaos_ingot` item. The full craft loop works.
+pedestals (catalyst items only, D5) + `RitualRunner`; `liquid_starlight` fluid;
+ship Illuminated Stone (T1) and Chaos Ingot (T2) recipes + the `chaos_ingot` item.
+The full in-world craft loop works.
 
-**Phase 5 — Gating & JEI.**
-Wire the instruction gate (page revelation + attemptability) and the Tier-3 unlock
-hooks (perform + obtain); JEI plugin with the gated category. Now "knowing ≠
-having" is real end-to-end.
+**Phase 5 — Gating, backlash & reference layer.**
+Wire the understanding gate + attemptability; the **backlash** system (D3) for
+blind attempts (anomaly spawn, corruption, `instability`); the Tier-3 master hooks
+(perform + obtain); the in-game documentation model + JEI plugin, both filtered by
+mastered state. Now "knowing ≠ having" and "research first or pay for it" are real
+end-to-end.
 
 **Phase 6 — Polish.**
-Ritual particles/FX, Codex art & lore text, sounds, advancement hooks, config
-(`require_translation_to_attempt`, `reveal_pages_on_sighting`), Observatory sky UI
-if deferred.
+Ritual particles/FX, backlash FX, documentation art & lore text, sounds,
+advancement hooks, config (`require_learning_to_attempt`,
+`reveal_instructions_on_sighting`), and settling the documentation form (guide book
+vs. in-world lectern projection — `DECISIONS.md` Q5).
 
 ---
 
@@ -112,20 +130,24 @@ if deferred.
 
 ---
 
-## 6. Open technical decisions (tracked in the design dialogue)
+## 6. Decisions (see `DECISIONS.md` for the authoritative log)
 
-These are choices we should settle together before/while coding — they don't
-change the *vision*, but they shape the code:
+Resolved since the first draft:
 
-1. **Codex backing** — custom screen (full control, more work) vs. Patchouli
-   (faster, less control over three-tier rendering). *Leaning custom.*
-2. **Constellation UI scope for v1** — ship sky-reading in v1, or defer to 6 and
-   launch discovery on carvings+tablets only? *Leaning defer.*
-3. **Pedestal matching** — multiset (v1, forgiving) vs. patterned geometry
-   (Thaumcraft-precise). *Leaning multiset now, pattern later.*
-4. **Attempt gate strictness** — require Tier-2 translation to attempt, or allow
-   Tier-1 "blind" attempts that risk failure/backlash? *Open — see dialogue.*
-5. **Fluid identity** — one universal infusion fluid vs. multiple themed fluids
-   from the start. *Leaning one now.*
+1. ✅ **No gameplay GUI (D1).** In-world/on-item actions only; the reference layer
+   is the sole permitted screen surface.
+2. ✅ **Translation is passive triangulation (D2).** No decode minigame.
+3. ✅ **Backlash everywhere (D3).** Blind attempts bite back — implemented in Phase 5.
+4. ✅ **Sky reading ships in v1 (D4).** Pulled into Phase 3.
+5. ✅ **Glyphs are research, not reagents (D5).** Pedestals hold catalysts only;
+   the altar reads the player's learned glyphs.
+6. ✅ **Reference layer = in-game documentation + JEI (D6).**
 
-See the conversation for where each of these currently stands.
+Still open (don't block early phases):
+
+- 🔵 **Pedestal matching** — multiset now, patterned geometry later (D5 keeps this simple).
+- 🔵 **Fluid identity** — one `liquid_starlight` now, themed fluids later.
+- ❓ **Documentation form (Q5)** — guide book vs. in-world lectern projection.
+- ❓ **Backlash severity model (Q6)** — per-recipe base × untranslated-count × instability.
+
+See `DECISIONS.md` for the current standing of each.

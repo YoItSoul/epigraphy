@@ -1,16 +1,13 @@
 # Discovery & Recording
 
-> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): the mod is **no-GUI**
-> (D1), so any "Codex screen"/UI language below will be recast as in-world +
-> on-item, and sky reading is now a **v1** system (D4). The exact recording/review
-> surface depends on open question **Q1** (knowledge storage model).
-
 The front half of the loop: how glyphs hide in the world, how the player *finds*
-and *records* them, and how a recorded shape becomes a translated meaning. This is
-the part that makes Epigraphy feel like exploration rather than a skill tree.
+and *records* them, and how a recorded shape becomes a *learned* glyph. This is the
+mod's **research** (D5) — but the research is done by exploring and reading the
+world, not by a minigame, and it involves **no gameplay GUI** (D1): recording and
+studying are in-world/on-item actions.
 
-Design north star: **the game never marks a glyph you haven't found.** The Codex
-is a record of *your* observations, not a quest tracker.
+Design north star: **the game never marks a glyph you haven't found.** Your record
+is of *your* observations, not a quest tracker.
 
 ---
 
@@ -60,20 +57,30 @@ skipping the "spot it in the world" step.
 
 ---
 
-## 2. The Codex and the "record" action
+## 2. Recording — an in-world / on-item action (no GUI)
 
-The **Codex** is the player's book item and the UI home of the knowledge system.
+There is **no Codex screen** (D1). Recording is a physical interaction, and what
+you know is surfaced through item tooltips and in-world visuals, not a menu.
 
-- **Recording a carving/constellation:** look at it and use the Codex (or a
-  **Charcoal Rubbing** consumable for carvings). This logs a *sighting* of that
-  glyph to the player's knowledge capability (`KNOWLEDGE.md`). The Codex page for
-  that glyph now shows its symbol and a sighting counter (`2 / 3`), but the
-  meaning still reads `???`.
-- **Studying a tablet:** right-click the tablet on a Lectern of Study; it is
-  consumed and produces a sighting (or, for a Rosetta, a translation).
-- Re-recording the *same* carving block does not count twice — sightings must be
-  *independent* (different carving instances, or a sky reading vs. a carving).
-  Each carving block stores whether this player has already recorded it.
+- **Recording a carving:** use a **Charcoal Rubbing** consumable (or the Codex
+  item) *on* the carving. The action produces an **on-item** result — an inscribed
+  rubbing/tablet whose tooltip shows the glyph symbol — and logs an independent
+  *sighting* to the player's knowledge capability (`KNOWLEDGE.md`). Until learned,
+  the tooltip reads `???`.
+- **Recording a constellation:** resolve it at the **Observatory** or with the
+  **Astrolabe** at night; the sighting is logged the same way (§1.2).
+- **Studying a tablet:** right-click the tablet on a **Lectern of Study**. It is
+  consumed and yields a sighting (or, for a Rosetta, an outright *learn*). The
+  lectern shows progress *in-world* — e.g. a floating relief of the glyph that
+  sharpens from faint to solid as sightings accumulate — never a screen.
+- **The Codex item** is a held journal used to *perform* the record action and to
+  carry rubbings; it is not a UI. Reviewing what you've learned happens through
+  your physical rubbings/tablets (tooltips) and the read-only **in-game
+  documentation** reference layer (`KNOWLEDGE.md` §3/§6), which populates as you
+  learn.
+- Re-recording the *same* carving does not count twice — sightings must be
+  *independent* (different carving instances, or a sky reading vs. a carving). Each
+  carving block remembers whether this player already recorded it.
 
 ---
 
@@ -87,26 +94,32 @@ A glyph translates — becomes readable everywhere — when either:
    how real decipherment works. **or**
 2. **A Rosetta tablet** is applied to it.
 
-On translation:
-- Every place the glyph appears (carvings, tablets, ritual pages) now renders the
-  translated gloss/flavor text.
-- Ritual pages that use the glyph gain a readable clause (`GLYPHS.md` §3).
-- A subtle client toast/codex-unlock effect plays. No numeric reward.
+On learning:
+- Every place the glyph appears (carvings, tablet tooltips, ritual instructions)
+  now renders the translated gloss/flavor text.
+- Rituals that use the glyph gain a readable clause in their instructions
+  (`GLYPHS.md` §3, `KNOWLEDGE.md` §4).
+- Feedback is in-world/on-item: the recorded carvings that use this glyph visibly
+  resolve to readable text, a soft particle/sound cue plays, and the item tooltip
+  updates. No screen, no numeric reward.
 
 ---
 
-## 4. Ritual pages: learning *what to attempt*
+## 4. Understanding *what to attempt*
 
 Knowing glyphs is necessary but not sufficient — the player also needs to know a
-*combination* is meaningful. **Ritual pages** bridge this:
+*combination* is meaningful. Research bridges this:
 
-- A ritual page is discovered as loot (tablets, shrine chests) or auto-revealed
-  once the player has *sighted* every glyph the ritual uses (a tunable rule; see
-  `KNOWLEDGE.md` §4).
-- A page at Tier 2 shows the translated *instruction sentence* (`GLYPHS.md` §3) —
-  enough to reason out the build, never the exact bill of materials.
-- Performing the ritual, or otherwise obtaining its result, promotes the page to
-  Tier 3 and writes the exact recipe to JEI (`KNOWLEDGE.md` §5).
+- A ritual becomes **understood** once the player has *learned* every glyph it uses
+  (its research is complete), or by looting a **ritual tablet** that seeds it
+  (`KNOWLEDGE.md` §4). Its instructions then read clearly.
+- Understood instructions are the translated *sentence* (`GLYPHS.md` §3) — enough
+  to reason out the build, never the exact bill of materials. They're legible
+  on-item (ritual tablets) and in the in-game documentation.
+- Performing the ritual, or otherwise obtaining its result, **masters** it (Tier 3)
+  and writes the exact recipe into the documentation and JEI (`KNOWLEDGE.md` §6).
+- Attempting a ritual you *haven't* learned is possible but risks **backlash**
+  (`KNOWLEDGE.md` §5) — research first, or pay for it.
 
 ---
 
@@ -117,8 +130,8 @@ Knowing glyphs is necessary but not sufficient — the player also needs to know
 | `epigraphy:glyph_carving` | Block (block-entity) | Holds a glyph id; sightable; worldgen decoration |
 | `epigraphy:observatory` | Multiblock/Block | Resolve celestial glyphs at night |
 | `epigraphy:astrolabe` | Item | Handheld, weaker constellation reader |
-| `epigraphy:codex` | Item | Knowledge UI + record action |
-| `epigraphy:charcoal_rubbing` | Item | Consumable that records a carving at range |
+| `epigraphy:codex` | Item | Held journal: performs the record action, carries rubbings — **no UI** |
+| `epigraphy:charcoal_rubbing` | Item | Consumable used *on* a carving to record it (yields an inscribed rubbing) |
 | `epigraphy:lectern_of_study` | Block | Study tablets into sightings |
 | `epigraphy:inscribed_tablet` | Item | Carries a glyph id; boss/mob drop |
 | `epigraphy:rosetta_tablet` | Item | Instantly translates one sighted glyph |

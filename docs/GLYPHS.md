@@ -43,7 +43,8 @@ Fields:
 ## 2. Starter lexicon
 
 The v1 vocabulary. Every glyph here can be sighted, translated, and used in at
-least one ritual. Categories are colour-coded in the codex UI.
+least one ritual. Categories are colour-coded wherever glyphs render (in-world
+carvings, tablet tooltips, the in-game documentation).
 
 ### Materials — `METALLUM`, and kin
 | id | lemma | gloss | rarity | notes |
@@ -80,8 +81,9 @@ least one ritual. Categories are colour-coded in the codex UI.
 ## 3. Sentences: how glyphs read as a ritual
 
 A ritual's `glyphs` array is ordered, and the order is meaningful for *reading*
-(not for mechanics). The codex assembles translated text by slotting each glyph
-into a template chosen by its category:
+(not for mechanics). The translation system assembles readable text — shown on
+ritual-tablet tooltips, in the in-game documentation, and on in-world readable
+carvings — by slotting each glyph into a template chosen by its category:
 
 - **place** → framing clause: *"Upon the **Altar** …"*
 - **material** → object clause: *"… offer **Metal** …"*
@@ -110,7 +112,8 @@ authoring per-glyph:
 
 1. **Gloss** — the one-word meaning (from the glyph JSON).
 2. **Description** — a sentence of lore (from `description`), shown on the glyph's
-   codex page. This is where the *feel* of the language lives.
+   in-game documentation entry and on inscribed-tablet tooltips. This is where the
+   *feel* of the language lives.
 3. **Sentence fragment** — the clause template above uses the gloss, but a glyph
    may optionally override its clause with a hand-written fragment via a
    `clause` field for glyphs whose grammar is awkward.

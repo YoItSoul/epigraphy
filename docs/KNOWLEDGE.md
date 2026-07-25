@@ -1,154 +1,192 @@
-# Knowledge & JEI Gating
-
-> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): "Codex UI" surfaces
-> become in-world/on-item (D1); a **backlash** gate is added (D3); the storage
-> model (capability vs. item-embodied) is open question **Q1**; and JEI's fate is
-> open question **Q2**. Treat the capability described below as the **Model A**
-> baseline until Q1 resolves.
+# Knowledge, Research & Gating
 
 The connective tissue: the per-player data that remembers what each player has
-sighted, translated, and unlocked, and the rules that turn that data into gated
-instructions and gated JEI recipes. This is where the "knowing ≠ having" pillar is
-enforced.
+sighted, learned, and unlocked, and the rules that turn that data into gated
+understanding, gated rituals, and a gated reference layer. This is where the
+"knowing ≠ having" pillar is enforced.
+
+**Framing (D5):** glyphs are the mod's **research** system — think Thaumcraft
+1.7.10, but the "research" is done by *discovering and reading the world*, not by a
+minigame. Learning a glyph is permanent per-player knowledge that unlocks your
+*understanding* of the recipes and systems that use it. Nothing here is a screen
+you fight through to *play* (D1); the only screens that exist are the read-only
+reference layer (D6).
 
 ---
 
 ## 1. The knowledge capability
 
-Per-player state is stored in a Forge **Capability** attached to the player entity,
-persisted in player NBT, and synced to the client.
-
-Conceptual shape:
+Per-player state lives in a Forge **Capability** attached to the player, persisted
+in player NBT, and synced to the client. It is permanent — death and item loss
+never erase it.
 
 ```
 PlayerKnowledge {
-  // Per-glyph progress
+  // Per-glyph research progress
   Map<GlyphId, GlyphProgress> glyphs
 
   // Per-ritual progress
-  Set<RitualId> pagesRevealed     // player has the readable instruction page
-  Set<RitualId> pagesUnlocked     // Tier 3: exact recipe in JEI
+  Set<RitualId> understood        // you've learned enough glyphs to read its instructions
+  Set<RitualId> mastered          // Tier 3: you've performed it / obtained its result
 
-  // Per-result-item unlocks (obtaining an item unlocks its recipe even w/o page)
+  // Per-result-item unlocks (obtaining an item counts, not only crafting it)
   Set<ItemId> itemsObtained
+
+  // Backlash bookkeeping (D3)
+  int  instability                // rises with reckless attempts, decays over time
 }
 
 GlyphProgress {
-  int  independentSightings       // counts toward translation
+  int  independentSightings
   Set<SightingSource> sources     // dedupe: which carvings/sky/tablets counted
-  boolean translated              // Tier 2 reached (via sightings OR rosetta)
+  boolean learned                 // Tier 2 reached (triangulated OR rosetta)
 }
 ```
 
-Tiers are derived, not stored redundantly:
+Derived tiers (not stored redundantly):
 
-- **Glyph Tier 0** — no `GlyphProgress` entry.
-- **Glyph Tier 1 (Sighted)** — entry exists, `translated == false`.
-- **Glyph Tier 2 (Translated)** — `translated == true`.
-- **Ritual Tier 3 (Unlocked)** — `pagesUnlocked` contains it, *or* `itemsObtained`
-  contains its result.
+- **Glyph Tier 0 — Unknown** — no `GlyphProgress` entry.
+- **Glyph Tier 1 — Sighted** — entry exists, `learned == false`.
+- **Glyph Tier 2 — Learned** — `learned == true`. The glyph is now readable
+  everywhere and its knowledge unlocks understanding of recipes/systems using it.
+- **Ritual Tier 3 — Mastered** — in `mastered`, *or* its result is in
+  `itemsObtained`.
 
 ---
 
 ## 2. Sighting sources & dedupe
 
-A "sighting" only counts if it is *independent*. `SightingSource` identifies where
-a sighting came from so the same carving can't be farmed:
+A "sighting" counts only if *independent*. `SightingSource` identifies its origin
+so the same carving can't be farmed:
 
 - `carving:<blockpos+dimension>` — a specific carving block instance.
-- `sky:<glyphId>` — the constellation reading (counts once; the sky is one source).
-- `tablet` — studying a tablet (each consumed tablet is inherently one-shot).
+- `sky:<glyphId>` — a constellation reading (the sky is one source per glyph).
+- `tablet` — studying a tablet (each consumed tablet is one-shot).
 
-`independentSightings` is `sources.size()`. Translation fires when
+`independentSightings == sources.size()`. A glyph becomes **Learned** when
 `sources.size() >= glyph.sightings_to_translate`, or immediately when a Rosetta
-sets `translated = true`.
+tablet sets `learned = true`.
 
 ---
 
-## 3. Sync & rendering
+## 3. How knowledge is surfaced (no-GUI + reference layer)
 
-- **Server is authoritative.** All mutations (record, study, translate, unlock)
-  happen server-side in response to player actions/rituals.
-- On change, the server sends a small **sync packet** (the delta) to that player.
-- The client copy drives: the Codex UI, whether carvings/tablets/ritual pages
-  render translated text vs. `???`, and the JEI plugin's recipe visibility.
-- On login/respawn/dimension change, a full sync is sent.
+Two distinct surfaces, per D1/D6:
 
----
+**In-world / on-item (the systems — no GUI):**
+- **Carvings** you've recorded render their glyph as relief in-world; once *learned*
+  they display floating translated text when looked at (like a readable sign),
+  otherwise a `???`/raw symbol.
+- **Tablets** carry a glyph; their **tooltip** shows `???` while sighted and the
+  translated lemma/gloss once learned.
+- **The altar** communicates via in-world feedback (particles, the "sputter" on a
+  gated attempt), never a menu.
 
-## 4. The instruction gate (Tier 2 — attempting rituals)
+**Reference layer (read-only convenience — a permitted GUI, D6):**
+- **In-game documentation** — a Thaumonomicon-style guide that *populates as you
+  learn glyphs and master rituals*. It is strictly a lookup of what you already
+  did; you can play without ever opening it. (Form under discussion — see
+  `DECISIONS.md` Q5.)
+- **JEI** — mirrors *mastered* recipes when installed (§6).
 
-Two independent gates use knowledge, and it's important to keep them distinct:
-
-**(a) Page revelation** — *may the player read the instructions?*
-A ritual page is revealed to a player when they have **sighted** (Tier 1+) every
-glyph in the ritual's `glyphs` array, OR they loot/are-given the page item.
-Rationale: once you've *seen* all the symbols a ritual uses, the game is willing to
-show you they *combine into something* — but the page only reads clearly for the
-glyphs you've actually *translated* (Tier 2). Partially-translated pages are a
-deliberate nudge toward what to decipher next (`GLYPHS.md` §3).
-
-**(b) Ritual attemptability** — *may the altar even try?*
-When the altar core searches for a matching recipe, it applies a knowledge check.
-The default (tunable) rule: the player must have **translated** (Tier 2) every
-glyph in the recipe. Reading the world's instructions is a prerequisite to
-commanding it. If unmet, the altar sputters and hints at the untranslated glyph.
-
-> Both gates are configurable (a server config: `require_translation_to_attempt`,
-> `reveal_pages_on_sighting`) so packs can make the mod harder or softer without
-> touching recipes.
+**Sync:** server is authoritative; every mutation happens server-side and pushes a
+delta packet to that player. The client copy drives translated-text rendering, the
+documentation contents, and JEI filtering. Full sync on login/respawn/dimension
+change.
 
 ---
 
-## 5. The JEI gate (Tier 3 — browsing recipes)
+## 4. The understanding gate (Tier 2 — reading & attempting)
 
-The mod ships a **JEI plugin** that registers an `epigraphy:infusion` recipe
-category, but every infusion recipe is filtered through player knowledge:
+Two gates use research, and keeping them distinct matters:
 
-- A recipe is **visible/browsable** in JEI only if it is Tier 3 for the player —
-  i.e. its id is in `pagesUnlocked` **or** its result item is in `itemsObtained`.
-- Locked recipes are hidden entirely (not greyed), so JEI stays a *reward*: it
-  fills in as you accomplish things, mirroring how the Codex fills in as you
-  explore. A player's JEI is a portrait of what they've actually done.
-- Because JEI's index is built client-side, the plugin reads the synced client
-  knowledge copy and re-filters whenever a Tier-3 unlock packet arrives.
+**(a) Ritual understanding** — *do you know this ritual exists and roughly how?*
+A ritual becomes **understood** (its instructions readable in the documentation,
+and its in-world hints legible) when the player has **learned** (Tier 2) the glyphs
+that define it — that's the research paying off. Partially-learned rituals read
+partially, with untranslated glyphs showing as `???`, nudging what to research next
+(`GLYPHS.md` §3). Some rituals may also be seeded directly by looting a ritual
+tablet.
 
-Unlock triggers (server→ marks Tier 3 → sync → JEI refresh):
-1. **Performing** the ritual successfully (`RITUALS.md` §4 step 5).
-2. **Obtaining** the result item by any means — an inventory-tick / pickup hook
-   adds the item id to `itemsObtained`. This honors "OBTAIN the item **or** perform
-   the ritual."
+**(b) Ritual attemptability** — *will the altar even try, and how dangerous is it?*
+When the altar core searches for a match, it checks research:
+- If the player has **learned all** the recipe's glyphs → the ritual runs cleanly.
+- If some glyphs are **only sighted or unknown** → the player may still *attempt* a
+  ritual whose physical setup happens to be correct, but it is a **blind attempt**
+  and triggers **backlash** (D3, §5) scaled by how many glyphs are untranslated.
+  Reckless experimentation is possible — it just bites back.
 
-> Compatibility note: if JEI is absent, all gating still functions — it simply has
-> no recipe browser to gate. The Codex remains the in-game reference; JEI is the
-> convenience layer on top.
-
----
-
-## 6. Anti-cheese & edge cases
-
-- **Creative/commands** can grant items; obtaining them unlocks JEI by design
-  (creative is not something we police).
-- **Multiplayer:** knowledge is strictly per-player. One player translating `CHAOS`
-  does not translate it for the party — but a translated player can *carve* glyphs
-  for others (a future "teaching" mechanic: inscribe a tablet from a known glyph).
-- **Removing a mod-added glyph** (datapack change) leaves orphaned progress; the
-  capability tolerates unknown ids (ignored on load).
-- **Recipe changes:** if a recipe's id persists but its contents change, a prior
-  Tier-3 unlock still stands (you unlocked *that ritual*, and its JEI page just
-  reflects current data).
+> Both behaviours are server-config tunable: `require_learning_to_attempt` (if a
+> pack wants blind attempts to simply fizzle instead of backlash) and
+> `reveal_instructions_on_sighting`.
 
 ---
 
-## 7. What the code must provide (summary for ROADMAP)
+## 5. Backlash (D3)
 
-- A `PlayerKnowledge` capability + attach/persist/sync (packets both directions
-  for actions; server→client for state).
-- Derivation helpers: `glyphTier(id)`, `isRitualAttemptable(recipe)`,
-  `isRitualUnlocked(recipe)`, `isPageRevealed(recipe)`.
-- Mutation entry points: `recordSighting(source, glyphId)`,
-  `applyRosetta(glyphId)`, `revealPage(id)`, `unlockRitual(id)`,
-  `markItemObtained(itemId)`.
-- Hooks: inventory-acquisition listener (Tier-3 by obtaining), ritual-success
-  callback, record/study interactions.
-- A JEI plugin that filters `epigraphy:infusion` recipes by `isRitualUnlocked`.
+Blind or botched rituals have consequences everywhere, not just for dark magic:
+
+- **Trigger:** an altar fires with a valid physical setup but the player hasn't
+  *learned* all the ritual's glyphs, or a partial/ambiguous match resolves badly.
+- **Severity** (leaning, `DECISIONS.md` Q6): a per-recipe base amplified by the
+  count of untranslated glyphs in the attempt, and by the player's current
+  `instability`.
+- **Effects (escalating):** wasted ingredients → hostile/anomaly spawns at the
+  altar → lingering area corruption the world remembers → a rise in the player's
+  `instability`, which makes the *next* reckless attempt worse. `instability`
+  decays slowly with time and with successful, *understood* rituals.
+- **Design intent:** you *can* stumble onto a ritual by copying a build you saw,
+  but doing so before you can *read* it is genuinely risky — so the incentive is
+  always to research first.
+
+---
+
+## 6. The reference gate (Tier 3 — documentation & JEI)
+
+Understanding a ritual (Tier 2) shows you *described instructions* — never the
+exact bill of materials. The precise recipe (pedestal counts, exact input, fluid
+amount, conditions) is written into the reference layer only at **Tier 3**:
+
+- A recipe appears in the **in-game documentation's** "mastered" section, and is
+  **browsable in JEI**, only once it is Tier 3 for the player — its id in
+  `mastered`, or its result in `itemsObtained`.
+- Locked recipes are **hidden** (not greyed), so both surfaces stay a *reward* that
+  fills in as you accomplish things — mirroring how the world's carvings fill in as
+  you explore.
+- JEI's index is client-side; the plugin reads the synced knowledge copy and
+  re-filters on every Tier-3 unlock packet. If JEI is absent, everything still
+  works — the in-game documentation is the fallback reference.
+
+**Tier-3 unlock triggers** (server marks → sync → documentation/JEI refresh):
+1. **Performing** the ritual successfully (`RITUALS.md`).
+2. **Obtaining** the result item by any means — an inventory/pickup hook adds it to
+   `itemsObtained`. Honors "OBTAIN the item **or** perform the ritual."
+
+---
+
+## 7. Edge cases
+
+- **Creative/commands** granting items unlock the reference by design; we don't
+  police creative.
+- **Multiplayer:** research is strictly per-player. A future "teaching" mechanic
+  could let a learned player inscribe tablets to seed sightings for others.
+- **Datapack drift:** unknown glyph/recipe ids in saved progress are tolerated and
+  ignored on load; a mastered ritual whose recipe contents change stays mastered
+  (you mastered *that ritual*; its documentation reflects current data).
+
+---
+
+## 8. What the code must provide (summary for ROADMAP)
+
+- `PlayerKnowledge` capability + attach/persist/sync (action packets C2S; state
+  packets S2C).
+- Derivation helpers: `glyphTier(id)`, `isRitualUnderstood(recipe)`,
+  `attemptResult(recipe, player)` → `{clean | blind(untranslatedCount) | no_match}`,
+  `isRitualMastered(recipe)`.
+- Mutations: `recordSighting(source, glyphId)`, `applyRosetta(glyphId)`,
+  `markUnderstood(id)`, `masterRitual(id)`, `markItemObtained(itemId)`,
+  `addInstability(n)` / decay tick.
+- Hooks: inventory-acquisition listener (Tier-3 by obtaining), ritual-success and
+  ritual-backlash callbacks, record/study interactions.
+- The reference layer: an in-game documentation model populated from knowledge, and
+  a JEI plugin filtering `epigraphy:infusion` recipes by `isRitualMastered`.

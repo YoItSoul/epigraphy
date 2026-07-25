@@ -10,6 +10,28 @@ Legend: ✅ Decided · 🔵 Leaning · ❓ Open
 
 ## Decided
 
+### D5 ✅ Glyphs are a research/knowledge layer (Thaumcraft 1.7.10 "research")
+Glyphs are **not** ritual ingredients you place at the altar. They are the mod's
+*research* system: learning a glyph is knowledge that permanently unlocks your
+**understanding of recipes and systems** that use it. Knowledge is **per-player
+and permanent**, held in a capability (this resolves **Q1** to the capability-backed
+"Model A", reframed as research). Discovery in the world (carvings, sky, tablets)
+is how you gather that research; triangulating enough sightings *learns* the glyph.
+The altar reads your knowledge capability to decide what you understand/can
+attempt — you never lay glyph tablets on pedestals.
+
+### D6 ✅ Systems are no-GUI; the reference layer is an allowed convenience
+The **gameplay systems** — rituals, discovery/recording, learning, sky reading —
+are strictly no-GUI (D1): every *action* happens in-world or on-item. Separately,
+a **reference layer** is explicitly permitted purely for *looking things up*:
+- **In-game documentation** — a Thaumonomicon-style guide that *populates as you
+  learn glyphs and unlock recipes*. Reference only; you can play entirely from
+  in-world cues without ever opening it. (This resolves **Q2**.)
+- **JEI** — mirrors unlocked recipes when installed, for convenience.
+
+The rule of thumb: **no GUI ever stands between you and *doing* something; a GUI may
+exist only to *remember* what you've already done.**
+
 ### D1 ✅ No GUI — in-world or on-item only
 The mod ships **no custom screens/menus of its own**. Every interaction and every
 piece of feedback is either:
@@ -48,56 +70,38 @@ above the structure), not on a screen.
 
 ## Open questions (current dialogue)
 
-### Q1 ❓ How is player knowledge stored & surfaced? (forced by D1)
-Two coherent models; this choice cascades into discovery, rituals, and JEI:
-
-- **A — Capability-backed, item/world-surfaced.** Knowledge is per-player data
-  (survives death/item loss). Physical items & blocks are how you *earn* and *view*
-  it: recording a carving mints a rubbing-tablet whose tooltip shows the glyph;
-  a lectern renders known glyphs in-world. The altar reads the player's knowledge
-  capability directly. *Safer, permanent, standard.*
-- **B — Item-embodied knowledge.** Knowledge literally lives on **physical glyph
-  tablets** you collect; there is no hidden per-player progress. Your library is a
-  physical chest of tablets. Rituals are gated by **placing the required glyph
-  tablets on/around the altar** — the glyph "sentence" becomes something you
-  physically lay out. *Maximally immersive and on-theme for no-GUI, but losing
-  tablets loses progress, and multiplayer/teaching get tricky.*
-
-A hybrid is possible (capability tracks what you've *ever* learned for safety, but
-rituals still require the physical tablets present). **Needs your call.**
-
-### Q2 ❓ JEI — keep it, given the no-GUI rule? (conflict with D1)
-Your original brainstorm wanted recipes to "unlock in JEI for easy remembering,"
-but JEI *is* a GUI. Options:
-- **Keep JEI as an optional external convenience.** The mod itself ships no GUI;
-  JEI is a third-party browser the player opted into, and unlocks still gate it.
-  The no-GUI rule governs *our* content, JEI is a lens on top. *Honors your
-  original ask; mild philosophical asterisk.*
-- **Drop JEI entirely.** Fully committed to no-GUI. "Remembering" happens through
-  your physical tablet/lectern collection and in-world references instead of a
-  recipe browser. *Purest, but loses the convenience you originally wanted.*
-- **In-world "recipe" reference.** No JEI; instead a discovered ritual can be
-  "remembered" by inscribing a physical **ritual tablet** that, placed at a
-  lectern, projects the required layout in-world. *No-GUI-native remembering.*
+> **Q1 and Q2 are now resolved** — see **D5** and **D6** above. Remaining open items:
 
 ### Q3 🔵 Pedestal matching — multiset now, patterned geometry later
 Leaning: v1 matches pedestal contents as an order-independent multiset (forgiving);
-a later version adds position-sensitive patterns. If Q1 resolves to **B**, glyph
-tablets may share the pedestal ring or get their own **glyph-ring**, which nudges
-this toward caring about geometry sooner. Revisit after Q1.
+a later version adds position-sensitive patterns. Since glyphs are *not* placed at
+the altar (D5), pedestals only ever hold catalyst items, which keeps this simple.
 
 ### Q4 🔵 One infusion fluid now, themed fluids later
 Leaning: ship `liquid_starlight` as the sole infusion medium in v1; add themed
 fluids (umbra, etc.) as tiers grow. No conflict with other decisions.
 
+### Q5 ❓ Form of the in-game documentation (D6)
+The reference guide populates as you learn — but what *is* it? A held **guide book**
+(a screen, acceptable since it's reference-only), or an in-world **lectern that
+projects** entries as holograms (purer no-GUI)? *Leaning: a lightweight guide book,
+since it's read-only reference and mirrors what JEI shows. Confirm when convenient.*
+
+### Q6 ❓ How is a ritual's backlash severity determined? (D3)
+Options to weigh later: fixed per-recipe `backlash` field; scaled by how *unknown*
+the attempted glyphs are (blind attempts hurt more); or a global "instability"
+stat the world accumulates. *Leaning: per-recipe base severity, amplified by the
+number of untranslated glyphs in the attempt.*
+
 ---
 
-## Docs to reconcile after Q1/Q2 resolve
-- `DISCOVERY.md` — remove Codex-*screen* language; recast recording/review as
-  in-world + on-item per D1 and the Q1 outcome. Sky reading is now v1 (D4).
-- `KNOWLEDGE.md` — recast the "Codex UI" surface; add the D3 backlash gate; settle
-  storage model per Q1; update the JEI section per Q2.
-- `RITUALS.md` — add the D3 backlash system; adjust pedestal/glyph handling per Q1.
-- `DESIGN.md` — fold D1 (no-GUI) into the pillars; note D3 backlash in the loop.
-- `ROADMAP.md` — move sky to v1 (D4), add a backlash phase, drop any custom-screen
-  work, mark §6 decisions resolved.
+## Docs reconciled with these decisions
+All bodies now reflect D1–D6; the "revision pending" banners have been removed.
+- `DESIGN.md` — no-GUI pillar (D1/D6), glyphs-as-research (D5), backlash in the loop (D3).
+- `DISCOVERY.md` — recording/review is in-world + on-item (D1); glyphs framed as
+  research (D5); sky reading is a v1 system (D4).
+- `KNOWLEDGE.md` — capability = research store (D5); reference layer = in-game
+  documentation + JEI (D6); backlash gate (D3).
+- `RITUALS.md` — backlash system (D3); pedestals hold only catalysts, no glyphs (D5).
+- `ROADMAP.md` — sky in v1 (D4), backlash phase, no custom *system* screens (D1),
+  guide+JEI as the reference layer (D6).
