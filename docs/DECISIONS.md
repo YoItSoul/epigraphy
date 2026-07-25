@@ -152,21 +152,19 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — a two-letter mark in a class frame
-**A glyph is a two-letter abbreviation of its word**, drawn as two bold marks on a
-stem inside a frame naming its class. That is the whole rule. Full spec:
-[`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+### D15 ✅ Glyph construction — a three-letter mark in a class frame
+**A glyph is a three-letter abbreviation of its word**, drawn as three bold marks on a
+stem inside a frame naming its class. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **Two marks.** The lemma normalises to classical orthography (`PULVIS` → `PVLVIS`)
-  and its **first two letters** become the upper and lower mark. Each mark's **width**
-  (5 steps) and **shape** (bar, chevron up, chevron down, double bar, broken bar)
-  identify one letter — 5 × 5 = **25 slots for the 23 letters**. Marks are **2 px
-  thick**. **The letter→(width, shape) map is frozen at v1.**
-- **Identity is frame × upper mark × lower mark** — three features to parse, not five
-  faint rungs. The frame *disambiguates*: `VIRGA`, `VITA` and `VIGILIA` all abbreviate
-  to `VI` and stay distinct as material, element and formula. Only a same-class
-  same-abbreviation pair collides; the validator rejects it and the author supplies an
-  explicit `mark`.
+- **Three marks.** The lemma normalises to classical orthography (`PULVIS` → `PVLVIS`)
+  and its **first three letters** become the marks. Each mark's **width** (5 steps) and
+  **shape** (bar, chevron up, chevron down, double bar, broken bar) identify one letter
+  — 5 × 5 = **25 slots for the 23 letters**. Marks are **2 px thick**. **The
+  letter→(width, shape) map is frozen at v1.**
+- **Every interior is unique on its own.** Strip the frames off the whole lexicon and
+  all 49 glyphs remain tellable apart. The frame adds *class*, never identity — a
+  symbol the player must pick out of a grid hundreds of times must never depend on its
+  border. Uniqueness is checked **globally**, not per class.
 - **Symmetry is structural.** Marks draw outward from the stem in both directions, and
   frames pass through a `symmetrise` step, so a glyph *cannot* come out asymmetric.
 - **Arms never leave the frame.** Each stops one pixel inside the frame's inner edge.
@@ -175,26 +173,27 @@ stem inside a frame naming its class. That is the whole rule. Full spec:
 profile outline). That optimised the wrong thing: **players read glyphs constantly**,
 since every rune-word guess means scanning the codex for the one they want. That is a
 *recognition* task, and recognition wants **few, bold, specific** shapes — five faint
-rungs made every glyph a variation on one comb. Two letters is ample (23 × 23 pairs ×
-6 frames), and dropping to two marks frees the room to draw each boldly.
+rungs made every glyph a variation on one comb.
 
-Roman inscriptions abbreviate exactly this way (`D.M.`, `I.O.M.`, `COS`). Once a
-player knows the 23 letterforms they don't memorise glyphs, they **read** them — `CA`
-is `CAELVM`.
+**Two letters was then too few**: `VIRGA`, `VITA` and `VIGILIA` all abbreviate to `VI`
+and rendered identical interiors, leaning on their frames to be told apart — the exact
+failure the system exists to prevent. `VIR` / `VIT` / `VIG` are three different figures.
+
+Roman inscriptions abbreviate exactly this way, and three letters is its commonest form
+(`IMP`, `AVG`, `COS`, `PON`). Once a player knows the 23 letterforms they don't
+memorise glyphs, they **read** them — `CAE` is `CAELVM`.
 
 **The trade, stated plainly:** a glyph now *names* its lemma rather than transcribing
-it. That is the right way round — decipherment difficulty belongs in the **rune
-words**, not in reading a symbol the player must pick out of a grid hundreds of times.
+it. Decipherment difficulty belongs in the **rune words**, not in reading a symbol.
 
-**Two constraints are load-bearing**, each found by an audit that failed first: both
-mark rows must sit in the frame's straight band (frames taper only outside rows 8–24),
-and widths must be two pixels apart with arms stopping one pixel inside the frame.
-Adding a frame **requires re-running the distinctness audit** — every collision found
-while developing this came from a frame intruding on the marks, never from the letter
-map.
+**Two constraints are load-bearing**, each found by an audit that failed first: all
+three mark rows must sit in the frame's straight band (frames taper only outside rows
+8–24), and widths must be two pixels apart with arms stopping one pixel inside the
+frame. Adding a frame **requires re-running the distinctness audit**.
 
-**Audited:** all 23 letters distinct in both mark positions in all six frames, every
-lexicon glyph unique, every output vertically symmetric.
+**Audited:** all 23 letters distinct in all three mark positions in all seven frames;
+all 49 lexicon glyphs have unique interiors with frames ignored; every output
+vertically symmetric.
 
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is

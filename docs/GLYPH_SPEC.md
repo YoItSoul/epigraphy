@@ -2,10 +2,15 @@
 
 The deterministic rule that turns a Latin lemma into a 32×32 symbol.
 
-> **A glyph is a two-letter abbreviation of its word**, drawn as two bold marks on a
-> stem inside a frame that names its class. That is the whole rule.
+> **A glyph is a three-letter abbreviation of its word**, drawn as three bold marks on
+> a stem inside a frame that names its class. That is the whole rule.
 
-Every lit pixel means something: it is stem, one of the two marks, or frame.
+Every lit pixel means something: it is stem, one of the three marks, or frame.
+
+**Every glyph's interior is unique on its own.** Strip the frames off the entire
+lexicon and all 49 glyphs remain tellable apart — the frame adds *class*, never
+identity. That is the property to protect: a symbol the player must pick out of a
+grid hundreds of times must never depend on its border.
 
 This is the implementation contract for the renderer (`RUNES.md` §5, D14/D15). Given
 the same `lemma` and `determinative.class` it must always produce byte-identical art.
@@ -18,13 +23,18 @@ means scanning the codex for the glyph they want. That is a *recognition* task, 
 recognition wants **few, bold, specific** shapes, not a dense record of data nobody
 parses at a glance. Five faint rungs made every glyph a variation on one comb.
 
-Two letters is ample. **23 × 23 letter pairs × 6 frames** vastly exceeds any lexicon,
-and dropping to two marks frees the room to draw each **2 px thick** — weight is what
-makes a symbol readable across a room.
+**Two letters proved too few.** `VIRGA`, `VITA` and `VIGILIA` all abbreviate to `VI`
+and rendered *identical interiors*, distinguishable only by frame — exactly the
+failure this system exists to avoid.
 
-The abbreviation is also the honest choice. Roman inscriptions abbreviate exactly
-this way (`D.M.`, `I.O.M.`, `COS` for *consul*). Once a player knows the 23
-letterforms they don't memorise glyphs, they **read** them: `CA` is `CAELVM`.
+**Three is the number that works.** `VIR` / `VIT` / `VIG` are three different figures,
+and across the whole 49-glyph worked lexicon every interior is unique. Three marks is
+still few enough to draw each **2 px thick** — weight is what makes a symbol readable
+across a room.
+
+The abbreviation is also the honest choice, and three letters is Roman practice at its
+most common: `IMP`, `AVG`, `COS`, `PON`. Once a player knows the 23 letterforms they
+don't memorise glyphs, they **read** them: `CAE` is `CAELVM`.
 
 **The trade, stated plainly:** a glyph no longer transcribes its lemma — it *names*
 it. That is the right way round. Decipherment difficulty belongs in the **rune
@@ -35,41 +45,42 @@ words**, not in reading a symbol the player must pick out of a grid hundreds of 
 ## 1. Anatomy
 
 ```
-        CAELVM  ->  "CA"              FLAMMANS  ->  "FL"
+        CAELVM  ->  "CAE"             FLAMMANS  ->  "FLA"
      ┌─────────────────┐           ┌─────────────────┐
-     │        ╬        │           │        ╬        │
      │    ════╬════    │  ← C      │       ╱╬╲       │  ← F
      │        ╬        │           │        ╬        │
      │      ══╬══      │  ← A      │       ╱╬╲       │  ← L
      │        ╬        │           │        ╬        │
+     │     ══╬══╬══    │  ← E      │      ══╬══      │  ← A
      └─────────────────┘           └─────────────────┘
         circle = celestial            open base = element
 ```
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
-| **Frame** | the class | one of six silhouettes |
-| **Stem** | nothing — it is the constant spine | 2 px vertical, rows 7–25 |
-| **Upper mark** | the lemma's **first** letter | a bold arm, row 11 |
-| **Lower mark** | the lemma's **second** letter | a bold arm, row 20 |
+| **Frame** | the class | one of seven silhouettes |
+| **Stem** | nothing — it is the constant spine | 2 px vertical, rows 5–27 |
+| **Mark 1** | the lemma's **first** letter | a bold arm, row 9 |
+| **Mark 2** | the lemma's **second** letter | a bold arm, row 16 |
+| **Mark 3** | the lemma's **third** letter | a bold arm, row 23 |
 
 A letter is identified by its mark's **width** (5 steps) and **shape** (5 kinds).
 5 × 5 = **25 slots for the 23 letters** of the classical Latin alphabet.
 
-A player parses exactly **three features** — frame, upper mark, lower mark.
+Interiors are unique without their frames; the frame is a bonus channel carrying class.
 
-### 1.1 Identity is frame × upper mark × lower mark
+### 1.1 Identity lives in the marks, not the frame
 
-The frame is not decoration — it **disambiguates**. `VIRGA`, `VITA` and `VIGILIA` all
-abbreviate to `VI`, and stay distinct because they are material, element and formula
-respectively.
-
-Two glyphs may only collide if they share **both** a class and an abbreviation. The
-validator rejects that (§8), and the author supplies an explicit two-letter `mark`:
+Two glyphs collide only if they share their **first three letters** — globally, not
+per class. The validator rejects that (§8) and the author supplies an explicit
+three-letter `mark`:
 
 ```jsonc
-{ "lemma": "VIRIDIS", "mark": "VR" }   // VI was taken in this class
+{ "lemma": "VIRIDIS", "mark": "VRD" }   // VIR was taken by VIRGA
 ```
+
+Because identity is carried entirely by the interior, the frame is free to do its own
+job — announcing the class — without being load-bearing for recognition.
 
 ---
 
@@ -85,7 +96,7 @@ orthography they would have been carved in:
 | `W` | not a Latin letter | rejected at validation |
 
 **The letter → (width, shape) map is frozen at v1.** Changing it invalidates every
-glyph ever made. Note that only a lemma's *first two* letters ever reach the art, so
+glyph ever made. Note that only a lemma's *first three* letters ever reach the art, so
 normalisation matters most at the front of a word.
 
 ```
@@ -107,23 +118,23 @@ shape  = floor(index / 5)               // 0..4
 ## 3. The mark
 
 1. **Normalise** the lemma (§2) — uppercase, `U`→`V`, `J`→`I`, strip non-letters.
-2. Take the **first two letters**. That is the glyph.
-3. An explicit `mark` field overrides step 2 when a class-mate has taken the pair.
+2. Take the **first three letters**. That is the glyph.
+3. An explicit `mark` field overrides step 2 when another glyph has taken the triple.
 
 No truncation rules, no vowel-dropping, no special case for repeated letters — a word
-whose first two letters are the same simply draws the same mark twice, which is
-legible and correct.
+with a doubled letter simply draws the same mark twice, which is legible and correct.
 
 ### 3.1 Worked marks
 
 | Lemma | Normalised | Mark | Class | Reads as |
 |---|---|---|---|---|
-| `CAELUM` | CAELVM | `CA` | celestial | circle frame, bar + bar |
-| `FLAMMANS` | FLAMMANS | `FL` | element | open base, chevron + chevron |
-| `PULVIS` | PVLVIS | `PV` | material | hexagon, chevron-down + double-bar |
-| `UNDA` | VNDA | `VN` | fluid | basin, double-bar + chevron-down |
-| `TERRA` | TERRA | `TE` | structure | plinth, double-bar + bar |
-| `OPUS` | OPVS | `OP` | formula | doubled ring, chevron-down ×2 |
+| `CAELUM` | CAELVM | `CAE` | celestial | circle |
+| `FLAMMANS` | FLAMMANS | `FLA` | element | open base |
+| `PULVIS` | PVLVIS | `PVL` | material | hexagon |
+| `UNDA` | VNDA | `VND` | fluid | basin |
+| `TERRA` | TERRA | `TER` | structure | plinth |
+| `BESTIA` | BESTIA | `BES` | creature | escutcheon |
+| `OPUS` | OPVS | `OPV` | formula | doubled ring |
 
 ---
 
@@ -153,9 +164,8 @@ enclosures.
 |---|---|
 | Canvas | 32 × 32, no anti-aliasing anywhere |
 | Mirror axis | between columns 15 and 16 |
-| Stem | columns 15–16, rows 7–25 |
-| Upper mark | row 11 |
-| Lower mark | row 20 |
+| Stem | columns 15–16, rows 5–27 |
+| Mark rows | 9, 16, 23 |
 | Mark thickness | **2 px** — bold enough to read at a glance |
 | Mark half-extent by width | **3, 5, 7, 9, 11** — arms start at column 13, 11, 9, 7, 5 |
 | Chevron rise | −1 to +2 rows, apex on the stem |
@@ -165,7 +175,7 @@ enclosures.
 Two constraints are load-bearing, each found by an audit that failed before it was
 added:
 
-- **Both mark rows sit in the frame's straight band.** Every frame keeps vertical
+- **All three mark rows sit in the frame's straight band.** Every frame keeps vertical
   sides across rows 8–24 and tapers only above and below. Where a frame tapered into
   the band, wide marks clamped to the same column and distinct letters collapsed.
 - **Widths are two pixels apart, and arms stop one pixel inside the frame.** Arms can
@@ -175,7 +185,8 @@ added:
 
 ## 6. Frames
 
-Six silhouettes, each vertically symmetric, each with straight sides across rows 8–24.
+Seven silhouettes, each vertically symmetric, each with straight sides across rows
+8–24.
 
 | Frame | Class | Heads | Shape |
 |---|---|---|---|
@@ -184,6 +195,7 @@ Six silhouettes, each vertically symmetric, each with straight sides across rows
 | Plinth | Structure / Place | `ALTARE` `INFERNUS` `TERRA` | box on a wider base |
 | Basin | Fluid | `UNDA` | flat top, tapered bottom |
 | Open base | Element | `FLAMMANS` `TENEBRAE` `CHAOS` `VITA` `PLENUS` `FUNDUS` | a baseline, **not** an enclosure |
+| Escutcheon | Creature | `BESTIA` `DRACO` `CUSTOS` | flat top, straight sides, coming to a point |
 | Doubled ring | Formula | `OPUS` `MERSIO` `TACTUS` `VIGILIA` `FIAT` | r = 14, plus an inner arc |
 
 **The doubled ring's inner arc is clipped out of rows 8–24.** A full inner ring at
@@ -204,7 +216,7 @@ lost. Colour may only ever be redundant reinforcement.
 
 | The player must tell… | Carried by | Never by |
 |---|---|---|
-| which glyph this is | the two marks | hue |
+| which glyph this is | the three marks | hue |
 | what class it belongs to | frame silhouette | hue |
 | whether they know it yet | how much is drawn (§7.1) | hue |
 | where a clause begins | doubled ring | hue |
@@ -217,8 +229,8 @@ lost. Colour may only ever be redundant reinforcement.
 | **1 · Sighted** | frame + stem + **mark positions**, arms unextended | "I've seen its shape but can't read it" |
 | **2 · Learned** | frame + stem + **full marks** | complete, legible |
 
-Tier 1 shows that a glyph *has* two marks without revealing either — a precise visual
-metaphor for partial decipherment, identical for every colour vision.
+Tier 1 shows that a glyph *has* three marks without revealing any of them — a precise
+visual metaphor for partial decipherment, identical for every colour vision.
 
 ---
 
@@ -226,18 +238,18 @@ metaphor for partial decipherment, identical for every colour vision.
 
 The renderer and datapack loader must reject:
 
-- A `lemma` (or `mark`) whose first two normalised characters aren't both A–Z, or that
-  contains `W`.
-- A `mark` override that isn't exactly two letters.
-- **Two glyphs in the same class with the same mark.** This is the collision that will
-  actually fire — `VIRGA`/`VITA`/`VIGILIA` are fine because their classes differ, but a
-  second `VI` *material* would not be. Fix with an explicit `mark`.
+- A `lemma` (or `mark`) whose first three normalised characters aren't all A–Z, or
+  that contains `W`.
+- A `mark` override that isn't exactly three letters.
+- **Any two glyphs with the same mark, in any class.** Uniqueness is global, not
+  per-class, precisely so that no glyph depends on its frame to be recognised. Fix
+  with an explicit `mark`.
 - A glyph whose `category` is `element` declaring a `determinative` (§6).
 - A new frame that is not vertically symmetric, or that intrudes into rows 8–24.
 
 **Adding a frame requires re-running the letter-distinctness audit**: render all 23
-letters in **both** mark positions in the new frame and assert 23 distinct figures each
-time. Every collision found while developing this spec came from a frame intruding on
+letters in **all three** mark positions in the new frame and assert 23 distinct figures
+each time. Every collision found while developing this spec came from a frame intruding on
 the marks, never from the letter map.
 
 ---
@@ -247,10 +259,10 @@ the marks, never from the letter map.
 ```js
 const ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";   // frozen at v1 — never reorder
 const EXT  = [0,3,5,7,9,11];                  // half-extent by width 1..5
-const ROWS = [11,20];                         // upper mark, lower mark
+const ROWS = [9,16,23];                       // three marks
 
 const normalise = s => s.toUpperCase().replace(/U/g,"V").replace(/J/g,"I").replace(/[^A-Z]/g,"");
-const mark = glyph => glyph.mark ?? normalise(glyph.lemma).slice(0,2);
+const mark = glyph => glyph.mark ?? normalise(glyph.lemma).slice(0,3);
 
 const form = c => { const i = ALPHABET.indexOf(c); return { w: i % 5 + 1, t: Math.floor(i / 5) }; };
 //  t: 0 bar · 1 chevron up · 2 chevron down · 3 double bar · 4 broken bar
@@ -268,7 +280,7 @@ function render(glyph, tier){
   symmetrise(b);
   if (tier === "unknown") return b;
 
-  vline(b,15,7,25); vline(b,16,7,25);                        // stem
+  vline(b,15,5,27); vline(b,16,5,27);                        // stem
   if (tier === "sighted"){ ROWS.forEach(y => { set(b,14,y); set(b,17,y); }); return b; }
 
   [...mark(glyph)].forEach((c,i) => {
@@ -292,6 +304,6 @@ function render(glyph, tier){
 Deterministic, dependency-free, and cheap enough to generate the whole lexicon into an
 atlas at resource-reload time.
 
-**Audited:** every one of the 23 letters renders distinctly in **both** mark positions
-in **all six** frames, every lexicon glyph is unique, and every output is vertically
-symmetric.
+**Audited:** every one of the 23 letters renders distinctly in **all three** mark
+positions in **all seven** frames; all 49 lexicon glyphs have **unique interiors** with
+frames ignored entirely; every output is vertically symmetric.

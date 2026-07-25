@@ -124,6 +124,39 @@ carvings, tablet tooltips, the in-game documentation).
 | `epigraphy:luna`   | LUNA   | Moon | uncommon | suffix determinative for lunar states |
 | `epigraphy:plenus` | PLENUS | Full | common | qualifier: full moon, brimming, complete |
 
+### Creatures
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:bestia` | BESTIA | Beast | common | suffix (creature) | heads almost every mob word |
+| `epigraphy:draco`  | DRACO  | Dragon | rare | suffix (creature) | boss head — reads as a warning, not another beast |
+| `epigraphy:custos` | CUSTOS | Warden | rare | suffix (creature) | boss head for guardians |
+
+### Tool heads — implements
+| id | lemma | gloss | determinative | names |
+|----|-------|-------|---------------|-------|
+| `epigraphy:gladius` | GLADIUS | Blade | suffix (material) | swords |
+| `epigraphy:dolabra` | DOLABRA | Pick | suffix (material) | pickaxes |
+| `epigraphy:securis` | SECURIS | Axe | suffix (material) | axes |
+| `epigraphy:pala`    | PALA    | Spade | suffix (material) | shovels |
+| `epigraphy:falx`    | FALX    | Sickle | suffix (material) | hoes |
+| `epigraphy:arcus`   | ARCUS   | Bow | suffix (material) | bows, crossbows |
+| `epigraphy:scutum`  | SCUTUM  | Shield | suffix (material) | shields |
+| `epigraphy:lorica`  | LORICA  | Mail | suffix (material) | armour pieces |
+| `epigraphy:hamus`   | HAMUS   | Hook | suffix (material) | fishing rods |
+| `epigraphy:forfex`  | FORFEX  | Shears | suffix (material) | shears |
+
+### Tool materials & organics
+| id | lemma | gloss | mark | notes |
+|----|-------|-------|------|-------|
+| `epigraphy:lignum` | LIGNUM | Wood | `LI` | |
+| `epigraphy:ferrum` | FERRUM | Iron | `FE` | |
+| `epigraphy:adamas` | ADAMAS | Diamond | `AD` | |
+| `epigraphy:aurum`  | AURUM  | Gold | `AV` | classical `AVRVM` |
+| `epigraphy:lana`   | LANA   | Wool | **`LN`** | **mark override** — `LA` was taken by `LAPIS` |
+| `epigraphy:pluma`  | PLUMA  | Feather | `PL` | |
+| `epigraphy:mors`     | MORS     | Death | `MO` | element — qualifier only |
+| `epigraphy:venenum`  | VENENUM  | Venom | `VE` | element — qualifier only |
+
 ### Frame — invocations & closing formula (§4.4)
 These never appear inside an ordinary rune word — they are clause markers only.
 
@@ -316,6 +349,57 @@ one — which is exactly the fantasy of decipherment.
   fiction, so reasoning is strictly faster than enumerating.
 - **A submission cooldown** (leaning, Q7) makes brute force tedious rather than
   optimal, without punishing genuine experimentation.
+
+### 3.1.3 Tools — a grid of material × implement
+
+Every tool is **`[material] · [implement]`**, implement always the head. The tool tree
+is therefore a grid to fill, not a list to coin:
+
+| | `· GLADIUS` | `· DOLABRA` | `· SECURIS` | `· PALA` | `· FALX` |
+|---|---|---|---|---|---|
+| `LIGNUM` | Wooden Sword | Wooden Pickaxe | Wooden Axe | Wooden Shovel | Wooden Hoe |
+| `LAPIS` | Stone Sword | Stone Pickaxe | Stone Axe | Stone Shovel | Stone Hoe |
+| `FERRUM` | Iron Sword | Iron Pickaxe | Iron Axe | Iron Shovel | Iron Hoe |
+| `ADAMAS` | Diamond Sword | Diamond Pickaxe | Diamond Axe | Diamond Shovel | Diamond Hoe |
+| `AURUM` | Golden Sword | … | … | … | … |
+| `INFERNUS · METALLUM` | Netherite Sword | … | … | … | … |
+
+Plus the non-tiered implements: `LIGNUM · ARCUS` (Bow), `LIGNUM · HAMUS` (Fishing
+Rod), `LIGNUM · SCUTUM` (Shield), `FERRUM · FORFEX` (Shears), `FERRUM · LORICA`
+(Iron Chestplate).
+
+**Nine implement heads and five material qualifiers describe every vanilla tool** —
+fourteen glyphs for roughly forty-five words, and a player who has decoded
+`FERRUM · SECURIS` and `LAPIS · DOLABRA` reads `FERRUM · DOLABRA` on sight.
+
+### 3.1.4 Mobs — one head, borrowed qualifiers
+
+Creatures take their own frame (an escutcheon) and are almost all
+**`[quality] · BESTIA`**. The striking thing is how little new vocabulary they need:
+
+| Mob | Rune word | Qualifier borrowed from |
+|---|---|---|
+| Zombie | `MORS · BESTIA` | new |
+| Skeleton | `OSSA · BESTIA` | bone meal |
+| Creeper | `CHAOS · BESTIA` | the Chaos Ingot |
+| Spider | `VENENUM · BESTIA` | new |
+| Enderman | `FINIS · BESTIA` | the End |
+| Blaze | `FLAMMANS · BESTIA` | blaze rods |
+| Ghast | `CAELUM · BESTIA` | the Overworld / sky |
+| Piglin | `INFERNUS · BESTIA` | netherite |
+| Sheep | `LANA · BESTIA` | new (mark `LN`) |
+| Chicken | `PLUMA · BESTIA` | new |
+| Warden | `TENEBRAE · CUSTOS` | deepslate / darkness |
+| Ender Dragon | `FINIS · DRACO` | the End |
+
+**Eight of twelve reuse a qualifier coined for something else entirely.** That is the
+compounding return on a well-chosen glyph: `CHAOS` was minted for an ingot and now
+names a Creeper.
+
+Bosses take a **distinct head** — `DRACO`, `CUSTOS` — so their words don't read as
+just another beast. That matters when the word is a warning carved on a wall.
+
+---
 
 ---
 
@@ -565,21 +649,22 @@ Glyph art is not decoration — it is **part of the grammar**. Every glyph is dr
 two layers:
 
 ```
-      CAELVM  ->  "CA"
+      CAELVM  ->  "CAE"
    ┌─────────────────┐
-   │        ╬        │   ← FRAME: the determinative CLASS (§4.3)
-   │    ════╬════    │        shape = what kind of thing this names
-   │        ╬        │   ← TWO MARKS: the lemma's first two letters,
-   │      ══╬══      │        each a bold arm; width + shape = a letter
+   │    ════╬════    │   ← FRAME: the determinative CLASS (§4.3)
+   │        ╬        │        shape = what kind of thing this names
+   │      ══╬══      │   ← THREE MARKS: the lemma's first three letters,
+   │        ╬        │        each a bold arm; width + shape = a letter
+   │     ══╬══╬══    │
    └─────────────────┘
 ```
 
-- **Two bold marks** (interior) spell the lemma's **first two letters** — a
-  two-letter abbreviation, exactly as Roman inscriptions abbreviate (`D.M.`, `COS`).
-  Each mark's width and shape identify one letter. Every lit pixel is stem, mark or
-  frame; nothing is decorative. Kept short deliberately: **players scan these
-  constantly** while guessing rune words, so each must be simple, specific and
-  instantly told apart. It is deliberately **cryptic**: you cannot look at it and know what it
+- **Three bold marks** (interior) spell the lemma's **first three letters** — exactly
+  as Roman inscriptions abbreviate (`IMP`, `AVG`, `COS`). Each mark's width and shape
+  identify one letter. Every lit pixel is stem, mark or frame; nothing is decorative.
+  Kept short deliberately: **players scan these constantly** while guessing rune words,
+  so each must be simple, specific and instantly told apart — and **every interior is
+  unique on its own**, so no glyph leans on its frame to be recognised. It is deliberately **cryptic**: you cannot look at it and know what it
   means, which is what preserves the decipherment loop. **Full construction rule:
   [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 - **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is
