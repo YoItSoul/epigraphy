@@ -125,8 +125,9 @@ A rune word is an **ordered** 2–3 glyph sequence naming exactly one concrete t
 ### The three hard rules
 
 1. **2 or 3 glyphs.** Never 1, never 4.
-2. **Ends (or begins) with a determinative.** The word must declare its class —
-   suffix for materials/objects, prefix for structures. A word with no determinative
+2. **Contains at least one determinative.** The **head** is the *last*
+   determinative-capable glyph in the word; everything before it qualifies
+   (`RUNES.md` §4.3.1). A word made only of element/quality glyphs has no head and
    fails validation.
 3. **Ordered sequences must be globally unique.** No two rune words may share the
    same glyph sequence, in any namespace. This is what makes codex submission
@@ -401,8 +402,10 @@ Run the game with the datapack loaded; failures are reported at load, not at use
 **Rune words**
 - Fewer than 2 or more than 3 glyphs.
 - A glyph id that doesn't resolve.
-- **No determinative** in the sequence, or a prefix determinative that isn't first
-  / suffix determinative that isn't last.
+- **No determinative-capable glyph** in the sequence — the word has no head
+  (`RUNES.md` §4.3.1).
+- A `means.type` that contradicts the head's determinative class (a word headed by
+  `UNDA` must name a `fluid`, one headed by `LUNA` a `condition`, and so on).
 - **Duplicate ordered sequence** with any existing rune word (the common one).
 
 **Rite types**

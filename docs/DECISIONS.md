@@ -357,14 +357,28 @@ Each word is validated independently, so a player can inscribe a whole ritual an
 see which clauses land — and the inscription as a whole is only a valid ritual if
 the clause order is right.
 
-### Q9 ✅ Resolved — determinatives, and they may prefix or suffix
-Real determinative systems place class-markers on **either** end: Sumerian prefixes
-`DINGIR` (god) and `GIŠ` (wooden) but suffixes `KI` (place). So `ALTARE · TENEBRAE`
-is not an exception to be explained away — `ALTARE` is a **prefix determinative**
-marking "what follows names a structure," while `VIRGA`/`METALLUM`/`LAPIS`/`PULVIS`
-are **suffix determinatives**. The original example stands as written, with real
-precedent. Convention: **structures/places prefix, materials/objects suffix**
-(`RUNES.md` §4.3.1).
+### Q9 ✅ Resolved — the head rule
+**The head of a rune word is the last determinative-capable glyph; everything before
+it qualifies.** Scan right to left, and the first glyph that *can* be a determinative
+is the head. Element/quality glyphs (`FLAMMANS`, `TENEBRAE`, `CHAOS`, `VITA`,
+`PLENUS`) can never be determinatives, so they are skipped.
+
+This handles both orders with a single rule and no exceptions:
+- `FLAMMANS · VIRGA` → `VIRGA` is a determinative → head. A rod.
+- `ALTARE · TENEBRAE` → `TENEBRAE` is an element, skip → `ALTARE` → head. An altar.
+
+So the original example was right, and reads head-first only because the glyph after
+it could never head a word.
+
+**Supersedes the earlier "places prefix, materials suffix" formulation**, which
+described the symptom and broke on the first word containing two
+determinative-capable glyphs: `INFERNUS · METALLUM` would have been ambiguous
+between "a hellish place" and "a hell-metal". The head rule picks `METALLUM` and the
+word means a metal. Found while authoring the worked vocabulary in `RUNES.md` §3.1.1.
+
+The Sumerian precedent still stands — determinatives genuinely appear on both sides
+(`DINGIR` prefixes, `KI` suffixes). The head rule adds a deterministic way to know
+*which* sign is doing the work when more than one could.
 
 ### Q7 ❓ What does a *wrong* codex submission cost?
 D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth

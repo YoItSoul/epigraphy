@@ -99,11 +99,21 @@ carvings, tablet tooltips, the in-game documentation).
 | `epigraphy:dulcis` | DULCIS | Sweet | common | — | sugar, honey, sweet things |
 | `epigraphy:terra`  | TERRA  | Earth | common | suffix (earthen) | dirt, iron, mundane ground |
 
+### Fluids
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:unda`   | UNDA   | Flow | common | suffix (fluid) | heads every liquid: water, lava, starlight |
+
+### Objects
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:gladius` | GLADIUS | Blade | uncommon | suffix (blade) | swords, axes, edged tools |
+
 ### Elements, continued
 | id | lemma | gloss | rarity | notes |
 |----|-------|-------|--------|-------|
 | `epigraphy:vita`   | VITA   | Life | uncommon | growth, healing, fertility |
-| `epigraphy:aqua`   | AQUA   | Water | common | water, fluids, steeping |
+| `epigraphy:fundus` | FUNDUS | Foundation | uncommon | qualifier: the bottom, the root, bedrock |
 
 ### Celestial, continued
 | id | lemma | gloss | rarity | notes |
@@ -181,6 +191,40 @@ the hand codex (D7).
 Because rune words are data, the whole language — and every hint the player ever
 reads — is authorable and pack-extensible without code. The registry is indexed by
 **ordered glyph sequence**, so submission validation is an exact-sequence lookup.
+
+### 3.1.1 Worked vocabulary
+
+Six words showing the system across all three `means` types. New glyphs are marked †
+— note the ratio: **three new glyphs bought six words**, which is the budget
+`AUTHORING.md` §3 recommends.
+
+| Names | Rune word | Reads as | `means.type` |
+|---|---|---|---|
+| **Lava** | `FLAMMANS · UNDA†` | Flaming Flow | `fluid` |
+| **Water** | `VITA · UNDA†` | Living Flow | `fluid` |
+| **Full Moon** | `PLENUS · LUNA` | Full Moon | `condition` — `moon_phase: full` |
+| **Netherite Sword** | `INFERNUS · METALLUM · GLADIUS†` | Hell-Metal Blade | `item` |
+| **Mountain Top** | `CAELUM · TERRA` | Sky-Earth | `condition` — `y_level: {min:190}` |
+| **Near Bedrock** | `FUNDUS† · TERRA` | Foundation-Earth | `condition` — `y_level: {max:-50}` |
+
+Three things this set demonstrates:
+
+**Minimal pairs teach themselves.** Lava and water differ by exactly one glyph, and
+that glyph is the difference between them: `FLAMMANS` vs `VITA` on a shared `UNDA`
+head. A player who decodes either can guess the other, and has learned "`· UNDA`
+names a liquid" in the process. Liquid starlight then falls out for free as
+`CAELUM · UNDA`.
+
+**Opposites share a head.** `CAELUM · TERRA` (high ground) and `FUNDUS · TERRA`
+(bedrock) are a matched vertical pair — same head, opposed qualifiers. The lexicon
+should be authored in these pairs wherever the fiction allows; it is the cheapest
+teaching device available.
+
+**Composition pays off.** `INFERNUS · METALLUM` already means netherite. Appending
+`GLADIUS` gives the sword — so a player who knows the metal can *predict* the
+weapon without ever having seen it. This is the moment the language stops being a
+lookup table and starts being a language, and it is worth authoring toward
+deliberately: prefer building new words out of known ones over coining fresh glyphs.
 
 ### 3.2 The codex submit loop (D7 / D9)
 
@@ -366,34 +410,45 @@ Roman-style inscription formulae.** Every one of those is a real, attested syste
 and together they make a language that a player can genuinely *learn to read*
 rather than memorise.
 
-### 4.3.1 Word-internal order: the determinative rule
+### 4.3.1 Word-internal order: the head rule
 
-Recommended rule, replacing the earlier flat "qualifier first":
+One rule governs every rune word, with no exceptions:
 
-> **A rune word is `[qualifiers] + HEAD`, where the head is a determinative naming
-> the word's category. Material and object determinatives are *suffixed*; place and
-> structure determinatives are *prefixed*.**
+> ### The head is the **last determinative-capable glyph** in the word.
+> Everything before it qualifies it.
 
-| Word | Determinative | Position | Names |
+Scan the word right to left; the first glyph you meet that *can* be a determinative
+is the head, and it names the word's category. Glyphs that can never be
+determinatives — the **element/quality** glyphs (`FLAMMANS`, `TENEBRAE`, `CHAOS`,
+`VITA`, `PLENUS`) — are skipped over, because they can only ever modify.
+
+| Word | Scanning right to left | Head | Names |
 |---|---|---|---|
-| `FLAMMANS · VIRGA` | `VIRGA` (rod) | suffix | Blaze Rod |
-| `INFERNUS · METALLUM` | `METALLUM` (metal) | suffix | Netherite |
-| `TENEBRAE · LAPIS` | `LAPIS` (stone) | suffix | Deepslate |
-| `CHAOS · CAELUM` | `CAELUM` (heavens) | suffix | Thunderstorm |
-| **`ALTARE · TENEBRAE`** | **`ALTARE` (structure)** | **prefix** | **Blackstone Altar** |
+| `FLAMMANS · VIRGA` | `VIRGA` is a determinative → stop | **VIRGA** (rod) | Blaze Rod |
+| `INFERNUS · METALLUM` | `METALLUM` is a determinative → stop | **METALLUM** (metal) | Netherite |
+| `CHAOS · CAELUM` | `CAELUM` is a determinative → stop | **CAELUM** (heavens) | Thunderstorm |
+| `ALTARE · TENEBRAE` | `TENEBRAE` is an element, skip → `ALTARE` | **ALTARE** (structure) | Blackstone Altar |
+| `INFERNUS · METALLUM · GLADIUS` | `GLADIUS` is a determinative → stop | **GLADIUS** (blade) | Netherite Sword |
 
-**This resolves Q9 in favour of your original example, with real precedent.**
-`ALTARE` behaves exactly like Sumerian `GIŠ` or `DINGIR` — a prefixed class marker
-declaring "what follows names a structure" — while `VIRGA`/`METALLUM`/`LAPIS`
-behave like `KI`, suffixed. Sumerian does both, so this is not a fudge; it's how
-determinative systems actually work.
+**This is why `ALTARE · TENEBRAE` looks "backwards" and isn't.** It reads head-first
+only because the glyph after it is a quality that could never head a word. Nothing
+special is happening — the same single rule produces both orders.
 
-The player-facing rule stays simple and teachable:
-- **`ALTARE` at the front** → this word names an altar.
-- **Anything else at the back** → that's the category, and what precedes it narrows it.
+The earlier formulation ("places prefix, materials suffix") described the *symptom*
+and broke on the first word containing two determinative-capable glyphs:
+`INFERNUS · METALLUM` would have been ambiguous between "a hellish place" and "a
+hell-metal". The head rule resolves it — `METALLUM` is last, so it wins, and the
+word means a metal.
 
-Which glyphs may serve as determinatives (and on which side) is declared per-glyph
-in data — see `AUTHORING.md` — so modders extend the system without touching code.
+The Sumerian precedent still holds: determinatives genuinely do appear on either
+side of a word (`DINGIR` prefixes, `KI` suffixes). What the head rule adds is a
+deterministic way to know *which* sign is doing the work when more than one could.
+
+Player-facing, it stays teachable in one line:
+- **Read to the end. The last real "kind of thing" word is what it is.**
+
+Which glyphs may serve as determinatives is declared per-glyph in data — see
+`AUTHORING.md` — so modders extend the system without touching code.
 
 ### 4.4 The frame: invocation and consecration (recommended)
 
