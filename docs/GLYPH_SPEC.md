@@ -50,11 +50,11 @@ words**, not in reading a symbol the player must pick out of a grid hundreds of 
 ```
         VIRGA -> "VIR"              CAELVM -> "CAE"
      ┌───────────────┐           ┌───────────────┐
-   ──┤    ◇ ◇ ◇      │ ← V     ──┤   ═══════     │ ← C
-     │      ○        │ ← I       │   ═══════     │ ← A
-   ──┤    \_____/     │ ← R     ──┤     ∧∧∧       │ ← E
+     │    ＞    ＜    │ ← V bowtie│   ═══════     │ ← C double bar
+   ──┤      ✕        │ ← I salt. ├─  ───────     │ ← A bar
+   ──┤    └─────┘    │ ← R cup   ├─    ∧   ∧     │ ← E chevron
      └───────────────┘           └───────────────┘
-      ↑ length notches            one universal frame
+      ↑ notches, drawn inward     one universal frame
 ```
 
 | Layer | Encodes | Drawn as |
@@ -77,7 +77,7 @@ glyphs differing by two pixels of arm length are not two symbols; they are one s
 with a typo.
 
 **Each letter is now its own kind of mark**: ring, saltire, arch, bowtie, triangle,
-twin rings, three posts. `VIR` is diamond-ring-cup; `CAE` is bar-double-bar-chevron.
+twin rings, three posts. `VIR` is bowtie-saltire-cup; `CAE` is double-bar-bar-chevron.
 Those do not merely measure differently, they *look* different — the only kind of
 difference a player scanning a codex grid can actually use.
 
@@ -110,18 +110,18 @@ orthography they would have been carved in (`PULVIS` → `PVLVIS`).
 | | | | | |
 |---|---|---|---|---|
 | **A** bar | **B** short bar | **C** double bar | **D** split bar | **E** chevron up |
-| **F** chevron down | **G** zigzag | **H** diamond | **I** ring | **K** saltire |
-| **L** cross | **M** tau | **N** inverted tau | **O** two posts | **P** three posts |
+| **F** chevron down | **G** ring | **H** diamond | **I** saltire | **K** cross |
+| **L** tau | **M** inverted tau | **N** two pips | **O** three pips | **P** two posts |
 | **Q** arch | **R** cup | **S** triangle | **T** wedge | **V** bowtie |
-| **X** beam | **Y** box | **Z** twin rings | | |
+| **X** barb above | **Y** barb below | **Z** zigzag | | |
 
 **The form table is frozen at v1.** Changing one invalidates every glyph using that
 letter.
 
 Forms are chosen for **mutual contrast**, not beauty in isolation: a ring, a saltire,
 an arch and a bowtie share no silhouette, so any three stacked produce a figure with
-no near-neighbour. Each is vertically symmetric and confined to its own zone
-(x 7–24, y ±3) so any three stack cleanly without touching.
+no near-neighbour. Each is vertically symmetric, **1 px thick**, and confined to its own zone
+(x 9–22, y ±3) so any three stack cleanly without touching.
 
 ---
 
@@ -151,18 +151,14 @@ no near-neighbour. Each is vertically symmetric and confined to its own zone
 Every glyph is **bilaterally symmetric about its vertical centre axis**, which sits
 between pixel columns 15 and 16.
 
-Symmetry is structural, not something to hand-check: marks are drawn outward from the
-stem in both directions, and each frame is passed through a `symmetrise` step that
-ORs every column with its mirror. **A frame therefore cannot be drawn asymmetrically
-by accident**, and vertex coordinates need not be mirror-exact.
+Symmetry is structural, not something to hand-check: the finished bitmap is passed
+through a `symmetrise` step that ORs every column with its mirror. **A glyph therefore
+cannot come out asymmetric by accident**, and neither stroke nor frame coordinates
+need to be mirror-exact.
 
-Left–right rather than top–bottom because mirror symmetry about a vertical stem is
+Left–right rather than top–bottom because mirror symmetry about a vertical axis is
 what reads as *writing* — runes, alchemical sigils, heraldic charges, maker's marks.
 Top–bottom symmetry reads as a playing card.
-
-Plinth and open-base frames deliberately break *horizontal* symmetry: a structure
-sits on something, a quality rests on a baseline. That is the cue that they are not
-enclosures.
 
 ---
 
