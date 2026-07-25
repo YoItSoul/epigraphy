@@ -18,23 +18,43 @@ the same `lemma` and `determinative.class` it must always produce byte-identical
 ## 1. Anatomy
 
 ```
-        ┌─────────────────────────┐
-        │            ║            │   ║  stem — full height, meets the frame
-        │      ══════╬══════      │   ═  rung — one per letter, read downward
-        │        ╌╌╌╌╬╌╌╌╌        │
-        │    ════════╬════════    │   frame — the determinative class
-        │            ║            │
-        └─────────────────────────┘
+   3 letters                    5 letters
+  ┌───────────────┐            ┌───────────────┐
+  │               │            │   ════╬════   │   ║ ╬  stem — as long as the word
+  │      ╱╬╲      │            │      ╱╬╲      │   ═    bar
+  │    ══╬══      │            │    ══╬══      │   ╱╲   chevron
+  │      ╲╬╱      │            │      ╲╬╱      │   ≡    double bar
+  │               │            │   ════╬════   │
+  └───────────────┘            └───────────────┘
+   compact mark                 fills the frame
 ```
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
 | **Frame** | the determinative class | one of six silhouettes |
-| **Stem** | nothing — it is the constant | 2 px vertical, touching frame top and bottom |
-| **Rungs** | the lemma, **one rung per letter**, top to bottom | horizontal arms + an end-form |
+| **Stem** | the **word's length** | 2 px vertical, spanning only the occupied rows |
+| **Rungs** | the lemma, **one rung per letter**, top to bottom | an arm of one of five widths, in one of five shapes |
 
-A letter is identified by its rung's **width** (5 steps) and **end-form** (5 kinds).
+A letter is identified by its rung's **width** (5 steps) and **shape** (5 kinds).
 5 × 5 = **25 slots for the 23 letters** of the classical Latin alphabet.
+
+### 1.1 Three variables, so glyphs don't all look alike
+
+An earlier revision fixed every glyph at five rows with a full-height stem and
+distinguished letters by 1-pixel end-ticks. Every symbol then had the same bounding
+box and differed only in fine detail — they read as variations on a single comb.
+
+Two changes fixed it **without adding any new information**, only making information
+that was already present visible at a glance:
+
+| Variable | Encodes | Why it differentiates |
+|---|---|---|
+| **Figure height** | word length | Rows are centred and only as many as there are letters; the stem spans only those rows. A 3-letter word is a compact mark, a 5-letter word fills the frame. Read first, before any detail. |
+| **Rung shape** | the letter's group | Bar, chevron up, chevron down, double bar, broken bar — gross forms that change a glyph's whole texture. A word of chevrons reads nothing like a word of double bars. |
+| **Rung width** | the letter within its group | Five steps, two pixels apart. |
+
+Rung shape replacing end-ticks is also the more authentic choice: **stroke *form* is
+Ogham's own device**, not a decoration on top of it.
 
 ---
 
@@ -49,22 +69,22 @@ orthography they would have been carved in:
 | `J` → `I` | Romans carved I | `IANUA` → `IANVA` |
 | `W` | not a Latin letter | rejected at validation |
 
-**The letter → (width, end-form) map is frozen at v1.** Changing it invalidates every
+**The letter → (width, shape) map is frozen at v1.** Changing it invalidates every
 glyph ever made.
 
 ```
 index = ALPHABET.indexOf(letter)        // "ABCDEFGHIKLMNOPQRSTVXYZ"
 width  = index % 5 + 1                  // 1..5
-form   = floor(index / 5)               // 0..4
+shape  = floor(index / 5)               // 0..4
 ```
 
-| form ↓ / width → | 1 | 2 | 3 | 4 | 5 |
+| shape ↓ / width → | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| **0** plain | A | B | C | D | E |
-| **1** up-tick | F | G | H | I | K |
-| **2** down-tick | L | M | N | O | P |
-| **3** cross | Q | R | S | T | V |
-| **4** broken | X | Y | Z | — | — |
+| **0** bar `═══` | A | B | C | D | E |
+| **1** chevron up `∧` | F | G | H | I | K |
+| **2** chevron down `∨` | L | M | N | O | P |
+| **3** double bar `≡` | Q | R | S | T | V |
+| **4** broken bar `═ ═` | X | Y | Z | — | — |
 
 ---
 
@@ -133,23 +153,36 @@ enclosures.
 |---|---|
 | Canvas | 32 × 32, no anti-aliasing anywhere |
 | Mirror axis | between columns 15 and 16 |
-| Stem | columns 15–16, rows 3–28 |
-| Rung rows | **8, 12, 16, 20, 24** |
+| Rung rows (`k` letters) | centred: `row[i] = 16 − (k−1)·2 + i·4` |
+| Stem | columns 15–16, from `row[0] − 3` to `row[k−1] + 3` |
 | Rung half-extent by width | **3, 5, 7, 9, 11** — arms start at column 13, 11, 9, 7, 5 |
-| End-form ticks | columns **14 and 17**, at row ± 1 |
-| Broken-arm gap | one pixel, mid-arm, both sides |
+| Chevron rise | ± 1 row, apex on the stem |
+| Double bar | two arms at row ± 1 |
+| Broken-bar gap | one pixel, mid-arm, both sides |
 
-Three constraints in that table are load-bearing, each found by an audit that failed
+Row layout by word length — note the varying vertical extent, which is the point:
+
+| Letters | Rows | Figure height |
+|---:|---|---|
+| 2 | 14, 18 | compact, centred |
+| 3 | 12, 16, 20 | small |
+| 4 | 10, 14, 18, 22 | medium |
+| 5 | 8, 12, 16, 20, 24 | fills the frame |
+
+Two constraints in that table are load-bearing, each found by an audit that failed
 before it was added:
 
-- **Rung rows sit in the frame's straight band (8–24).** Every frame keeps vertical
-  sides across those rows and tapers only above and below. Where a frame tapered into
-  the band, wide rungs clamped to the same column and distinct letters collapsed.
+- **Rung rows stay within rows 8–24, the frame's straight band.** Every frame keeps
+  vertical sides across it and tapers only above and below. Where a frame tapered
+  into the band, wide rungs clamped to the same column and distinct letters collapsed.
 - **Widths are two pixels apart, and arms stop one pixel inside the frame.** Arms can
-  then never cross the frame, and adjacent widths never coincide.
-- **End-form ticks sit beside the stem, not at the arm ends.** At the ends they landed
-  on frame pixels — on curved frames especially — and vanished, collapsing E/K/P/V
-  onto one figure.
+  then never cross the frame, and adjacent widths never coincide once clamped.
+
+> A third constraint applied while letters were distinguished by 1-pixel end-ticks:
+> those had to sit beside the stem, because at the arm ends they landed on frame
+> pixels and vanished, collapsing E/K/P/V. **Rung shapes make that moot** — a chevron
+> or double bar cannot be swallowed by a frame the way a single pixel could. One more
+> reason the shape-based encoding is the better one.
 
 ---
 
@@ -224,8 +257,8 @@ intruding on the stave, never from the letter map itself.
 ```js
 const ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";   // frozen at v1 — never reorder
 const VOWELS   = "AEIOVY";
-const ROWS = [8,12,16,20,24];
-const EXT  = [0,3,5,7,9,11];                  // half-extent by width 1..5
+const EXT      = [0,3,5,7,9,11];              // half-extent by width 1..5
+const rowsFor  = k => Array.from({length:k}, (_,i) => 16 - (k-1)*2 + i*4);
 
 const normalise = s => s.toUpperCase().replace(/U/g,"V").replace(/J/g,"I").replace(/[^A-Z]/g,"");
 
@@ -236,6 +269,7 @@ function stave(glyph){
 }
 
 const form = c => { const i = ALPHABET.indexOf(c); return { w: i % 5 + 1, t: Math.floor(i / 5) }; };
+//  t: 0 bar · 1 chevron up · 2 chevron down · 3 double bar · 4 broken bar
 
 function symmetrise(b){                        // frames cannot be asymmetric
   for (let y = 0; y < 32; y++) for (let x = 0; x < 16; x++)
@@ -247,20 +281,25 @@ const boundL = (b,y) => { for (let x = 1; x < 15; x++) if (b[y*32+x]) return x; 
 function render(glyph, tier){
   const b = new Uint8Array(32*32);
   drawFrame(b, glyph.determinative?.class ?? glyph.category);
-  symmetrise(b);
+  symmetrise(b);                                             // frames cannot be asymmetric
   if (tier === "unknown") return b;
 
-  vline(b,15,3,28); vline(b,16,3,28);                        // stem
+  const s = stave(glyph), k = s.length, ROWS = rowsFor(k);
+  vline(b, 15, ROWS[0]-3, ROWS[k-1]+3);                      // stem length = word length
+  vline(b, 16, ROWS[0]-3, ROWS[k-1]+3);
 
-  [...stave(glyph)].forEach((c,i) => {
+  if (tier === "sighted"){ ROWS.forEach(y => { set(b,14,y); set(b,17,y); }); return b; }
+
+  [...s].forEach((c,i) => {
     const {w,t} = form(c), y = ROWS[i];
-    if (tier === "sighted"){ set(b,14,y); set(b,17,y); return; }   // positions only
-    const xl = Math.max(16 - EXT[w], boundL(b,y) + 1);
+    const xl = Math.max(16 - EXT[w], boundL(b,y) + 1);        // never crosses the frame
     const xr = 31 - xl;
-    hline(b, xl, xr, y);
-    if (t === 4){ const g = Math.round((xl+14)/2); b[y*32+g] = 0; b[y*32+31-g] = 0; }
-    if (t === 1 || t === 3){ set(b,14,y-1); set(b,17,y-1); }
-    if (t === 2 || t === 3){ set(b,14,y+1); set(b,17,y+1); }
+    if (t === 0) hline(b, xl, xr, y);                                       // bar
+    else if (t === 1){ dline(b,xl,y+1,15,y-1); dline(b,xr,y+1,16,y-1); }    // chevron up
+    else if (t === 2){ dline(b,xl,y-1,15,y+1); dline(b,xr,y-1,16,y+1); }    // chevron down
+    else if (t === 3){ hline(b,xl,xr,y-1); hline(b,xl,xr,y+1); }            // double bar
+    else { hline(b,xl,xr,y);                                                // broken bar
+           const g = Math.round((xl+14)/2); b[y*32+g] = 0; b[y*32+31-g] = 0; }
   });
   return b;
 }

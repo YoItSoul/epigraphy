@@ -157,14 +157,22 @@ Glyphs are built by a **deterministic rule where every lit pixel is meaningful**
 is part of the stem, part of a rung naming one letter, or part of the class frame.
 Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **Stem and rungs.** A vertical stem spans the glyph and meets the frame at both
-  ends. Each letter of the lemma draws one **horizontal rung**, read top to bottom.
-  A letter is identified by its rung's **width** (5 steps) and **end-form** (plain,
-  up-tick, down-tick, cross, broken) — 5 × 5 = **25 slots for the 23 letters** of
-  the classical Latin alphabet. Lemmas normalise to classical orthography
+- **Stem and rungs.** A vertical stem carries one **rung per letter**, read top to
+  bottom.
+  A letter is identified by its rung's **width** (5 steps) and **shape** (bar,
+  chevron up, chevron down, double bar, broken bar) — 5 × 5 = **25 slots for the 23
+  letters** of the classical Latin alphabet. Lemmas normalise to classical orthography
   (`PULVIS` → `PVLVIS`); over five letters they abbreviate by dropping vowels after
   the initial (`FLAMMANS` → `FLMMN`), the abjad principle and what a stonecutter
-  would have cut. **The letter→(width, form) map is frozen at v1.**
+  would have cut. **The letter→(width, shape) map is frozen at v1.**
+- **Three variables keep glyphs from looking alike.** An earlier revision fixed every
+  glyph at five rows with a full-height stem and used 1-pixel end-ticks, so every
+  symbol had the same bounding box and read as a variation on one comb. Fixed without
+  adding any information, only by making what was already there visible at a glance:
+  **figure height encodes word length** (rows are centred, only as many as there are
+  letters, and the stem spans just those rows), and **the letter group is a rung's
+  shape rather than a tick**. Stroke *form* is also Ogham's own device, so this is the
+  more authentic encoding as well as the more legible one.
 - **Symmetry is structural.** Rungs are drawn outward from the stem in both
   directions, and frames pass through a `symmetrise` step that ORs each column with
   its mirror — so a glyph *cannot* come out asymmetric, and frame vertices need not
@@ -179,15 +187,17 @@ strokes running outside the frame. The Ogham precedent is now closer, not furthe
 Ogham encodes letters as counted strokes against a stem, and survives almost entirely
 as standing-stone inscriptions.
 
-**Three constraints are load-bearing**, each found by an audit that failed before it
+**Two constraints are load-bearing**, each found by an audit that failed before it
 was added — they are not stylistic:
-1. **Rung rows sit in the frame's straight band (rows 8–24)**, and every frame keeps
-   vertical sides across it. Where a frame tapered into the band, wide rungs clamped
-   to the same column and distinct letters collapsed.
+1. **Rung rows stay within rows 8–24**, the frame's straight band, and every frame
+   keeps vertical sides across it. Where a frame tapered into the band, wide rungs
+   clamped to the same column and distinct letters collapsed.
 2. **Widths are two pixels apart** so adjacent widths never coincide once clamped.
-3. **End-form ticks sit beside the stem, not at the arm ends.** At the ends they
-   landed on frame pixels — on curved frames especially — and vanished, collapsing
-   E/K/P/V onto one figure.
+
+A third constraint applied while letters were distinguished by 1-pixel end-ticks —
+they had to sit beside the stem, since at the arm ends they landed on frame pixels
+and vanished, collapsing E/K/P/V. **Rung shapes make that moot**: a chevron or double
+bar cannot be swallowed by a frame the way a single pixel could.
 
 Adding a frame therefore **requires re-running the letter-distinctness audit**: render
 all 23 letters in it and assert 23 distinct figures. Every collision found while
