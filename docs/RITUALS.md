@@ -1,15 +1,33 @@
 # Rituals & Infusion
 
-The back half of the loop: the altar, the pedestals, the infusion fluid, and the
-environmental conditions that turn a decoded **inscription** into an actual crafting
-event. This document specifies the multiblock, the full JSON recipe schema, the
+The back half of the loop: how a decoded **inscription** becomes an actual crafting
+event. This document specifies the rite types, the altar multiblock, conditions, the
 backlash system, and worked examples.
 
-Every recipe carries an inscription written in the ritual formula (`RUNES.md` §4) —
-`VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` — and each clause is one rune word.
-The inscription *is* the recipe, expressed in the language the player is learning:
-the schema below is simply that sentence plus the exact quantities the player only
-earns at Tier 3.
+> **For the full JSON schemas and a step-by-step guide to adding content, see
+> [`AUTHORING.md`](AUTHORING.md).** This document covers the *design*; that one is
+> the reference.
+
+**Not every rite needs an altar (D12).** A rite type is a grammar template plus a
+trigger, and each is announced by its own **invocation glyph** — just as `D.M.`
+opens a Roman funerary inscription and `I.O.M.` a votive one:
+
+| Invocation | Rite | How it's performed | Batched? |
+|---|---|---|---|
+| **`OPUS`** | *The Work* | altar multiblock + pedestals + pool | no |
+| **`MERSIO`** | *The Steeping* | throw items into a fluid in-world | **yes — full stacks** |
+| **`TACTUS`** | *The Touch* | use one item on another item/block | no |
+| **`VIGILIA`** | *The Vigil* | observe the sky through an Observatory | no |
+
+`OPUS` is the heavyweight — precise, structural, one output at a time. `MERSIO` is
+the everyday one: no structure at all, just items thrown together into water under
+the right sky, and it processes **whole stacks in one go**. That spread matters for
+pacing: players meet the language through cheap, batched steeping rites long before
+they can build an altar.
+
+Every recipe carries an inscription (`RUNES.md` §4), and the inscription *is* the
+recipe expressed in the language the player is learning — the JSON is simply that
+sentence plus the exact quantities they only earn at Tier 3.
 
 Two decisions shape this doc: glyphs are a **research** layer, **not** physical
 altar ingredients (D5) — pedestals only ever hold catalyst items, and the altar
@@ -78,14 +96,23 @@ v1:
 | `epigraphy:weather` | `clear`, `rain`, `thunder` | Current weather at the altar |
 | `epigraphy:time` | `day`, `night`, or a tick range `[13000, 23000]` | Time of day |
 | `epigraphy:moon_phase` | `0`–`7`, or `full`, `new` | Lunar phase |
-| `epigraphy:dimension` | `minecraft:the_nether`, `minecraft:overworld` | Dimension of the altar |
-| `epigraphy:sky_visible` | `true` / `false` | Whether the pool can see the sky |
-| `epigraphy:biome` | biome id or tag | Biome at the altar |
+| `epigraphy:dimension` | `minecraft:the_nether`, `minecraft:overworld` | Dimension of the rite |
+| `epigraphy:sky_visible` | `true` / `false` | Whether the rite can see the sky |
+| `epigraphy:biome` | biome id or tag | Biome at the rite |
+| `epigraphy:y_level` | `min` / `max` | Altitude or depth band |
+| `epigraphy:constellation` | constellation id + `visible` | A named constellation overhead |
+| `epigraphy:light_level` | `min` / `max` | Block/sky light |
+| `epigraphy:fluid_present` | fluid id | The fluid the rite sits in |
+| `epigraphy:nearby_block` | block id/tag + `radius` | A block within range |
 
-Condition types are an extensible registry: adding a new one (say, "player is on
-fire" or "nearby block") is a small code addition, but the *recipes* that use them
-stay pure data. This is the one place the design deliberately reserves room for
-code growth.
+Any condition may be marked `"optional": true`, turning it from a gate into a
+**bonus** — the intended way to author "same ingredients, better yield under rarer
+skies" without duplicating recipes. Full catalogue and syntax in
+[`AUTHORING.md`](AUTHORING.md) §6–7.
+
+Condition types are an extensible registry: adding a new *kind* (say, "player is on
+fire") is a small code addition, but the *recipes* that use them stay pure data.
+This is the one place the design deliberately reserves room for code growth.
 
 ---
 

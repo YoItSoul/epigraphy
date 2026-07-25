@@ -91,19 +91,47 @@ carvings, tablet tooltips, the in-game documentation).
 | `epigraphy:caelum`   | CAELUM   | Heavens | uncommon | sky access, storms, day |
 | `epigraphy:nox`      | NOX      | Night | common | requires darkness/night to read the sky |
 
-### Frame — the invariant formula glyphs (§4.4)
+### Materials, continued — powders & organics
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:pulvis` | PULVIS | Dust | common | suffix (powder) | bone meal, sugar, glowstone dust, redstone |
+| `epigraphy:ossa`   | OSSA   | Bone | common | — | bones, undead materials |
+| `epigraphy:dulcis` | DULCIS | Sweet | common | — | sugar, honey, sweet things |
+| `epigraphy:terra`  | TERRA  | Earth | common | suffix (earthen) | dirt, iron, mundane ground |
+
+### Elements, continued
 | id | lemma | gloss | rarity | notes |
 |----|-------|-------|--------|-------|
-| `epigraphy:opus` | OPUS | Work / Rite | common | opens every inscription; the mod's most-seen glyph |
-| `epigraphy:fiat` | FIAT | Let it be made | common | opens the final (result) clause |
+| `epigraphy:vita`   | VITA   | Life | uncommon | growth, healing, fertility |
+| `epigraphy:aqua`   | AQUA   | Water | common | water, fluids, steeping |
 
-> Frame glyphs never appear inside an ordinary rune word — only as clause markers.
-> Because they're on every inscription, players learn them first, which is the point:
-> the invariant frame teaches you where the variable parts are.
+### Celestial, continued
+| id | lemma | gloss | rarity | notes |
+|----|-------|-------|--------|-------|
+| `epigraphy:luna`   | LUNA   | Moon | uncommon | suffix determinative for lunar states |
+| `epigraphy:plenus` | PLENUS | Full | common | qualifier: full moon, brimming, complete |
 
-> These eight-plus glyphs cover every condition and input the v1 rituals need
-> (`RITUALS.md`), while leaving obvious room to grow (Water/`AQUA`, Life/`VITA`,
-> Void/`VACUUM`, Order/`ORDO`, etc.).
+### Frame — invocations & closing formula (§4.4)
+These never appear inside an ordinary rune word — they are clause markers only.
+
+| id | lemma | gloss | role |
+|----|-------|-------|------|
+| `epigraphy:opus`    | OPUS    | The Work | invocation — **altar rite** |
+| `epigraphy:mersio`  | MERSIO  | The Steeping | invocation — **items into fluid** (batched) |
+| `epigraphy:tactus`  | TACTUS  | The Touch | invocation — **item used on item** |
+| `epigraphy:vigilia` | VIGILIA | The Vigil | invocation — **sky observation** |
+| `epigraphy:fiat`    | FIAT    | Let it be made | closes every inscription, prefixing the result |
+
+> The **invocation glyph declares the rite type**, exactly as `D.M.` opens a Roman
+> funerary text and `I.O.M.` a votive one — you know what kind of inscription you're
+> reading from its first sign. `FIAT` closes them all, so every inscription has a
+> recognisable shape regardless of type. Because frame glyphs appear on *every*
+> inscription, players learn them first — which is the point: the invariant frame
+> teaches you where the variable parts are.
+
+> The lexicon is expected to **grow alongside the recipe list** — budget roughly one
+> new glyph per handful of new rune words (`AUTHORING.md` §3). Obvious room to grow:
+> Void/`VACUUM`, Order/`ORDO`, Blood/`SANGUIS`, Wind/`VENTUS`.
 
 ---
 
@@ -260,31 +288,112 @@ say *"the third word is the condition"* — even before decoding it.
 - **It makes forgeries fail.** A grammatically wrong inscription — right words,
   wrong order — is not a valid ritual, which is what gives the language teeth.
 
-### 4.3 Word-internal order: QUALIFIER · HEAD
+### 4.3 What real writing systems do (and which one we're building)
 
-Within a word, the convention is **qualifier first, head second** — the second
-glyph names *what kind of thing it is*, the first *narrows which one*:
+Three features of real scripts do all the work here. Epigraphy uses all three, and
+the design is stronger for naming them explicitly.
 
-| Word | Qualifier | Head | Names |
+#### (i) Compounding — two signs, one meaning
+
+Every logographic script builds new words by **juxtaposing existing signs**. The
+compound means something the parts don't:
+
+| Language | Compound | Literally | Means |
 |---|---|---|---|
-| `FLAMMANS · VIRGA` | Flaming | Rod | Blaze Rod |
-| `CHAOS · CAELUM` | Chaos | Heavens | Thunderstorm |
-| `INFERNUS · METALLUM` | Hell | Metal | Netherite |
-| `CHAOS · METALLUM` | Chaos | Metal | Chaos Ingot |
+| Chinese | 火山 | fire · mountain | **volcano** |
+| Chinese | 电脑 | electric · brain | **computer** |
+| Chinese | 手机 | hand · machine | **mobile phone** |
+| Japanese | 手紙 | hand · paper | **letter** |
+| German | Handschuh | hand · shoe | **glove** |
+| English | firewood, blackbird, doorbell | — | — |
 
-This is why the head glyph is so reusable: every rod-catalyst ends in `VIRGA`,
-every metal ends in `METALLUM`. Learning a head glyph unlocks a whole *category* of
-guessable words — vocabulary that compounds.
+Notice every single one is **head-final**: the *last* element says what the thing
+**is**, the earlier one narrows it. A blackbird is a *bird*. Firewood is *wood*. 火山
+is a *mountain*. This is overwhelmingly the cross-linguistic norm for compounds, and
+it is exactly `FLAMMANS · VIRGA` → a *rod*, that flames.
 
-**One open point (`DECISIONS.md` Q9):** the VESSEL clause in the source example
-reads `ALTARE · TENEBRAE` — *head first*, the mirror of the rule above. Two ways to
-resolve it, both defensible:
-- **(a) The vessel is a named exception.** An inscription opens by naming its
-  subject — the altar — then qualifies it, exactly as Latin dedications name the
-  dedicatee first (`ALTARE TENEBRARUM`, "altar of darkness"). Keeps the original
-  example literal.
-- **(b) Strict `QUALIFIER · HEAD` everywhere** → `TENEBRAE · ALTARE`. One simple
-  rule with no exceptions, at the cost of flipping that one word.
+**This is the single most important pattern to hold.** It is why the language feels
+natural to players who have never thought about linguistics: they already speak a
+language that does this.
+
+#### (ii) Determinatives — the feature you'd already half-invented
+
+This is the big one. Sumerian and Egyptian both use **determinatives**: signs that
+are *not read aloud* and carry no sound — they exist purely to tell the reader
+**what category the word belongs to**.
+
+| Script | Sign | Position | Marks |
+|---|---|---|---|
+| Sumerian | 𒀭 `DINGIR` | **prefix** | the word is a **god** |
+| Sumerian | 𒆠 `KI` | **suffix** | the word is a **place** |
+| Sumerian | 𒄑 `GIŠ` | **prefix** | the object is **wooden** |
+| Sumerian | 𒐕 `DIŠ` | prefix | the word is a **man's name** |
+| Egyptian | 𓀀 seated man | suffix | the word is a **person** |
+| Egyptian | 𓂻 walking legs | suffix | the word is a **motion verb** |
+
+So a Sumerian scribe writing "the city of Ur" writes `URI₅` followed by `KI` — and
+the reader knows it's a place *before* knowing which place. Egyptian readers can
+tell a person-word from a motion-word at a glance, purely from the trailing sign.
+
+**Your head glyphs are determinatives.** `· VIRGA` means "this word names a
+rod-class thing." `· LAPIS` means "a stone-class thing." `· METALLUM`, "a metal."
+That's not an approximation of a real feature — it *is* the real feature, and it's
+why the language is learnable: a player who has decoded one `· LAPIS` word can
+correctly guess the *category* of every other one they meet.
+
+It also resolves the `ALTARE · TENEBRAE` question (see below), because Sumerian
+proves determinatives can go on **either** end.
+
+#### (iii) Isolating grammar — why order must carry the meaning
+
+Latin can scramble word order (*puella rosam amat* / *rosam puella amat* both mean
+"the girl loves the rose") because **case endings** mark who does what. Chinese
+cannot: it has no inflection, so **position is the grammar** — 我打你 and 你打我 are
+different sentences made of identical signs.
+
+A glyph script has no endings to inflect. So Epigraphy is necessarily an
+**isolating/analytic** language, and that is precisely why the fixed clause formula
+(§4.1) isn't an arbitrary game rule — it's the only way a script like this *can*
+encode roles. Order is grammar because there's nothing else to be grammar.
+
+#### Verdict: what we're building
+
+> **A logographic, isolating script that forms head-final compounds marked by
+> determinatives, framed by fixed formulae.**
+
+In plain terms: **Chinese-style compound words + Sumerian-style category markers +
+Roman-style inscription formulae.** Every one of those is a real, attested system,
+and together they make a language that a player can genuinely *learn to read*
+rather than memorise.
+
+### 4.3.1 Word-internal order: the determinative rule
+
+Recommended rule, replacing the earlier flat "qualifier first":
+
+> **A rune word is `[qualifiers] + HEAD`, where the head is a determinative naming
+> the word's category. Material and object determinatives are *suffixed*; place and
+> structure determinatives are *prefixed*.**
+
+| Word | Determinative | Position | Names |
+|---|---|---|---|
+| `FLAMMANS · VIRGA` | `VIRGA` (rod) | suffix | Blaze Rod |
+| `INFERNUS · METALLUM` | `METALLUM` (metal) | suffix | Netherite |
+| `TENEBRAE · LAPIS` | `LAPIS` (stone) | suffix | Deepslate |
+| `CHAOS · CAELUM` | `CAELUM` (heavens) | suffix | Thunderstorm |
+| **`ALTARE · TENEBRAE`** | **`ALTARE` (structure)** | **prefix** | **Blackstone Altar** |
+
+**This resolves Q9 in favour of your original example, with real precedent.**
+`ALTARE` behaves exactly like Sumerian `GIŠ` or `DINGIR` — a prefixed class marker
+declaring "what follows names a structure" — while `VIRGA`/`METALLUM`/`LAPIS`
+behave like `KI`, suffixed. Sumerian does both, so this is not a fudge; it's how
+determinative systems actually work.
+
+The player-facing rule stays simple and teachable:
+- **`ALTARE` at the front** → this word names an altar.
+- **Anything else at the back** → that's the category, and what precedes it narrows it.
+
+Which glyphs may serve as determinatives (and on which side) is declared per-glyph
+in data — see `AUTHORING.md` — so modders extend the system without touching code.
 
 ### 4.4 The frame: invocation and consecration (recommended)
 

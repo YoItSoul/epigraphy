@@ -31,8 +31,11 @@ The design is being developed doc-first, before code. Start here:
   how 2–3 glyph rune words are formed, decoded, and read.
 - **[docs/DISCOVERY.md](docs/DISCOVERY.md)** — how glyphs hide in worldgen and the
   sky, tablets, and the hand codex (submit + seek).
-- **[docs/RITUALS.md](docs/RITUALS.md)** — the altar, pedestals, infusion fluid,
-  world conditions, backlash, and the JSON recipe schema.
+- **[docs/RITUALS.md](docs/RITUALS.md)** — rite types (altar, steeping, touch,
+  vigil), the altar multiblock, world conditions, and backlash.
+- **[docs/AUTHORING.md](docs/AUTHORING.md)** — **the modder/datapack guide**: how to
+  add glyphs, coin rune words, define rite types, and write recipes. Full JSON
+  schemas, the condition catalogue, and validation rules.
 - **[docs/KNOWLEDGE.md](docs/KNOWLEDGE.md)** — the tiers of knowing and how exact
   recipes stay locked until you *do* the thing.
 - **[docs/ROADMAP.md](docs/ROADMAP.md)** — architecture, package layout, and a

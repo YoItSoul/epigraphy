@@ -152,6 +152,40 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
+### D12 ✅ Rite types — not everything is an altar
+A **rite type** is a grammar template plus a trigger, declared in data. Each is
+announced by its own **invocation glyph**, exactly as Roman inscriptions announce
+their type (`D.M.` funerary, `I.O.M.` votive) — the first sign tells you what kind
+of rite you're reading.
+
+| Invocation | Rite | Trigger | Batched |
+|---|---|---|---|
+| `OPUS` | The Work | altar + pedestals + pool | no |
+| `MERSIO` | The Steeping | throw items into a fluid | **yes, full stacks** |
+| `TACTUS` | The Touch | use item on item/block | no |
+| `VIGILIA` | The Vigil | observe the sky | no |
+
+Canonical example of a non-altar rite: *bone meal and sugar thrown into water under
+a full moon yields Blue Bone Meal* — no structure, and whole stacks at once.
+
+```
+MERSIO·AQUA   OSSA·PULVIS, DULCIS·PULVIS   PLENUS·LUNA   FIAT·VITA·OSSA·PULVIS
+```
+*"The steeping of Water — bone-dust and sweet-dust — at the Full Moon — let there be
+life-bone-dust."*
+
+Rationale: batched, structureless rites give players a cheap, high-volume way to
+meet the language long before they can build an altar, and they make the grammar
+feel like a *language* rather than an altar-recipe format. Schemas in
+`AUTHORING.md` §4–5.
+
+### D13 ✅ Everything is datapack-authorable
+The modding contract: **glyphs, rune words, rite types, recipes, and discovery
+distribution are all JSON.** Only two things need Java — a genuinely new *condition
+kind* and a genuinely new *trigger mechanic* — and both are registry entries whose
+*use* remains pure data. Namespaced throughout, so third-party content composes with
+`epigraphy:` content freely. Full guide: `AUTHORING.md`.
+
 ### D8 ✅ Glyphs hint in rune words of 2–3 words (compositional language)
 Glyphs are never used as a single long sentence. The language is **compositional**:
 a **rune word** of **2 or 3 glyphs names exactly one concrete thing** — an item, a
@@ -229,18 +263,14 @@ Each word is validated independently, so a player can inscribe a whole ritual an
 see which clauses land — and the inscription as a whole is only a valid ritual if
 the clause order is right.
 
-### Q9 ❓ Does the VESSEL clause break `QUALIFIER · HEAD`? (D10)
-Every other word follows qualifier-then-head (`FLAMMANS · VIRGA`), but the source
-example's vessel reads `ALTARE · TENEBRAE` — head first. Two resolutions:
-- **(a) Vessel is a named exception.** An inscription opens by naming its subject,
-  then qualifies it — as Latin dedications name the dedicatee first
-  (`ALTARE TENEBRARUM`, "altar of darkness"). Keeps the original example literal
-  and gives the formula a distinctive opening.
-- **(b) Strict `QUALIFIER · HEAD` everywhere** → `TENEBRAE · ALTARE`. One rule, no
-  exceptions, at the cost of flipping that one word.
-
-*No strong lean — (a) is more characterful and matches the example as given;
-(b) is easier to teach.* Needs a call before the lexicon is authored.
+### Q9 ✅ Resolved — determinatives, and they may prefix or suffix
+Real determinative systems place class-markers on **either** end: Sumerian prefixes
+`DINGIR` (god) and `GIŠ` (wooden) but suffixes `KI` (place). So `ALTARE · TENEBRAE`
+is not an exception to be explained away — `ALTARE` is a **prefix determinative**
+marking "what follows names a structure," while `VIRGA`/`METALLUM`/`LAPIS`/`PULVIS`
+are **suffix determinatives**. The original example stands as written, with real
+precedent. Convention: **structures/places prefix, materials/objects suffix**
+(`RUNES.md` §4.3.1).
 
 ### Q7 ❓ What does a *wrong* codex submission cost?
 D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth
