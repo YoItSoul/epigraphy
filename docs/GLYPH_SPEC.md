@@ -60,8 +60,14 @@ words**, not in reading a symbol the player must pick out of a grid hundreds of 
 | Layer | Encodes | Drawn as |
 |---|---|---|
 | **Frame** | nothing — deliberately universal | one shared tablet outline |
-| **Stroke 1–3** | the lemma's first three letters | one of 23 **structurally distinct** shapes each |
-| **Notches** | the word's **length** | one notch per letter past the third, cut into both sides |
+| **Stroke 1–3** | the lemma's first three letters | one of 23 **structurally distinct** shapes each, 1 px, 2–3 segments |
+| **Notches** | the word's **length** | one per letter past the third, drawn **inward** onto the frame |
+
+**Nothing is ever drawn outside the frame.** Strokes are confined to `x 9–22, y ±3`
+within each zone, and length notches are drawn *inward* at `x 3–4` / `x 27–28`. This
+is checked against the frame outline programmatically, not by eye — the validator
+scans each row for the frame's leftmost and rightmost pixel and asserts no lit pixel
+falls beyond them.
 
 ### 1.1 Structure, not parameters
 
@@ -167,14 +173,20 @@ enclosures.
 | Canvas | 32 × 32, no anti-aliasing anywhere |
 | Mirror axis | between columns 15 and 16 |
 | Frame | clipped tablet, vertices (9,2) (22,2) (28,8) (28,23) (22,29) (9,29) (3,23) (3,8) |
-| Stroke zones | rows **9, 16, 23**; each stroke confined to x 7–24, y ±3 |
-| Stroke weight | **2 px** on every limb |
-| Notch rows | 10, 13, 16, 19, 22 — outside the frame at x 1–2 and 29–30 |
+| Frame | clipped tablet, vertices (8,2) (23,2) (29,8) (29,23) (23,29) (8,29) (2,23) (2,8) |
+| Stroke zones | rows **9, 16, 23**; each stroke confined to x 9–22, y ±3 |
+| Stroke weight | **1 px** — as light as a form can be and stay distinct |
+| Notch rows | 11, 14, 18, 21, 24 — drawn **inward** at x 3–4 and 27–28 |
 
 The frame keeps **straight vertical sides across the whole stroke band** (rows 8–23),
 so no stroke ever meets a tapering edge. Zones are 7 rows apart and strokes reach ±3,
-which guarantees adjacent strokes never touch — the reason any three forms stack
-cleanly without a legibility audit per combination.
+guaranteeing adjacent strokes never touch — the reason any three forms stack cleanly
+without a per-combination audit.
+
+**Weight is deliberately minimal.** A first pass drew the forms 2 px thick and much
+wider; the glyphs turned muddy and complex. Dropping to 1 px and tightening the zone
+cut mean ink by a third (221 → 147) and read far better. Nothing is drawn heavier than
+it needs to be to be told apart.
 
 ---
 
@@ -229,6 +241,9 @@ The renderer and datapack loader must reject:
   words would not be, and need an explicit `mark`.
 - A glyph whose `category` is `element` declaring a `determinative` (a grammar rule,
   `RUNES.md` §5.2 — unrelated to art now that frames are universal).
+- **Any lit pixel falling outside the frame outline.** Scan each row for the frame's
+  leftmost and rightmost pixel; assert nothing lies beyond. Cheap, and it catches the
+  class of bug where a stroke or notch escapes the border.
 
 **Adding or altering a stroke form requires re-auditing all 23** against each other:
 render each alone and assert 23 distinct figures. Because the frame is shared and the
@@ -271,4 +286,4 @@ function render(glyph, tier){
 
 **Audited:** all 23 stroke forms distinct from one another; every glyph in the worked
 lexicon unique; `VIRGA`/`VIRIDIS` separated by notches alone; every output vertically
-symmetric.
+symmetric; and **zero lit pixels outside the frame** across the whole lexicon.

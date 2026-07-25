@@ -166,6 +166,11 @@ Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
   distinguishes any of them, so identity is forced entirely into the strokes.
 - **Length is notched into the sides**, one per letter past the third — countable,
   meaningful, and it separates words sharing three letters (`VIRGA` 5 vs `VIRIDIS` 7).
+  Notches are drawn **inward**; nothing is ever drawn outside the frame, and that is
+  asserted against the frame outline rather than trusted.
+- **Weight is minimal.** Forms are 1 px and 2–3 segments. A first pass at structural
+  strokes drew them heavy and wide and the glyphs turned muddy — the fix cut mean ink
+  by a third (221 → 147). Nothing is drawn heavier than it must be to be distinct.
 
 **Why three earlier attempts failed**, since the pattern matters more than any one
 fix: a lattice path produced tangled diagonals; five rungs on a stem made every glyph
