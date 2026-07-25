@@ -152,6 +152,100 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
+### D15 ✅ Glyph construction — the stave path, mirrored
+Glyphs are built by a **deterministic rule where every lit pixel is meaningful**:
+it is either a letter of the glyph's own name or a stroke joining two letters in
+order. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+
+- **The lattice.** A 5×5 grid of 25 nodes, one per letter of the **classical Latin
+  alphabet** — exactly 23 letters, no J/U/W, so it fits with two spare. Lemmas are
+  normalised to classical orthography (`PULVIS` → `PVLVIS`). **The letter→node map
+  is frozen at v1** — reordering would invalidate every glyph ever made.
+- **The path.** Letters map to nodes; strokes join them *in sequence*, so anagrams
+  render differently. Lemmas over 5 letters abbreviate by dropping vowels after the
+  initial (`FLAMMANS` → `FLMMN`) — the abjad principle, and what a stonecutter would
+  actually have cut.
+- **Mirror symmetry.** The seed path is reflected about the **vertical** axis and the
+  union is the glyph, so every symbol is bilaterally symmetric. Vertical rather than
+  horizontal because left–right symmetry is what reads as *writing* (runes, sigils,
+  maker's marks); top–bottom reads as a playing card. Centre-column letters
+  (`C H N S Z`) sit on the axis and draw once.
+- **Frames must be vertically symmetric too.** Plinth and open-base deliberately
+  break *horizontal* symmetry — a structure sits on something, a quality rests on a
+  baseline — which is the cue that they are not enclosures.
+
+This supersedes the earlier "overlay SGA letterforms" sketch, which was
+impressionistic where this is systematic. The SGA *aesthetic* is retained — hard
+geometric strokes, square caps, dot terminals, no curves, no anti-aliasing — so
+glyphs still read as kin to the enchanting table.
+
+**Precedent:** close to **Ogham**, the ancient Irish alphabet surviving almost
+entirely as standing-stone inscriptions, which encodes letters as counted strokes
+against a stem with no pictography at all; and to **Nordic bind-runes**, where
+several runes share one stave as a composite mark.
+
+**New collision class to validate:** symmetry means a seed path and its own
+reflection render identically, so `A·E` and `E·A` are the same glyph. The validator
+must compare finished figures, not letter sequences.
+
+### D16 ✅ Colour encodes nothing — shape carries all meaning
+A hard accessibility rule, not a preference: **strip every colour from the game and
+zero information is lost.** Colour may only ever be redundant reinforcement.
+
+| The player must tell… | Carried by | Never by |
+|---|---|---|
+| which glyph this is | the stave path (sequence-unique) | hue |
+| what class it belongs to | frame silhouette (5 contrasting outlines) | hue |
+| whether they know it yet | how much of the glyph is drawn | hue |
+| where a clause begins | doubled ring | hue |
+
+**Knowledge tier is drawn, not tinted** — a progressive reveal needing no colour and
+no UI:
+
+- **Tier 0 Unknown** — frame only, stave field empty.
+- **Tier 1 Sighted** — frame + **node marks, no strokes**. The letters are literally
+  present but unconnected: you have the dots and not the line.
+- **Tier 2 Learned** — frame + nodes + **full stroke path**.
+
+That is a precise visual metaphor for partial decipherment, conveying the same
+information as the text layer's `???` while remaining fully legible to colourblind
+players.
+
+### D14 ✅ Glyph art — a mark inside a class frame
+Every glyph is drawn as two layers, and the art is **part of the grammar**:
+
+- **Interior mark** — derived from the lemma (construction rule in D15).
+  Deliberately cryptic: you cannot read it by looking, which is what preserves the
+  decipherment loop.
+- **Frame** (exterior) — encodes the **determinative class**: hexagon = material,
+  circle = celestial, plinth = structure, **open base** = element, doubled ring =
+  formula marker.
+
+**Pictographs were rejected.** A flame drawn as a flame has nothing to decipher —
+the codex, sightings, and submit loop become ceremony around a solved puzzle. Real
+scripts agree: Sumerian began pictographic and abstracted within centuries, and that
+drift is what made it writing rather than drawing. Pictography stays on tablet
+frames, block textures, and structure motifs — never on glyphs.
+
+Three consequences:
+1. **The grammar is visible.** Read an inscription's frames alone and you can see
+   where the rite opens, which clause is celestial, and where the result is named —
+   while completely illiterate. This makes `KNOWLEDGE.md` §4a's "the clause label is
+   legible even when the word is not" a visual fact rather than a stated rule.
+2. **Art generates from data.** Monogram from `lemma`, frame from
+   `determinative.class` — a modder writes JSON and gets usable art with no image
+   editor, with `texture` available as a hand-drawn override (D13, `AUTHORING.md` §2.1).
+3. **The element frame is open, not enclosing**, because quality glyphs are never
+   heads. Validation enforces it: an `element` glyph may not declare a
+   `determinative`. The shape *is* the rule.
+
+**Accepted caveat:** SGA is a substitution cipher and can be decoded externally.
+That's authentic — real inscriptions are decipherable — but it means **difficulty
+must live in the rune words, not the letters**. Knowing a mark spells `PULVIS` says
+nothing about which powders `… · PULVIS` names.
+
+Full treatment: `RUNES.md` §5.
+
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is
 announced by its own **invocation glyph**, exactly as Roman inscriptions announce

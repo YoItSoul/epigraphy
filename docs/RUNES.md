@@ -466,7 +466,97 @@ still comes last, so the rule scales without a new pattern to learn.
 
 ---
 
-## 5. Readable text at each tier
+## 5. The visual system: monogram + frame (D14)
+
+Glyph art is not decoration — it is **part of the grammar**. Every glyph is drawn as
+two layers:
+
+```
+   ┌─────────────────┐
+   │   FRAME         │  ← the determinative CLASS (§4.3)
+   │   ┌─────────┐   │     shape = what kind of thing this names
+   │   │ MONOGRAM│   │  ← the LEMMA, in Standard Galactic Alphabet
+   │   └─────────┘   │     the enchanting-table script, letters overlaid
+   └─────────────────┘
+```
+
+- **The stave** (interior) encodes the lemma **letter by letter, in order**, as a
+  path through a 5×5 lettered lattice — then mirrored for symmetry. Every lit pixel
+  is a letter or a stroke joining two letters; nothing is decorative. It is
+  deliberately **cryptic**: you cannot look at it and know what it means, which is
+  what preserves the decipherment loop. **Full construction rule:
+  [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
+- **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is
+  readable at a glance, from across a room, at any resolution.
+
+Both layers are **vertically symmetric**, and **colour encodes nothing** — every
+distinction is carried by shape, position, or presence (`GLYPH_SPEC.md` §4, §6).
+
+### 5.1 Why not pictographs
+
+The rejected alternative was drawing each glyph as its referent — a flame for
+`FLAMMANS`, a cloud for `CAELUM`. It fails on the mod's central pillar: **if the
+symbol is a picture, there is nothing to decipher.** The codex, the sightings, and
+the submit loop all become ceremony around a puzzle that solved itself on sight.
+
+Real scripts confirm the instinct. Sumerian *began* pictographic and abstracted
+within a few centuries — that drift away from depiction is precisely what turned it
+from drawing into **writing**. Pictography stays in the mod, but on **tablet frames,
+block textures, and structure motifs**, never on the glyphs themselves.
+
+### 5.2 The frame vocabulary
+
+Five shapes, learned once, then readable forever:
+
+| Frame | Class | Determinative glyphs | Reads as |
+|---|---|---|---|
+| **Hexagon** | Material | `METALLUM` `LAPIS` `VIRGA` `PULVIS` `OSSA` `TERRA` | a substance or object |
+| **Circle** | Celestial | `CAELUM` `LUNA` `NOX` | sky, time, a condition |
+| **Plinth** (square on a base) | Structure | `ALTARE` `INFERNUS` | a place or built thing |
+| **Open base** (no enclosure) | Element | `FLAMMANS` `TENEBRAE` `CHAOS` `VITA` `AQUA` `DULCIS` `PLENUS` | a quality |
+| **Doubled ring** | Formula | `OPUS` `MERSIO` `TACTUS` `VIGILIA` `FIAT` | a clause marker |
+
+**The element frame is deliberately *open*** — a base stroke, not an enclosure.
+Quality glyphs modify; they are never the head of a word. That asymmetry is a
+grammar rule the eye learns without being taught it, and it is enforced in data:
+a glyph with `category: element` may not declare a `determinative` block.
+
+### 5.3 What this buys
+
+**The grammar becomes visible.** Read the Chaos Ingot inscription by its frames
+alone, ignoring every monogram:
+
+```
+ ring · plinth · open  │ open · hex │ open · circle │ plinth · hex │ ring · open · hex
+└─── invocation ──────┘└─ offering ┘└──── hour ────┘└── subject ──┘└─── consecration ──┘
+```
+
+Completely illiterate, you can still see where the rite opens, that its third clause
+is celestial, and where the result is named. This is the mechanic from
+`KNOWLEDGE.md` §4a — *the clause label is legible even when the word is not* — made
+visual rather than merely stated.
+
+**Glyphs generate themselves.** Monogram derives from `lemma`, frame from
+`determinative.class`. A modder who writes a glyph in JSON gets usable art without
+opening an image editor (`AUTHORING.md` §2.1) — the strongest possible answer to
+the datapack-friendliness goal (D13).
+
+**It survives 32×32.** The frame carries silhouette, the monogram carries identity.
+That split is why framed glyphs stay distinguishable when scaled down, where bare
+monograms blur into siblings.
+
+### 5.4 The honest caveat
+
+SGA is a plain substitution cipher, so a determined player can decode the alphabet
+externally on day one. Treat this as **authentic rather than broken** — real
+inscriptions are decipherable, and someone who cracks the alphabet has done exactly
+what the mod is about. The consequence for design: **the difficulty must live in the
+rune words, not the letters.** Knowing that a mark spells `PULVIS` tells you nothing
+about which powders `… · PULVIS` names.
+
+---
+
+## 6. Readable text at each tier
 
 When a glyph reaches Tier 2, three text surfaces become available and are worth
 authoring per-glyph:
@@ -484,7 +574,7 @@ can reskin the whole language.
 
 ---
 
-## 6. Design notes
+## 7. Design notes
 
 - **Why Latin, not a conlang?** A real language the player can partially
   recognize ("infernus… inferno… hell") rewards attention without a decoder ring,

@@ -46,6 +46,10 @@ com.epigraphy
 │   └─ AltarBlockEntity · RitualRunner
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
 ├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
+├─ art/                           // procedural glyph rendering (D14)
+│   ├─ SgaMonogram                //   lemma -> overlaid SGA letterform mark
+│   ├─ ClassFrame                 //   determinative class -> hex/circle/plinth/open/ring
+│   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
 ├─ doc/                           // in-game documentation model, populated from knowledge
 ├─ client/                        // in-world renderers (readable carvings, sky projection,
 │                                 //   ritual FX), translated-text resolver, doc reader
@@ -91,11 +95,17 @@ Each phase ends at something runnable/testable, so the mod is never a big-bang.
 Gradle + ForgeGradle, `mods.toml`, `Epigraphy.java`, empty DeferredRegisters, a
 creative tab. Goal: `runClient` opens a world with the mod present.
 
-**Phase 1 — Runes as data.**
+**Phase 1 — Runes as data, and the glyph renderer.**
 `Glyph` + `RuneWord` + `Inscription` objects and their datapack loaders; ship the
 starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the
 **ordered-sequence** index for submit validation and the clause-order validator.
-`/epigraphy runes` debug command lists both. No gameplay yet.
+
+Also here: the **procedural glyph renderer** (D14) — SGA monogram from `lemma`,
+class frame from `determinative.class`, composited and atlased, with `texture` as an
+override. Worth doing early: every later phase (carvings, tablets, codex, in-world
+inscriptions) renders glyphs, and generated art means no phase is ever blocked
+waiting on an artist. `/epigraphy runes` debug command lists loaded glyphs and dumps
+the atlas for eyeballing.
 
 **Phase 2 — Knowledge capability (research spine).**
 `PlayerKnowledge` + persistence + sync; both layers (glyph progress + decoded rune
@@ -171,6 +181,10 @@ Resolved since the first draft:
 9. ✅ **Codex: submit + seek (D7); 20 cycling glyph slots (D9).**
 10. ✅ **Slot segmentation (Q8).** The grid is one inscription, gap-delimited,
     read left to right in formula order.
+11. ✅ **Determinatives may prefix or suffix (Q9).** Structures prefix, materials
+    suffix — as Sumerian prefixes `DINGIR` but suffixes `KI`.
+12. ✅ **Glyph art = SGA monogram + class frame (D14).** Generated from data;
+    pictographs rejected for undercutting decipherment.
 
 Still open (don't block early phases):
 

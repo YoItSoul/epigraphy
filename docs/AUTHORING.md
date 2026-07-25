@@ -38,18 +38,54 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
   "gloss": "Dust",                // one-word English meaning, shown once learned
   "category": "material",         // material | element | place | celestial | frame
   "rarity": "common",             // common | uncommon | rare — biases where it hides
-  "texture": "examplemod:glyph/pulvis",   // 32x32 monochrome symbol
   "sightings_to_learn": 1,        // independent sightings needed to learn it
 
   // Determinative role (RUNES.md §4.3). Omit for plain qualifier glyphs.
+  // Also selects the FRAME the glyph is drawn in (§2.1).
   "determinative": {
-    "class": "powder",            // the category this glyph marks
+    "class": "material",          // material | celestial | structure
     "position": "suffix"          // suffix | prefix
   },
 
   "description": "That which is ground down, and so made ready."
+
+  // "texture": "examplemod:glyph/pulvis"   // OPTIONAL — see §2.1. Omit and the
+  //                                        // art is generated for you.
 }
 ```
+
+### 2.1 Glyph art is generated — you usually write no texture
+
+Glyphs are drawn as **monogram + frame** (`RUNES.md` §5), and both layers derive
+from fields you have already written:
+
+| Layer | Derived from | Result |
+|---|---|---|
+| **Monogram** (interior mark) | `lemma` | the word's letters in Standard Galactic Alphabet, overlaid into one mark |
+| **Frame** (border shape) | `determinative.class`, or `category` if absent | hexagon / circle / plinth / open base / doubled ring |
+
+So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
+hex-framed SGA monogram with no art file at all. **This is the intended path** —
+add a glyph in JSON, get usable art immediately.
+
+Supply `texture` only to override generation for a glyph worth hand-drawing (a
+boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
+composite, frame included, so hand-drawn glyphs must draw their own frame to stay
+readable in a line of inscription.
+
+**Frame selection rules:**
+
+| `category` | Frame | May be a determinative? |
+|---|---|---|
+| `material` | hexagon | yes |
+| `celestial` | circle | yes |
+| `place` | plinth | yes (prefix, conventionally) |
+| `element` | **open base** | **no** — qualifiers are never heads |
+| `frame` | doubled ring | n/a — clause markers only |
+
+The element restriction is enforced: declaring a `determinative` block on an
+`element` glyph fails validation. That rule is why the element frame is drawn open
+rather than enclosing — the shape *is* the rule.
 
 ### Choosing a good glyph
 
@@ -356,8 +392,11 @@ skies" content without duplicating recipes.
 Run the game with the datapack loaded; failures are reported at load, not at use.
 
 **Glyphs**
-- Missing `lemma`, `gloss`, `category`, or `texture`.
+- Missing `lemma`, `gloss`, or `category`. (`texture` is optional — art generates.)
 - `determinative.position` not `prefix` or `suffix`.
+- A `determinative` block on a glyph whose `category` is `element` — quality glyphs
+  can never be heads (`RUNES.md` §5.2).
+- A `lemma` that isn't A–Z, which the monogram generator can't render.
 
 **Rune words**
 - Fewer than 2 or more than 3 glyphs.
@@ -399,7 +438,9 @@ an undiscoverable glyph silently locks every rune word that uses it.
 ## 10. Checklist for adding new content
 
 1. **Coin the glyphs** you need — broad, and marked as determinatives if they name a
-   category. Check you actually need them; reuse beats invention.
+   category. Check you actually need them; reuse beats invention. **Skip `texture`**
+   unless you're deliberately hand-drawing one — art generates from `lemma` +
+   `determinative.class` (§2.1).
 2. **Add them to a discovery source** (§9) so they can be found.
 3. **Write the rune words**, reusing determinatives across a recipe's ingredients so
    decoding one teaches the others.

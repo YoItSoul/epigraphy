@@ -288,6 +288,7 @@ the physical build is right) but incurs backlash (`KNOWLEDGE.md` §4).
 | [`RUNES.md`](RUNES.md) | The glyph language: lexicon, categories, sentences, translation text |
 | [`DISCOVERY.md`](DISCOVERY.md) | Finding & recording glyphs (in-world/on-item); worldgen, sky, tablets |
 | [`RITUALS.md`](RITUALS.md) | Rite types, altar multiblock, fluid, conditions, backlash |
+| [`GLYPH_SPEC.md`](GLYPH_SPEC.md) | Glyph construction: letter lattice, stave paths, symmetry, pixel geometry |
 | [`AUTHORING.md`](AUTHORING.md) | Modder/datapack guide: schemas for glyphs, rune words, rite types, recipes |
 | [`KNOWLEDGE.md`](KNOWLEDGE.md) | Per-player research/knowledge capability, tiers, backlash, reference gating |
 | [`ROADMAP.md`](ROADMAP.md) | Architecture, package layout, dependencies, phased build order |
