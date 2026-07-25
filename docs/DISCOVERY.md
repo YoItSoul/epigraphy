@@ -1,5 +1,10 @@
 # Discovery & Recording
 
+> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): the mod is **no-GUI**
+> (D1), so any "Codex screen"/UI language below will be recast as in-world +
+> on-item, and sky reading is now a **v1** system (D4). The exact recording/review
+> surface depends on open question **Q1** (knowledge storage model).
+
 The front half of the loop: how glyphs hide in the world, how the player *finds*
 and *records* them, and how a recorded shape becomes a translated meaning. This is
 the part that makes Epigraphy feel like exploration rather than a skill tree.

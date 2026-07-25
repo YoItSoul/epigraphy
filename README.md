@@ -11,6 +11,10 @@ don't unlock progression by grinding — you unlock it by *learning to read*.
 
 The design is being developed doc-first, before code. Start here:
 
+- **[docs/DECISIONS.md](docs/DECISIONS.md)** — the running decisions log: what's
+  settled (no-GUI, passive translation, backlash, sky-in-v1) and what's still
+  open. **Read this first** — where other docs conflict, this one wins.
+
 - **[docs/DESIGN.md](docs/DESIGN.md)** — vision, pillars, the core loop, and a
   fully worked example (the Chaos Ingot).
 - **[docs/GLYPHS.md](docs/GLYPHS.md)** — the glyph language: lexicon, categories,

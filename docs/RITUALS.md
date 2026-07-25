@@ -1,5 +1,10 @@
 # Rituals & Infusion
 
+> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): a **backlash** system
+> (D3) will be added — mis-assembled or untranslated ritual attempts risk area
+> effects, anomaly spawns, and item loss. Pedestal/glyph handling may shift with
+> open question **Q1** (whether glyph tablets are physically placed at the altar).
+
 The back half of the loop: the altar, the pedestals, the infusion fluid, and the
 environmental conditions that turn a glyph sentence into an actual crafting event.
 This document specifies the multiblock, the full JSON recipe schema, and worked

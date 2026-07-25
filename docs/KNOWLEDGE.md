@@ -1,5 +1,11 @@
 # Knowledge & JEI Gating
 
+> ⚠ **Revision pending.** Per [`DECISIONS.md`](DECISIONS.md): "Codex UI" surfaces
+> become in-world/on-item (D1); a **backlash** gate is added (D3); the storage
+> model (capability vs. item-embodied) is open question **Q1**; and JEI's fate is
+> open question **Q2**. Treat the capability described below as the **Model A**
+> baseline until Q1 resolves.
+
 The connective tissue: the per-player data that remembers what each player has
 sighted, translated, and unlocked, and the rules that turn that data into gated
 instructions and gated JEI recipes. This is where the "knowing ≠ having" pillar is
