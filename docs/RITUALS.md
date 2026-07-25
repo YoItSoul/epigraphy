@@ -342,7 +342,7 @@ without a tutorial popup.
   "altar": "epigraphy:blackstone_altar",
   "inscription": {
     "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:quartz",            // INFERNUS · LAPIS  ("hell's stone")
+    "offering": "epigraphy:quartz",            // INFERNUS · GEMMA  ("hell's gem")
     "hour":     "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELUM  (3-glyph)
     "subject":  "epigraphy:echo_shard",        // NOX      · LAPIS
     "issue":    "epigraphy:umbral_shard"       // CHAOS    · TENEBRAE

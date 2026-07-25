@@ -79,11 +79,13 @@ carvings, tablet tooltips, the in-game documentation).
 | `epigraphy:tenebrae` | TENEBRAE | Darkness | uncommon | night, low light, the deep dark |
 | `epigraphy:chaos`    | CHAOS    | Chaos | rare | transformation, instability, remaking |
 
-### Places
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:altare`   | ALTARE   | Altar | common | the ritual structure itself |
-| `epigraphy:infernus` | INFERNUS | Hell  | rare | the Nether dimension / nether materials |
+### Places & realms
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:altare`   | ALTARE   | Altar | common | prefix (structure) | the ritual structure itself |
+| `epigraphy:infernus` | INFERNUS | Hell  | rare | prefix (structure) | infernal things; qualifies nether matter |
+| `epigraphy:regnum`   | REGNUM   | Realm | uncommon | suffix (realm) | heads every dimension word |
+| `epigraphy:finis`    | FINIS    | End   | rare | — | qualifier: ending, outermost, the void |
 
 ### Celestial
 | id | lemma | gloss | rarity | notes |
@@ -104,10 +106,11 @@ carvings, tablet tooltips, the in-game documentation).
 |----|-------|-------|--------|---------------|-------|
 | `epigraphy:unda`   | UNDA   | Flow | common | suffix (fluid) | heads every liquid: water, lava, starlight |
 
-### Objects
+### Objects & gems
 | id | lemma | gloss | rarity | determinative | notes |
 |----|-------|-------|--------|---------------|-------|
 | `epigraphy:gladius` | GLADIUS | Blade | uncommon | suffix (blade) | swords, axes, edged tools |
+| `epigraphy:gemma`   | GEMMA   | Gem   | uncommon | suffix (gem) | quartz, pearls, crystalline drops |
 
 ### Elements, continued
 | id | lemma | gloss | rarity | notes |
@@ -225,6 +228,41 @@ teaching device available.
 weapon without ever having seen it. This is the moment the language stops being a
 lookup table and starts being a language, and it is worth authoring toward
 deliberately: prefer building new words out of known ones over coining fresh glyphs.
+
+### 3.1.2 The realms — authoring a grid, not a list
+
+Dimensions are headed by `REGNUM` (Realm), giving a matched set one qualifier apart:
+
+| Names | Rune word | Reads as |
+|---|---|---|
+| **The Overworld** | `CAELUM · REGNUM` | Realm of Sky |
+| **The Nether** | `INFERNUS · REGNUM` | Realm of Hell |
+| **The End** | `FINIS · REGNUM` | Realm of the End |
+
+`CAELUM · REGNUM` is worth noting as a piece of design: the Overworld is genuinely
+*the dimension with an open sky*, so the word is both guessable from fiction and true
+to the mechanics. Words that are right in both registers at once are the ones to
+reach for.
+
+The real payoff is that those qualifiers extend downward onto other heads. Author the
+**grid**, not the list:
+
+| Qualifier | `· REGNUM` (realm) | `· LAPIS` (stone) | `· GEMMA` (gem) |
+|---|---|---|---|
+| `INFERNUS` | the Nether | Netherrack | Nether Quartz |
+| `FINIS` | the End | End Stone | Ender Pearl |
+| `CAELUM` | the Overworld | — | — |
+
+Two new glyphs (`REGNUM`, `FINIS`) plus one new head (`GEMMA`) buy **seven words**,
+and a player who has decoded *the Nether* and *End Stone* can derive *Netherrack*
+without ever meeting it. Filling a grid is strictly cheaper — in glyphs and in
+player effort — than coining words one at a time.
+
+> **A correction this forced.** Nether Quartz was previously `INFERNUS · LAPIS`, which
+> squatted on the natural name for **Netherrack**. Reassigning quartz to
+> `INFERNUS · GEMMA` frees it and reads better besides. Exactly the lexicon pressure
+> `AUTHORING.md` §3 warns about — it surfaces when you author a family and see the
+> gaps.
 
 ### 3.2 The codex submit loop (D7 / D9)
 
@@ -528,17 +566,18 @@ two layers:
 
 ```
    ┌─────────────────┐
-   │   FRAME         │  ← the determinative CLASS (§4.3)
-   │   ┌─────────┐   │     shape = what kind of thing this names
-   │   │ MONOGRAM│   │  ← the LEMMA, in Standard Galactic Alphabet
-   │   └─────────┘   │     the enchanting-table script, letters overlaid
+   │  ╱────╬────╲    │  ← FRAME: the determinative CLASS (§4.3)
+   │  │  ══╬══  │    │       shape = what kind of thing this names
+   │  │   ╱╬╲   │    │  ← STAVE: the LEMMA, one rung per letter,
+   │  ╲────╬────╱    │       tips joined into a profile silhouette
    └─────────────────┘
 ```
 
 - **The stave** (interior) encodes the lemma **letter by letter, in order**, as a
   vertical stem with **one rung per letter** read top to bottom; a rung's width and
-  end-form identify the letter. Every lit pixel is stem, rung, or frame; nothing is
-  decorative. It is deliberately **cryptic**: you cannot look at it and know what it
+  shape identify the letter, and the rung tips are joined into a **profile** so the
+  glyph's silhouette is the word's own. Every lit pixel is stem, rung, profile or
+  frame; nothing is decorative. It is deliberately **cryptic**: you cannot look at it and know what it
   means, which is what preserves the decipherment loop. **Full construction rule:
   [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 - **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is

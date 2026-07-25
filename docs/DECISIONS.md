@@ -170,8 +170,9 @@ Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
   symbol had the same bounding box and read as a variation on one comb. Fixed without
   adding any information, only by making what was already there visible at a glance:
   **figure height encodes word length** (rows are centred, only as many as there are
-  letters, and the stem spans just those rows), and **the letter group is a rung's
-  shape rather than a tick**. Stroke *form* is also Ogham's own device, so this is the
+  letters, and the stem spans just those rows), **a profile outline joins the rung
+  tips** so the silhouette is the word's own width-sequence, and **the letter group is
+  a rung's shape rather than a tick**. Stroke *form* is also Ogham's own device, so this is the
   more authentic encoding as well as the more legible one.
 - **Symmetry is structural.** Rungs are drawn outward from the stem in both
   directions, and frames pass through a `symmetrise` step that ORs each column with

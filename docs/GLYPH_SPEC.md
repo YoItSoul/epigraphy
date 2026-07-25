@@ -34,27 +34,34 @@ the same `lemma` and `determinative.class` it must always produce byte-identical
 | **Frame** | the determinative class | one of six silhouettes |
 | **Stem** | the **word's length** | 2 px vertical, spanning only the occupied rows |
 | **Rungs** | the lemma, **one rung per letter**, top to bottom | an arm of one of five widths, in one of five shapes |
+| **Profile** | the **whole width-sequence** | an outline joining the rung tips, closing on the stem |
 
 A letter is identified by its rung's **width** (5 steps) and **shape** (5 kinds).
 5 × 5 = **25 slots for the 23 letters** of the classical Latin alphabet.
 
-### 1.1 Three variables, so glyphs don't all look alike
+### 1.1 Four variables, so every word shape is unique
 
 An earlier revision fixed every glyph at five rows with a full-height stem and
 distinguished letters by 1-pixel end-ticks. Every symbol then had the same bounding
 box and differed only in fine detail — they read as variations on a single comb.
 
-Two changes fixed it **without adding any new information**, only making information
-that was already present visible at a glance:
+Three changes fixed it **without adding any new information**. Each merely promotes
+data already present in the figure into something visible at distance:
 
 | Variable | Encodes | Why it differentiates |
 |---|---|---|
 | **Figure height** | word length | Rows are centred and only as many as there are letters; the stem spans only those rows. A 3-letter word is a compact mark, a 5-letter word fills the frame. Read first, before any detail. |
-| **Rung shape** | the letter's group | Bar, chevron up, chevron down, double bar, broken bar — gross forms that change a glyph's whole texture. A word of chevrons reads nothing like a word of double bars. |
+| **Profile silhouette** | the whole width-sequence | Rung tips are joined into an outline closing on the stem, so **the glyph's outer shape is the word itself**. Two words can share a length and still be unmistakable across a room. |
+| **Rung shape** | the letter's group | Bar, chevron up, chevron down, double bar, broken bar — gross forms that change a glyph's whole texture. |
 | **Rung width** | the letter within its group | Five steps, two pixels apart. |
 
 Rung shape replacing end-ticks is also the more authentic choice: **stroke *form* is
 Ogham's own device**, not a decoration on top of it.
+
+**The profile costs about 17% more ink** than bars alone and is the reason no two
+words share a silhouette. If a build ever wants the barest possible glyphs, dropping
+the profile is a one-line change that keeps every letter distinct — it only costs
+the uniqueness of the outline.
 
 ---
 
@@ -157,6 +164,7 @@ enclosures.
 | Stem | columns 15–16, from `row[0] − 3` to `row[k−1] + 3` |
 | Rung half-extent by width | **3, 5, 7, 9, 11** — arms start at column 13, 11, 9, 7, 5 |
 | Chevron rise | ± 1 row, apex on the stem |
+| Profile | joins tips; closes to the stem at `row[0] − 3` and `row[k−1] + 3` |
 | Double bar | two arms at row ± 1 |
 | Broken-bar gap | one pixel, mid-arm, both sides |
 
@@ -290,10 +298,22 @@ function render(glyph, tier){
 
   if (tier === "sighted"){ ROWS.forEach(y => { set(b,14,y); set(b,17,y); }); return b; }
 
+  // rung tips, clamped so no arm ever crosses the frame
+  const xs = [...s].map((c,i) => Math.max(16 - EXT[form(c).w], boundL(b, ROWS[i]) + 1));
+
+  // PROFILE — join consecutive tips, closing on the stem above and below, so the
+  // silhouette is the word's own width-sequence. This is what makes shapes unique.
+  dline(b,16,ROWS[0]-3,xs[0],ROWS[0]);  dline(b,15,ROWS[0]-3,31-xs[0],ROWS[0]);
+  for (let i = 0; i < k-1; i++){
+    dline(b, xs[i], ROWS[i], xs[i+1], ROWS[i+1]);
+    dline(b, 31-xs[i], ROWS[i], 31-xs[i+1], ROWS[i+1]);
+  }
+  dline(b, xs[k-1], ROWS[k-1], 16, ROWS[k-1]+3);
+  dline(b, 31-xs[k-1], ROWS[k-1], 15, ROWS[k-1]+3);
+
   [...s].forEach((c,i) => {
     const {w,t} = form(c), y = ROWS[i];
-    const xl = Math.max(16 - EXT[w], boundL(b,y) + 1);        // never crosses the frame
-    const xr = 31 - xl;
+    const xl = xs[i], xr = 31 - xl;
     if (t === 0) hline(b, xl, xr, y);                                       // bar
     else if (t === 1){ dline(b,xl,y+1,15,y-1); dline(b,xr,y+1,16,y-1); }    // chevron up
     else if (t === 2){ dline(b,xl,y-1,15,y+1); dline(b,xr,y-1,16,y+1); }    // chevron down

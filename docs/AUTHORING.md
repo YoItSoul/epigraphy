@@ -56,17 +56,17 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **monogram + frame** (`RUNES.md` §5), and both layers derive
-from fields you have already written:
+Glyphs are drawn as **stave + frame** (`GLYPH_SPEC.md`), and both derive from fields
+you have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Monogram** (interior mark) | `lemma` | the word's letters in Standard Galactic Alphabet, overlaid into one mark |
-| **Frame** (border shape) | `determinative.class`, or `category` if absent | hexagon / circle / plinth / open base / doubled ring |
+| **Stave** (interior) | `lemma` | a stem with one rung per letter; each rung's width and shape identify the letter, and the rung tips are joined into a profile so the silhouette is the word's own |
+| **Frame** (border) | `determinative.class`, or `category` if absent | hexagon / circle / plinth / basin / open base / doubled ring |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
-hex-framed SGA monogram with no art file at all. **This is the intended path** —
-add a glyph in JSON, get usable art immediately.
+hex-framed stave with no art file at all. **This is the intended path** — add a
+glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
 boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
@@ -79,13 +79,20 @@ readable in a line of inscription.
 |---|---|---|
 | `material` | hexagon | yes |
 | `celestial` | circle | yes |
-| `place` | plinth | yes (prefix, conventionally) |
+| `place` | plinth | yes |
+| `fluid` | basin | yes |
 | `element` | **open base** | **no** — qualifiers are never heads |
 | `frame` | doubled ring | n/a — clause markers only |
 
 The element restriction is enforced: declaring a `determinative` block on an
 `element` glyph fails validation. That rule is why the element frame is drawn open
 rather than enclosing — the shape *is* the rule.
+
+> **Adding a new frame is not a free action.** Frames must be vertically symmetric
+> and must keep straight sides across the stave band, and adding one **requires
+> re-running the letter-distinctness audit** (`GLYPH_SPEC.md` §8). Every glyph
+> collision found while building this system came from a frame intruding on the
+> stave, never from the letter map.
 
 ### Choosing a good glyph
 
@@ -141,8 +148,9 @@ different stones all wanted `TENEBRAE · LAPIS`, and had to be distinguished:
 | Word | Names | Note |
 |---|---|---|
 | `TENEBRAE · LAPIS` | Deepslate | "dark stone" — got there first |
-| `INFERNUS · LAPIS` | Nether Quartz | "hell's stone" |
+| `INFERNUS · LAPIS` | Netherrack | "hell's stone" |
 | `NOX · LAPIS` | Echo Shard | "night stone" |
+| `INFERNUS · GEMMA` | Nether Quartz | moved off `· LAPIS` once Netherrack needed it |
 
 **Practical guidance:** budget roughly **one new glyph per handful of new rune
 words**, and choose recipe ingredients partly for whether they're *nameable*. If an
