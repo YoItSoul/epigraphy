@@ -1,0 +1,15 @@
+{
+  "type": "epigraphy:ritual",
+  "sentence": ["epigraphy:verb_altare", "epigraphy:mat_adamas", "epigraphy:mod_chaos", "epigraphy:cond_fulgur"],
+  "altar": "epigraphy:glyph_altar",
+  "pedestal_items": [
+    { "ingredient": { "item": "minecraft:netherite_ingot" }, "count": 1 }
+  ],
+  "ground_items": [],
+  "fluid": null,
+  "conditions": [
+    { "type": "weather", "value": "thunder" }
+  ],
+  "result": { "item": "epigraphy:chaos_ingot", "count": 1 },
+  "scan_radius": 3
+}

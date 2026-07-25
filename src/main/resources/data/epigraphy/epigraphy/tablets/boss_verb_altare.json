@@ -1,0 +1,10 @@
+{
+  "glyph": "epigraphy:verb_altare",
+  "tier": "boss",
+  "grants": "learned",
+  "item_model": "epigraphy:item/tablet_boss",
+  "loot": {
+    "comment": "informational only — actual drop wiring stays in normal loot_tables",
+    "suggested_pools": ["entities/soa_boss_placeholder"]
+  }
+}

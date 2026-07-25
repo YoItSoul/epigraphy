@@ -1,0 +1,12 @@
+{
+  "role": "condition",
+  "gloss": "Fulgur",
+  "translation": "Storm",
+  "symbol_texture": "epigraphy:textures/glyph/cond_fulgur.png",
+  "flavor_text": "The jagged bolt. The sky itself takes a side.",
+  "discovery_sources": ["star", "ruin"],
+  "constellation": {
+    "points": [[0, 4], [1, 1], [-1, 0], [1, -3]],
+    "night_only": false
+  }
+}

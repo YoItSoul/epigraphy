@@ -1,0 +1,15 @@
+{
+  "itemGroup.epigraphy": "Epigraphy",
+
+  "item.epigraphy.codex": "Codex",
+  "item.epigraphy.astrolabe": "Astrolabe",
+  "item.epigraphy.rubbing_kit": "Rubbing Kit",
+  "item.epigraphy.glyph_rubbing": "Glyph Rubbing",
+  "item.epigraphy.glyph_tablet": "Glyph Tablet",
+  "item.epigraphy.chaos_ingot": "Chaos Ingot",
+  "item.epigraphy.order_ingot": "Order Ingot",
+
+  "block.epigraphy.glyph_altar": "Glyph Altar",
+  "block.epigraphy.glyph_pedestal": "Glyph Pedestal",
+  "block.epigraphy.carved_glyph": "Carved Glyph"
+}

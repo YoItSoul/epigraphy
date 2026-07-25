@@ -1,0 +1,8 @@
+{
+  "role": "material",
+  "gloss": "Adamas",
+  "translation": "Netherite",
+  "symbol_texture": "epigraphy:textures/glyph/mat_adamas.png",
+  "flavor_text": "The unbreakable metal. Even chaos cannot unmake it, only remake it.",
+  "discovery_sources": ["ruin", "tablet"]
+}

@@ -1,0 +1,12 @@
+{
+  "role": "modifier",
+  "gloss": "Chaos",
+  "translation": "Chaos",
+  "symbol_texture": "epigraphy:textures/glyph/mod_chaos.png",
+  "flavor_text": "The asymmetric crack. Entropy given a shape.",
+  "discovery_sources": ["star", "ruin", "tablet"],
+  "constellation": {
+    "points": [[0, 0], [4, -2], [2, 3], [-3, 1], [1, -4]],
+    "night_only": true
+  }
+}

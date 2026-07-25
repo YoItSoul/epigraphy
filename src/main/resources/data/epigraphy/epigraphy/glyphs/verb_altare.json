@@ -1,0 +1,8 @@
+{
+  "role": "verb",
+  "gloss": "Altare",
+  "translation": "Altar",
+  "symbol_texture": "epigraphy:textures/glyph/verb_altare.png",
+  "flavor_text": "The first word. Everything begins at the altar.",
+  "discovery_sources": ["tablet"]
+}
