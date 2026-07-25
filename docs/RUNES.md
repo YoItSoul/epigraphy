@@ -643,28 +643,36 @@ still comes last, so the rule scales without a new pattern to learn.
 
 ---
 
-## 5. The visual system: carved stone at 16 × 16 (D14/D15)
+## 5. The visual system: chiselled stone at 16 × 16 (D14/D15/D17/D18)
 
 Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**.
 
 ```
-      VIRGA -> "VI"              blank
-   ┌──────────────┐        ┌──────────────┐
-   │    ╱▔▔╲      │ ← V    │              │   bare stone:
-   │    ╲__╱      │        │              │   unknown glyph,
-   │    ╱▔▔╲      │ ← I    │              │   empty codex slot,
-   │  ▁▁▁▁▁▁▁▁    │ ← foot │              │   uninscribed tablet
-   └──────────────┘        └──────────────┘
-     = word length
+       VIRGA -> "VI"                blank
+    ╱▔▔▔▔▔▔▔▔▔▔╲            ╱▔▔▔▔▔▔▔▔▔▔╲
+   ╱   ╱▔▔╲     ╲ ← V      ╱            ╲    bare stone:
+   │   ╲__╱      │         │             │   unknown glyph,
+   │   ╱▔▔╲      │ ← I     │             │   empty codex slot,
+   ╲ ▁▁▁▁▁▁▁▁▁  ╱ ← foot   ╲            ╱    uninscribed tablet
+    ╲▁▁▁▁▁▁▁▁▁▁╱            ╲▁▁▁▁▁▁▁▁▁▁╱
+      = word length
 ```
 
 - **One continuous figure.** Two letter-forms stack and link at the centre; the foot
   hangs off the lower one. Nothing floats — the whole glyph is a single unbroken shape.
-- **Two letters + length.** The forms carry the lemma's first two letters; the foot
-  bar's width counts its letters, which is what keeps `VITA`, `VIRGA` and `VIGILIA`
-  distinct despite sharing `VI`.
-- **Carved into lit stone.** A top-left-lit gradient with deterministic grain; cuts sit
-  in shadow with a lit lip below-right. The gradient is *material, not information*.
+- **Two letters + a tally.** The forms carry the lemma's first two letters; the foot
+  tallies its length, which is what keeps `VITA`, `VIRGA` and `VIGILIA` distinct despite
+  sharing `VI`.
+- **An octagonal tile** — corners chamfered by 3, transparent outside — so the
+  silhouette reads as a cut stone rather than a sprite. It is **universal**: the outline
+  never varies per glyph (D17).
+- **Chiselled, not painted.** One height field and one top-left light give the tile's
+  bevelled rim, the shadowed upper-left wall of every groove and the lit lower-right
+  wall (D18).
+- **The groove is inlaid** with a pigment hashed from the lemma, renormalised so every
+  hue cuts to the same depth. It is redundant reinforcement only — see §5.3.
+- **Nothing comes within 2 px of the stone's edge**, chamfered corners included, and the
+  audit fails the build if it does.
 - **A blank tile** covers unknown glyphs, empty slots and uninscribed tablets.
 
 **Full construction rule: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
@@ -691,15 +699,22 @@ Each attempt failed for a recorded reason, and the pattern is the lesson:
 **Varying parameters of a shared skeleton never produced distinct symbols; varying
 structure did — but only once it was kept light and continuous.**
 
-### 5.3 Knowledge tier
+### 5.3 Knowledge tier is depth, not tint
 
-**Colour encodes nothing** — flatten the stone to one grey and no information is lost.
+**Colour never carries anything on its own.** The groove's pigment is hashed from the
+lemma, but every pigment is renormalised to a single luminance, so hue never changes how
+strongly a cut reads. Desaturate the whole atlas and all 49 glyphs stay distinct —
+verified in the audit. Colour is a second, faster channel onto an identity that shape
+already carries in full.
 
-| Tier | Rendered |
-|---|---|
-| **0 · Unknown** | the blank tile |
-| **1 · Sighted** | *open* — see `DECISIONS.md` D15 |
-| **2 · Learned** | the full carved figure |
+| Tier | Rendered | Reads as |
+|---|---|---|
+| **0 · Unknown** | the blank tile — uncut stone | "a stone, meaning nothing" |
+| **1 · Sighted** | the figure cut **shallow and unfilled** — bare stone-grey, no pigment | "seen, not yet taken down" |
+| **2 · Learned** | cut to **full depth and inlaid** | complete, legible |
+
+The ladder is **uncut → shallow and empty → deep and filled** — a *value* difference
+before it is a colour one, so it reads identically to a colourblind player (D19).
 
 ---
 

@@ -47,8 +47,9 @@ com.epigraphy
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
 ├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
 ├─ art/                           // procedural glyph rendering (D14)
-│   ├─ FormRenderer               //   lemma -> two linked forms + length foot (16x16)
-│   ├─ StoneTile                  //   lit gradient + deterministic grain; blank tile
+│   ├─ FormRenderer               //   lemma -> two linked forms + tally foot (16x16)
+│   ├─ StoneTile                  //   octagon, height-field lighting, grain; blank tile
+│   ├─ Pigment                    //   lemma -> hashed hue, renormalised to one luma
 │   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
 ├─ doc/                           // in-game documentation model, populated from knowledge
 ├─ client/                        // in-world renderers (readable carvings, sky projection,
@@ -100,9 +101,9 @@ creative tab. Goal: `runClient` opens a world with the mod present.
 starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the
 **ordered-sequence** index for submit validation and the clause-order validator.
 
-Also here: the **procedural glyph renderer** (D14/D15) — two linked letter-forms from
-`lemma`, a length foot, carved into a 16x16 stone tile, atlased, with
-`texture` as an override. Worth doing early: every later phase (carvings, tablets, codex, in-world
+Also here: the **procedural glyph renderer** (D14/D15/D17/D18/D19) — two linked
+letter-forms from `lemma`, a tally foot, chiselled into an octagonal 16x16 stone tile
+and inlaid with a name-hashed pigment, atlased, with `texture` as an override. Worth doing early: every later phase (carvings, tablets, codex, in-world
 inscriptions) renders glyphs, and generated art means no phase is ever blocked
 waiting on an artist. `/epigraphy runes` debug command lists loaded glyphs and dumps
 the atlas for eyeballing.
@@ -183,15 +184,22 @@ Resolved since the first draft:
     read left to right in formula order.
 11. ✅ **Determinatives may prefix or suffix (Q9).** Structures prefix, materials
     suffix — as Sumerian prefixes `DINGIR` but suffixes `KI`.
-12. ✅ **Glyph art = one continuous figure on a 16x16 stone tile (D14/D15).** Generated
-    from data, every glyph its own shape; pictographs rejected for undercutting
-    decipherment.
+12. ✅ **Glyph art = one continuous figure on a 16x16 octagonal stone tile
+    (D14/D15/D17).** Generated from data, every glyph its own shape; pictographs
+    rejected for undercutting decipherment. Silhouette is universal — side count is
+    deliberately not tied to word length.
+13. ✅ **Depth from one light; pigment hashed from the name (D18).** Colour is redundant
+    reinforcement only, and the atlas is audited desaturated to prove it.
+14. ✅ **Knowledge tier is depth of cut, not tint (D19).** Uncut, shallow and unfilled,
+    deep and inlaid.
 
 Still open (don't block early phases):
 
 - 🔵 **Pedestal matching** — multiset now, patterned geometry later.
 - 🔵 **Fluid identity** — one `liquid_starlight` now, themed fluids later.
 - 🔵 **Reference form (Q5)** — likely the codex itself rather than a separate book.
+- 🔵 **Class silhouettes (Q10)** — should the tile outline encode thing/place/condition?
+  Wants the lexicon's classes settled first; revisit before Phase 3.
 - ❓ **Backlash severity model (Q6)** — per-recipe base × undecoded-count × instability.
 - ❓ **Wrong-submission cost (Q7)** — free, cooldown, or consumable.
 - ❓ **Vessel clause order (Q9)** — `ALTARE · TENEBRAE` exception vs. strict

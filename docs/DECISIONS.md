@@ -152,10 +152,10 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — 16 × 16, one continuous figure carved in stone
+### D15 ✅ Glyph construction — 16 × 16, one continuous figure chiselled in stone
 **A glyph is one continuous figure** — two stacked letter-forms linking at the centre,
-on a foot bar whose width counts the word's letters — incised into a **16 × 16** stone
-tile lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+on a foot that tallies the word's letters — **chiselled into an octagonal 16 × 16 stone
+tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
 - **16 × 16** matches Minecraft's item resolution.
 - **Continuity is structural.** Every form touches the centre column at its top and
@@ -165,22 +165,84 @@ tile lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 - **No frame.** At 16 × 16 a border costs a quarter of the usable area and was never
   carrying identity; removing it is what made 16 × 16 viable.
 - **Two letters, not three.** Three six-row zones do not fit. Uniqueness survives
-  because **the foot carries word length**: `VITA` (4), `VIRGA` (5) and `VIGILIA` (7)
-  all abbreviate to `VI` and remain three different tiles.
-- **Stone, lit top-left.** Gradient plus deterministic grain; cuts drop to 34% of the
-  base value with a lit lip below-right, so they read as carved rather than painted.
-  **The gradient is material, not information** — flatten it to one grey and nothing is
-  lost, so the colour rule (D16) still holds.
-- **A blank tile** — bare stone, no cuts — serves as unknown glyph, empty codex slot,
-  and uninscribed tablet.
+  because **the foot tallies word length**: `VITA` (4), `VIRGA` (5) and `VIGILIA` (7)
+  all abbreviate to `VI` and remain three different tiles. The bar widens one step per
+  letter up to four, then its ends turn up into a serif and the width restarts, so
+  `letters = 2 + (width − 1) + 4 × serif`.
+- **A 2 px margin, enforced.** No part of a glyph comes within two pixels of the
+  stone's edge, chamfered corners included — measured in the audit, not eyeballed. It
+  is what sets the tally's ceiling at four and why the two letter-forms share a row.
+- **Stone, lit top-left.** Gradient plus deterministic grain. **The gradient is
+  material, not information** — flatten it to one grey and nothing is lost, so the
+  colour rule (D16) still holds.
+- **A blank tile** — bare stone, no cuts, still an octagon — serves as unknown glyph,
+  empty codex slot, and uninscribed tablet.
 
-**Open:** Tier 1 (Sighted) has no representation now that the frame is gone. Options
-are carving the foot only (reveals length, hides letters), a rougher unfinished stone,
-or dropping the middle tier's visual entirely.
+**Audited:** all 23 forms distinct; **49/49 lexicon glyphs unique, and still 49/49 with
+colour stripped**; every output vertically symmetric; every glyph a **single connected
+component**; tightest margin to the stone's edge 2 px. The audit executes the *live*
+renderer rather than a transcription of it, so those numbers cannot drift from the art.
 
-**Audited:** all 23 forms distinct; every lexicon glyph unique; `VITA`/`VIRGA`/`VIGILIA`
-separated by foot width alone; every output vertically symmetric; **every glyph a
-single connected component**.
+### D17 ✅ The tile is an octagon, and the silhouette is universal
+The tile is the 16 × 16 square with its **four corners chamfered by 3** — 232 of 256
+pixels, transparent outside. The silhouette reads as a cut stone rather than a sprite,
+and its bevelled rim comes free from the same lighting rule as the grooves (D18).
+
+**The silhouette does not vary per glyph.** Tying the side count to word length was
+considered and rejected on three grounds, in order of how much they hurt:
+
+1. **Length is already spoken for** by the foot tally. Spending the silhouette — the
+   most visible feature at inventory scale — on an already-encoded variable buys
+   nothing.
+2. **16 px cannot hold the alphabet of shapes.** Square, octagon and heavy-chamfer
+   octagon are the three that survive; pentagons and heptagons are mush at this size,
+   and a true hexagon points top and bottom, exactly where the forms and foot live.
+3. **Latin lengths cluster** at 4–7, so most glyphs would land on the same two or three
+   shapes and the encoding would read as random rather than systematic.
+
+**Deferred, not dead (Q10):** the variable actually worth the silhouette is
+**grammatical class** — thing / place / condition — because that is what a player parses
+first when guessing a rune word. Three or four silhouettes would put the grammar on the
+outline where it can be read across a wall of carvings. It waits until the lexicon's
+classes are settled, since freezing it into art is hard to undo.
+
+### D18 ✅ Depth from one light; pigment hashed from the name
+**One height field and one light produce all of the depth.** Void sits at −1, the
+incised stroke at 0, the stone surface at 1; each pixel is compared against its three
+up-left and three down-right neighbours, diagonals double-weighted. Higher than up-left
+turns into the light; higher than down-right turns away. That single rule gives the
+tile's bevelled rim, the chamfered corners, the shadowed upper-left wall of every groove
+and the lit lower-right wall — nothing special-cased, and a two-pixel stem falls out as
+a true V-groove.
+
+**The groove holds a pigment hashed from the lemma** — FNV-1a → hue, with a little
+saturation jitter. Nothing is stored: the same word is the same colour in every world,
+forever. Blood Magic's runes are the reference: a symbol sunk into stone whose inlay
+tells one rune from another across a room.
+
+**Every pigment is renormalised to one fixed relative luminance** (62 of 255, against
+stone running 110–195), so a yellow groove and a blue groove cut exactly as deep. Hue
+never changes how strongly a cut reads — the trap that catches most name-hashed
+palettes. Measured across the lexicon the spread is 61.6–62.4, under one percent.
+
+**This does not weaken D16.** Colour here is *redundant reinforcement*: a second, faster
+channel onto an identity that shape already carries in full. Desaturate the whole atlas
+and all 49 glyphs stay distinct — verified in the audit, not asserted. If a future
+change ever makes two glyphs tell apart *only* by hue, that change is wrong.
+
+### D19 ✅ Knowledge tier is depth, not tint
+This closes the gap D15 left open when the frame was removed.
+
+| Tier | Rendered | Reads as |
+|---|---|---|
+| **0 · Unknown** | the blank tile — uncut stone | "a stone, meaning nothing" |
+| **1 · Sighted** | the full figure cut **shallow and unfilled** — weak bevel, groove holds bare stone-grey instead of pigment | "seen, not yet taken down" |
+| **2 · Learned** | cut to **full depth and inlaid** with the word's pigment | complete, legible |
+
+The ladder runs **uncut → shallow and empty → deep and filled**. It is a *value*
+difference before it is a colour one, so it survives desaturation and reads identically
+to a colourblind player — and "you have seen the carving but not yet taken the rubbing"
+is exactly what partial decipherment should look like.
 
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is
@@ -315,6 +377,14 @@ word means a metal. Found while authoring the worked vocabulary in `RUNES.md` §
 The Sumerian precedent still stands — determinatives genuinely appear on both sides
 (`DINGIR` prefixes, `KI` suffixes). The head rule adds a deterministic way to know
 *which* sign is doing the work when more than one could.
+
+### Q10 🔵 Should the tile silhouette encode grammatical class? (D17)
+One universal octagon ships in v1. The open proposal is to let the outline carry
+**thing / place / condition** — three or four silhouettes, readable at a glance across a
+wall of carvings, reinforcing the head rule (Q9) that players must already parse.
+
+Not blocking: it wants the lexicon's classes settled first, because freezing a class
+encoding into art is hard to undo. Revisit before Phase 3.
 
 ### Q7 ❓ What does a *wrong* codex submission cost?
 D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth

@@ -56,30 +56,42 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **two linked forms + a length foot, carved into a 16 × 16 stone tile** (`GLYPH_SPEC.md`), and both derive from fields
-you have already written:
+Glyphs are drawn as **two linked forms + a tally foot, chiselled into an octagonal
+16 × 16 stone tile** (`GLYPH_SPEC.md`), and every layer derives from fields you have
+already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
 | **Forms** | `lemma` | its first two letters, each one of 23 closed shapes, linked into one continuous figure |
-| **Foot** | `lemma` length | a bar whose width counts the word's letters |
-| **Stone** | — | 16 × 16 tile, lit top-left; the same for every glyph |
+| **Foot** | `lemma` length | a tally bar: width 1–4, plus a serif once the word passes five letters |
+| **Pigment** | `lemma` | the groove's inlay colour, hashed from the word; every hue cuts to the same depth |
+| **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
 
-So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
-`PV` glyph with a 5-wide foot and no art file at all. **This is the intended path** — add a
-glyph in JSON, get usable art immediately.
+So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
+with a 4-wide foot, its own colour, and no art file at all. **This is the intended
+path** — add a glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
 boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
-composite, frame included, so hand-drawn glyphs must draw their own frame to stay
-readable in a line of inscription.
+composite, so a hand-drawn glyph must draw its own octagonal stone — and must respect
+the **2 px margin** — to sit readably in a line of inscription.
 
-> **No two glyphs may share their first two letters *and* their length.** There is no
-> frame to disambiguate for you. Fix a clash with an explicit two-letter `mark`:
+> **No two glyphs may render identically.** The mark is `(letter 1, letter 2, length
+> tally)`, so two lemmas agreeing on all three produce the same tile — `VELLUS` and
+> `VENTVS` do. **Treat that as a language bug, not an art bug:** the first fix is a
+> synonym, and Latin has one for nearly everything (which is why wool is `LANA`, not
+> `VELLUS`). Only when no synonym will do, force it with an explicit two-letter `mark`:
 > `{ "lemma": "VIRIDIS", "mark": "VR" }`.
 >
-> `determinative.class` still matters for **grammar** (`RUNES.md` §4.3.1) — it decides
-> whether a glyph can head a rune word. It no longer affects the art.
+> The loader renders every glyph at load, hashes the bitmap and refuses a duplicate, so
+> a clash fails the datapack rather than shipping two identical tiles.
+
+> **Do not encode anything in colour.** The pigment is generated for you and is
+> *redundant reinforcement only* — the atlas is audited desaturated, and every glyph
+> must still be distinct with colour stripped. `determinative.class` still matters for
+> **grammar** (`RUNES.md` §4.3.1) — it decides whether a glyph can head a rune word —
+> and it does not affect the art today. It may drive the tile silhouette in a later
+> version (`DECISIONS.md` Q10); until then, do not assume it is visible.
 
 ### Choosing a good glyph
 
