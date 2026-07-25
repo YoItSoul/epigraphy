@@ -643,64 +643,63 @@ still comes last, so the rule scales without a new pattern to learn.
 
 ---
 
-## 5. The visual system: structural strokes (D14/D15)
+## 5. The visual system: carved stone at 16 × 16 (D14/D15)
 
-Glyph art is generated, never hand-drawn. Every glyph is:
+Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**.
 
 ```
-      VIRGA -> "VIR"
-   ┌─────────────────┐
- ──┤     ◇ ◇ ◇       │  ← three STROKES, one per letter of the
-   │       ○         │     three-letter abbreviation; each letter
- ──┤     \_____/      │     is its own shape, not a width of one bar
-   └─────────────────┘
-    ↑ NOTCHES = word length      one UNIVERSAL frame
+      VIRGA -> "VI"              blank
+   ┌──────────────┐        ┌──────────────┐
+   │    ╱▔▔╲      │ ← V    │              │   bare stone:
+   │    ╲__╱      │        │              │   unknown glyph,
+   │    ╱▔▔╲      │ ← I    │              │   empty codex slot,
+   │  ▁▁▁▁▁▁▁▁    │ ← foot │              │   uninscribed tablet
+   └──────────────┘        └──────────────┘
+     = word length
 ```
 
-- **Three strokes** carry the lemma's first three letters. Each of the 23 letters is a
-  **structurally distinct shape** — ring, saltire, arch, bowtie, triangle, twin rings —
-  so no two glyphs share a skeleton.
-- **One universal frame.** A border shared by every glyph cannot be what distinguishes
-  them, so identity is forced into the strokes where it can be seen.
-- **Length notches** cut into the sides count the word's letters past the third.
+- **One continuous figure.** Two letter-forms stack and link at the centre; the foot
+  hangs off the lower one. Nothing floats — the whole glyph is a single unbroken shape.
+- **Two letters + length.** The forms carry the lemma's first two letters; the foot
+  bar's width counts its letters, which is what keeps `VITA`, `VIRGA` and `VIGILIA`
+  distinct despite sharing `VI`.
+- **Carved into lit stone.** A top-left-lit gradient with deterministic grain; cuts sit
+  in shadow with a lit lip below-right. The gradient is *material, not information*.
+- **A blank tile** covers unknown glyphs, empty slots and uninscribed tablets.
 
 **Full construction rule: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 
 ### 5.1 Why not pictographs
 
-The rejected alternative was drawing each glyph as its referent — a flame for
-`FLAMMANS`. It fails the mod's central pillar: **if the symbol is a picture, there is
-nothing to decipher.** Sumerian confirms the instinct — it *began* pictographic and
-abstracted within a few centuries, and that drift is what turned drawing into
-**writing**. Pictography stays on tablet frames, block textures and structure motifs,
-never on glyphs.
+**If the symbol is a picture, there is nothing to decipher.** Sumerian began
+pictographic and abstracted within a few centuries — that drift is what turned drawing
+into **writing**. Pictography stays on tablet frames, block textures and structure
+motifs, never on glyphs.
 
-### 5.2 Why structure beats parameters
+### 5.2 What five iterations taught
 
-Several revisions varied *parameters* of a shared skeleton — bar widths, rung counts,
-tick directions on one vertical stem. Every glyph came out a variation on a ladder.
-**Two glyphs differing by two pixels of arm length are not two symbols; they are one
-symbol with a typo.** Players scan these constantly while guessing rune words, and
-recognition needs shapes that differ in *kind*, not degree.
+Each attempt failed for a recorded reason, and the pattern is the lesson:
 
-### 5.3 The trade: class is no longer visible
+| Attempt | Why it failed |
+|---|---|
+| Lattice path | tangled diagonals, strokes leaving the frame |
+| Five rungs on a stem | every glyph a variation on one comb |
+| Two bold marks | `VIRGA`/`VITA`/`VIGILIA` rendered identically |
+| Three marks by width × thickness | still one shared skeleton |
+| Heavy structural strokes | distinct but muddy, and notches escaped the border |
 
-Earlier the frame encoded the determinative class — hexagon for materials, circle for
-celestial — so an *undecoded* glyph still announced its category, making the grammar
-visible in the art. **The universal frame gives that up.** Class is information the
-codex supplies anyway, whereas recognising a symbol happens hundreds of times an hour.
-A small class pip on the frame's top edge could restore the cue without the border
-carrying identity (`DECISIONS.md` D15).
+**Varying parameters of a shared skeleton never produced distinct symbols; varying
+structure did — but only once it was kept light and continuous.**
 
-### 5.4 Knowledge tier is drawn, not tinted
+### 5.3 Knowledge tier
 
-**Colour encodes nothing** — strip every colour and zero information is lost.
+**Colour encodes nothing** — flatten the stone to one grey and no information is lost.
 
-| Tier | Rendered | Reads as |
-|---|---|---|
-| **0 · Unknown** | frame only | "a symbol, meaning nothing" |
-| **1 · Sighted** | frame + **length notches** | "I know how long the word is, not what it says" |
-| **2 · Learned** | frame + notches + **all three strokes** | complete, legible |
+| Tier | Rendered |
+|---|---|
+| **0 · Unknown** | the blank tile |
+| **1 · Sighted** | *open* — see `DECISIONS.md` D15 |
+| **2 · Learned** | the full carved figure |
 
 ---
 

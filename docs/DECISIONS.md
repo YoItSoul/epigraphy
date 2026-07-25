@@ -152,45 +152,35 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — structural strokes in a universal frame
-**A glyph is a three-letter abbreviation of its word**, written as three
-**structurally distinct strokes** inside **one universal frame**, with the word's
-**length notched into the frame's edges**. Full spec:
-[`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+### D15 ✅ Glyph construction — 16 × 16, one continuous figure carved in stone
+**A glyph is one continuous figure** — two stacked letter-forms linking at the centre,
+on a foot bar whose width counts the word's letters — incised into a **16 × 16** stone
+tile lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **23 letters, 23 shapes.** Each letter is its own kind of mark — ring, saltire,
-  arch, bowtie, triangle, twin rings, three posts — not a width or thickness of a
-  shared bar. Forms are chosen for *mutual contrast* and confined to isolated zones,
-  so any three stack cleanly. **The form table is frozen at v1.**
-- **The frame is universal.** A border shared by every glyph cannot be what
-  distinguishes any of them, so identity is forced entirely into the strokes.
-- **Length is notched into the sides**, one per letter past the third — countable,
-  meaningful, and it separates words sharing three letters (`VIRGA` 5 vs `VIRIDIS` 7).
-  Notches are drawn **inward**; nothing is ever drawn outside the frame, and that is
-  asserted against the frame outline rather than trusted.
-- **Weight is minimal.** Forms are 1 px and 2–3 segments. A first pass at structural
-  strokes drew them heavy and wide and the glyphs turned muddy — the fix cut mean ink
-  by a third (221 → 147). Nothing is drawn heavier than it must be to be distinct.
+- **16 × 16** matches Minecraft's item resolution.
+- **Continuity is structural.** Every form touches the centre column at its top and
+  bottom row, so stacking two links them automatically. The geometry *cannot* produce
+  a loose piece — no floating pips, split bars or posts, and nothing to validate after
+  the fact.
+- **No frame.** At 16 × 16 a border costs a quarter of the usable area and was never
+  carrying identity; removing it is what made 16 × 16 viable.
+- **Two letters, not three.** Three six-row zones do not fit. Uniqueness survives
+  because **the foot carries word length**: `VITA` (4), `VIRGA` (5) and `VIGILIA` (7)
+  all abbreviate to `VI` and remain three different tiles.
+- **Stone, lit top-left.** Gradient plus deterministic grain; cuts drop to 34% of the
+  base value with a lit lip below-right, so they read as carved rather than painted.
+  **The gradient is material, not information** — flatten it to one grey and nothing is
+  lost, so the colour rule (D16) still holds.
+- **A blank tile** — bare stone, no cuts — serves as unknown glyph, empty codex slot,
+  and uninscribed tablet.
 
-**Why three earlier attempts failed**, since the pattern matters more than any one
-fix: a lattice path produced tangled diagonals; five rungs on a stem made every glyph
-a variation on one comb; two marks rendered `VIRGA`/`VITA`/`VIGILIA` identically; and
-three marks distinguished only by width and thickness still shared one skeleton. The
-common thread is that **varying parameters of a shared skeleton does not produce
-distinct symbols — only varying structure does.** Players scan these constantly, and
-two glyphs differing by two pixels of arm length are one symbol with a typo.
+**Open:** Tier 1 (Sighted) has no representation now that the frame is gone. Options
+are carving the foot only (reveals length, hides letters), a rougher unfinished stone,
+or dropping the middle tier's visual entirely.
 
-**What the universal frame gives up:** the frame previously encoded the determinative
-class, so an *undecoded* glyph announced its category and the grammar was visible in
-the art. That is gone. The trade is deliberate — class is information the codex
-supplies anyway, whereas recognising the symbol at all happens hundreds of times an
-hour. A **small class pip on the frame's top edge** would restore the cue without the
-border carrying identity, if wanted.
-
-**Audited:** all 23 stroke forms distinct from one another; every glyph in the worked
-lexicon unique; `VIRGA`/`VIRIDIS` separated by notches alone; every output vertically
-symmetric. Because the frame is shared and zones are isolated, a single 23-way audit
-now suffices — there is no per-frame matrix to re-check.
+**Audited:** all 23 forms distinct; every lexicon glyph unique; `VITA`/`VIRGA`/`VIGILIA`
+separated by foot width alone; every output vertically symmetric; **every glyph a
+single connected component**.
 
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is

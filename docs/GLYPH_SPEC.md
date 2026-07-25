@@ -1,155 +1,118 @@
 # Glyph Construction Spec
 
-The deterministic rule that turns a Latin lemma into a 32×32 symbol.
+The deterministic rule that turns a Latin lemma into a **16 × 16** symbol — Minecraft's
+own item resolution.
 
-> **A glyph is a three-letter abbreviation of its word**, written as three
-> **structurally distinct strokes** inside **one universal frame**, with the word's
-> **length notched into the frame's edges**.
+> **A glyph is one continuous figure**: two stacked letter-forms that link at the
+> centre, standing on a foot bar whose width counts the word's letters. It is carved
+> into a stone tile lit from the top-left.
 
-Every lit pixel means something: it is one of the three strokes, a length notch, or
-the frame.
-
-**Every glyph is its own shape.** The frame is identical on all of them, so it cannot
-possibly be what you are reading — identity lives entirely in the strokes. That is the
-property to protect: a symbol the player picks out of a grid hundreds of times must
-never depend on its border.
+**No frame, no floating marks, no disconnected pieces.** The whole symbol is a single
+unbroken shape — something you could cut with one chisel.
 
 This is the implementation contract for the renderer (`RUNES.md` §5, D14/D15). Given
-the same `lemma` and `determinative.class` it must always produce byte-identical art.
+the same `lemma` it must always produce byte-identical art.
 
-### Why abbreviation beats transcription
+### Why 16 × 16 forced two letters
 
-**Players read these constantly**: every rune-word guess means scanning the codex for
-the glyph they want. That is a *recognition* task, and recognition wants **few, bold,
-structurally different** shapes.
+32 × 32 held three six-row letter zones comfortably. 16 × 16 has **a quarter the
+pixels** and holds two. Rather than shrink the forms into illegibility, the third
+letter was dropped and **word length moved into the foot bar**.
 
-Three revisions failed that test, each for a different reason worth recording:
+Uniqueness survives: `VITA` (4 letters), `VIRGA` (5) and `VIGILIA` (7) all abbreviate
+to `VI` and remain three different tiles because their feet differ. Two glyphs now
+collide only if they share their first two letters **and** their length — rarer than
+the three-letter clash it replaces, and still fixable with an explicit `mark`.
 
-| Attempt | Why it failed |
+Two other things had to go to make 16 × 16 work, and both were improvements:
+
+| Dropped | Why it was affordable |
 |---|---|
-| Lattice path — letters as grid points joined in sequence | tangled diagonals, strokes leaving the frame |
-| Five rungs on a stem, one per letter | every glyph a variation on one comb |
-| Two bold marks | `VIRGA`/`VITA`/`VIGILIA` rendered *identically*, leaning on frames |
-| Three marks, width × thickness | still one shared skeleton — a wide bar and a slightly wider bar are the same shape |
+| The frame | cost a quarter of the usable area and never carried identity |
+| Disconnected marks (pips, split bars, posts) | continuity rules them out anyway |
 
-The common thread: **varying parameters of a shared skeleton does not produce distinct
-symbols.** Only varying *structure* does.
+### Why continuity is structural, not checked
 
-The abbreviation is also the honest choice, and three letters is Roman practice at its
-most common: `IMP`, `AVG`, `COS`, `PON`. Once a player knows the 23 letterforms they
-don't memorise glyphs, they **read** them: `CAE` is `CAELVM`.
-
-**The trade, stated plainly:** a glyph no longer transcribes its lemma — it *names*
-it. That is the right way round. Decipherment difficulty belongs in the **rune
-words**, not in reading a symbol the player must pick out of a grid hundreds of times.
+**Every letter-form touches the centre column at its top and bottom row.** Stack two
+and they link automatically; the foot hangs off the lower one. The geometry cannot
+produce a loose piece, so continuity is a property of the construction rather than
+something validated and patched afterwards.
 
 ---
 
 ## 1. Anatomy
 
 ```
-        VIRGA -> "VIR"              CAELVM -> "CAE"
-     ┌───────────────┐           ┌───────────────┐
-     │    ＞    ＜    │ ← V bowtie│   ═══════     │ ← C double bar
-   ──┤      ✕        │ ← I salt. ├─  ───────     │ ← A bar
-   ──┤    └─────┘    │ ← R cup   ├─    ∧   ∧     │ ← E chevron
-     └───────────────┘           └───────────────┘
-      ↑ notches, drawn inward     one universal frame
+        VIRGA -> "VI"          blank tile
+     ┌──────────────┐       ┌──────────────┐
+     │    ╱▔▔╲      │ ← V   │              │
+     │    ╲__╱      │       │              │   bare stone —
+     │    ╱▔▔╲      │ ← I   │              │   unknown glyph,
+     │    ╲__╱      │       │              │   empty codex slot,
+     │  ▁▁▁▁▁▁▁▁    │ ←foot │              │   uninscribed tablet
+     └──────────────┘       └──────────────┘
 ```
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
-| **Frame** | nothing — deliberately universal | one shared tablet outline |
-| **Stroke 1–3** | the lemma's first three letters | one of 23 **structurally distinct** shapes each, 1 px, 2–3 segments |
-| **Notches** | the word's **length** | one per letter past the third, drawn **inward** onto the frame |
+| **Form 1** (rows 2–7) | the lemma's **first** letter | one of 23 closed shapes |
+| **Form 2** (rows 8–13) | the lemma's **second** letter | one of 23 closed shapes |
+| **Foot** (row 14) | the word's **length** | a bar `1 + min(5, len−2)` half-widths wide |
+| **Stone** | nothing — material only | gradient + grain, see §7 |
 
-**Nothing is ever drawn outside the frame.** Strokes are confined to `x 9–22, y ±3`
-within each zone, and length notches are drawn *inward* at `x 3–4` / `x 27–28`. This
-is checked against the frame outline programmatically, not by eye — the validator
-scans each row for the frame's leftmost and rightmost pixel and asserts no lit pixel
-falls beyond them.
+### 1.1 The blank glyph
 
-### 1.1 Structure, not parameters
-
-Earlier revisions varied *parameters* — bar width, rung count, tick direction — all
-hanging off one vertical stem. Every glyph came out a variation on a ladder, and two
-glyphs differing by two pixels of arm length are not two symbols; they are one symbol
-with a typo.
-
-**Each letter is now its own kind of mark**: ring, saltire, arch, bowtie, triangle,
-twin rings, three posts. `VIR` is bowtie-saltire-cup; `CAE` is double-bar-bar-chevron.
-Those do not merely measure differently, they *look* different — the only kind of
-difference a player scanning a codex grid can actually use.
-
-Uniqueness becomes **structural rather than earned**: three independent zones × 23
-distinct forms means two glyphs collide only if they share all three letters, and the
-length notches separate even those (`VIRGA` 5 vs `VIRIDIS` 7).
-
-### 1.2 The frame is universal — and what that costs
-
-Every glyph wears the same tablet. A border shared by all glyphs *cannot* be what
-distinguishes any of them, so identity is forced entirely into the strokes.
-
-**This gives up a real property.** The frame previously encoded the determinative
-class — hexagon for materials, circle for celestial, escutcheon for creatures — so an
-*undecoded* glyph still announced its category and the grammar was visible in the art
-(`RUNES.md` §5). That is gone.
-
-The trade is deliberate: class is information the codex supplies anyway, whereas
-*recognising the symbol at all* is something a player does hundreds of times an hour.
-If the category cue is wanted back, the cheap version is **a small class pip on the
-frame's top edge** — seven positions, subordinate to the strokes, never load-bearing.
+A tile with **no cuts at all** — bare stone. It serves three jobs with one asset:
+an **unknown glyph** (Tier 0), an **empty codex slot**, and an **uninscribed tablet**.
 
 ---
 
-## 2. The stroke alphabet
+## 2. The letter forms
 
-23 letters, 23 shapes. Classical Latin has no J, U or W, so lemmas normalise to the
-orthography they would have been carved in (`PULVIS` → `PVLVIS`).
+23 letters, 23 **closed shapes**. Classical Latin has no J, U or W, so lemmas normalise
+to the orthography they would have been carved in (`PULVIS` → `PVLVIS`).
 
 | | | | | |
 |---|---|---|---|---|
-| **A** bar | **B** short bar | **C** double bar | **D** split bar | **E** chevron up |
-| **F** chevron down | **G** ring | **H** diamond | **I** saltire | **K** cross |
-| **L** tau | **M** inverted tau | **N** two pips | **O** three pips | **P** two posts |
-| **Q** arch | **R** cup | **S** triangle | **T** wedge | **V** bowtie |
-| **X** barb above | **Y** barb below | **Z** zigzag | | |
+| **A** shaft | **B** lozenge | **C** wide lozenge | **D** narrow lozenge | **E** box |
+| **F** lozenge + bar | **G** triangle | **H** wedge | **I** twin lozenge | **K** lozenge + shaft |
+| **L** shaft + bar | **M** shaft + two bars | **N** horns | **O** roots | **P** flask |
+| **Q** flask + bar | **R** barrel | **S** kite | **T** stem + skirt | **V** cap + stem |
+| **X** nested lozenge | **Y** box + bar | **Z** double chevron | | |
 
 **The form table is frozen at v1.** Changing one invalidates every glyph using that
 letter.
 
-Forms are chosen for **mutual contrast**, not beauty in isolation: a ring, a saltire,
-an arch and a bowtie share no silhouette, so any three stacked produce a figure with
-no near-neighbour. Each is vertically symmetric, **1 px thick**, and confined to its own zone
-(x 9–22, y ±3) so any three stack cleanly without touching.
+Every form spans **six rows** and **must include the centre columns at its top and
+bottom row** — that contract is what makes any two link into one continuous figure.
+Forms are chosen for mutual contrast: a kite, a barrel, a flask and a double chevron
+share no silhouette.
 
 ---
 
 ## 3. The mark
 
 1. **Normalise** the lemma — uppercase, `U`→`V`, `J`→`I`, strip non-letters.
-2. Take the **first three letters**; each selects a stroke form.
-3. Count the **whole normalised word**; `length − 3` notches (capped at 5) are cut into
-   the frame's sides.
-4. An explicit `mark` field overrides step 2 if two words share three letters *and* a
-   length.
+2. Take the **first two letters**; each selects a form.
+3. Count the **whole normalised word**; the foot is `1 + min(5, length − 2)` wide.
+4. An explicit `mark` overrides step 2 if two words share two letters *and* a length.
 
-| Lemma | Normalised | Mark | Letters | Notches |
+| Lemma | Normalised | Mark | Letters | Foot |
 |---|---|---|---|---|
-| `VIRGA` | VIRGA | `VIR` | 5 | 2 |
-| `VIRIDIS` | VIRIDIS | `VIR` | 7 | 4 |
-| `CAELUM` | CAELVM | `CAE` | 6 | 3 |
-| `PULVIS` | PVLVIS | `PVL` | 6 | 3 |
-| `BESTIA` | BESTIA | `BES` | 6 | 3 |
+| `VITA` | VITA | `VI` | 4 | 3 |
+| `VIRGA` | VIRGA | `VI` | 5 | 4 |
+| `VIGILIA` | VIGILIA | `VI` | 7 | 6 |
+| `CAELUM` | CAELVM | `CA` | 6 | 5 |
+| `BESTIA` | BESTIA | `BE` | 6 | 5 |
 
-`VIRGA` and `VIRIDIS` share a mark and are still distinct — the notches do it.
+Three `VI` words, three different tiles — the foot does it.
 
 ---
 
 ## 4. Symmetry
 
 Every glyph is **bilaterally symmetric about its vertical centre axis**, which sits
-between pixel columns 15 and 16.
+between pixel columns 7 and 8.
 
 Symmetry is structural, not something to hand-check: the finished bitmap is passed
 through a `symmetrise` step that ORs every column with its mirror. **A glyph therefore
@@ -162,39 +125,35 @@ Top–bottom symmetry reads as a playing card.
 
 ---
 
-## 5. Pixel geometry (32 × 32)
+## 5. Pixel geometry (16 × 16)
 
 | Element | Value |
 |---|---|
-| Canvas | 32 × 32, no anti-aliasing anywhere |
-| Mirror axis | between columns 15 and 16 |
-| Frame | clipped tablet, vertices (9,2) (22,2) (28,8) (28,23) (22,29) (9,29) (3,23) (3,8) |
-| Frame | clipped tablet, vertices (8,2) (23,2) (29,8) (29,23) (23,29) (8,29) (2,23) (2,8) |
-| Stroke zones | rows **9, 16, 23**; each stroke confined to x 9–22, y ±3 |
-| Stroke weight | **1 px** — as light as a form can be and stay distinct |
-| Notch rows | 11, 14, 18, 21, 24 — drawn **inward** at x 3–4 and 27–28 |
-
-The frame keeps **straight vertical sides across the whole stroke band** (rows 8–23),
-so no stroke ever meets a tapering edge. Zones are 7 rows apart and strokes reach ±3,
-guaranteeing adjacent strokes never touch — the reason any three forms stack cleanly
-without a per-combination audit.
-
-**Weight is deliberately minimal.** A first pass drew the forms 2 px thick and much
-wider; the glyphs turned muddy and complex. Dropping to 1 px and tightening the zone
-cut mean ink by a third (221 → 147) and read far better. Nothing is drawn heavier than
-it needs to be to be told apart.
+| Canvas | **16 × 16**, no anti-aliasing |
+| Mirror axis | between columns 7 and 8 |
+| Form 1 | rows 2–7 · **Form 2** rows 8–13 |
+| Form bounds | x 2–13; must include (7,8) at the form's top and bottom row |
+| Foot | row 14, centred, `1 + min(5, len−2)` half-widths |
+| Mean ink | ~52 of 256 pixels |
 
 ---
 
-## 6. The frame
+## 6. Stone
 
-**One frame, shared by every glyph.** See §1.2 for what that trades away and how to
-restore a class cue if wanted.
+The tile is stone lit from the **top-left**, grading to shadow at the bottom-right.
 
-The frame must stay vertically symmetric and keep straight sides across rows 8–23.
-Because it is universal there is no per-class audit any more — a single shape is
-checked once, and adding decoration to it affects every glyph equally, which makes it
-far safer to change than the seven-frame scheme it replaces.
+```
+value(x,y) = lerp(hi, lo, (x+y) / 2(S−1)) + grain(x,y)
+grain(x,y) = deterministic hash of (x,y), range ±8
+cut  pixel = value × 0.34          // incised groove
+lip  pixel = value × 1.18          // lit edge, down-right of any cut
+```
+
+The grain is a **hash, not randomness** — the renderer must stay byte-identical.
+
+**The gradient is material, not information.** It carries no meaning: flatten every
+tile to one grey and nothing is lost. The rule that colour never encodes anything
+(§7) is unaffected.
 
 ---
 
@@ -205,7 +164,7 @@ lost. Colour may only ever be redundant reinforcement.
 
 | The player must tell… | Carried by | Never by |
 |---|---|---|
-| which glyph this is | the three stroke shapes | hue |
+| which glyph this is | the two letter-forms + foot width | hue |
 | what class it belongs to | frame silhouette | hue |
 | whether they know it yet | how much is drawn (§7.1) | hue |
 | where a clause begins | doubled ring | hue |
@@ -214,13 +173,15 @@ lost. Colour may only ever be redundant reinforcement.
 
 | Tier | Rendered | Reads as |
 |---|---|---|
-| **0 · Unknown** | frame only | "a symbol, meaning nothing" |
-| **1 · Sighted** | frame + **length notches**, no strokes | "I know how long the word is, not what it says" |
-| **2 · Learned** | frame + notches + **all three strokes** | complete, legible |
+| **0 · Unknown** | **the blank tile** — bare stone | "a stone, meaning nothing" |
+| **1 · Sighted** | *open — see below* | "seen but unread" |
+| **2 · Learned** | the full carved figure | complete, legible |
 
-Tier 1 reveals the word's *length* and nothing else — you can count its letters but not
-read one. A precise visual metaphor for partial decipherment, identical for every
-colour vision.
+**Tier 1 has no representation yet.** With the frame gone there is nothing left to draw
+that isn't the answer. Three options, none chosen: carve the **foot only** (reveals
+length, hides the letters — closest to the old behaviour); render the tile as
+**rougher, unfinished stone**; or drop the middle tier's visual entirely and let
+Sighted look like Unknown until learned.
 
 ---
 
@@ -241,45 +202,48 @@ The renderer and datapack loader must reject:
   leftmost and rightmost pixel; assert nothing lies beyond. Cheap, and it catches the
   class of bug where a stroke or notch escapes the border.
 
-**Adding or altering a stroke form requires re-auditing all 23** against each other:
-render each alone and assert 23 distinct figures. Because the frame is shared and the
-zones are isolated, that single audit is sufficient — there is no per-frame or
-per-position matrix to re-check, which is a real simplification over the previous
-scheme.
+**Adding or altering a form requires re-auditing all 23** against each other, and
+checking the new form includes its centre contacts at top and bottom row. Because
+there is no frame and the zones are isolated, that single audit is sufficient.
 
 ---
 
 ## 9. Reference implementation
 
 ```js
-const ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";      // frozen at v1
-const ROWS  = [9,16,23];                          // stroke zones
-const NOTCH = [10,13,16,19,22];                   // length notches
-
+const S = 16, ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";   // frozen at v1
 const normalise = s => s.toUpperCase().replace(/U/g,"V").replace(/J/g,"I").replace(/[^A-Z]/g,"");
-const mark = g => (g.mark ?? normalise(g.lemma)).slice(0,3);
+const mark = g => (g.mark ?? normalise(g.lemma)).slice(0,2);
 
-// 23 stroke forms, each its own shape — bar, short bar, double bar, split bar,
-// chevron up/down, zigzag, diamond, ring, saltire, cross, tau, inverted tau,
-// two posts, three posts, arch, cup, triangle, wedge, bowtie, beam, box, twin rings.
-const FORMS = [ /* one drawing fn per letter, confined to x 7..24, y ±3 */ ];
+// 23 closed forms. Each spans 6 rows and MUST include the centre columns at its
+// top and bottom row — that contract is what makes the figure continuous.
+const FORMS = [ /* shaft, lozenge, box, flask, kite, barrel, … */ ];
 
-function render(glyph, tier){
-  const b = new Uint8Array(32*32);
-  drawFrame(b);                                   // the one universal tablet
-  if (tier !== "unknown"){
-    const n = Math.min(5, Math.max(0, normalise(glyph.lemma).length - 3));
-    for (let i=0;i<n;i++) notch(b, NOTCH[i]);      // length, countable
-    if (tier === "learned")
-      [...mark(glyph)].forEach((c,i) => FORMS[ALPHABET.indexOf(c)](b, ROWS[i]));
-    else
-      ROWS.forEach(y => stub(b,y));               // sighted: zones marked, not drawn
+function render(glyph){
+  const b = new Uint8Array(S*S);
+  const m = mark(glyph);
+  FORMS[ALPHABET.indexOf(m[0])](b, 2);                 // rows 2..7
+  FORMS[ALPHABET.indexOf(m[1])](b, 8);                 // rows 8..13
+  const n = Math.min(5, Math.max(0, normalise(glyph.lemma).length - 2));
+  foot(b, 14, 1 + n);                                  // length, connected to form 2
+  symmetrise(b);                                       // cannot come out asymmetric
+  return b;                                            // 1-bit cut mask
+}
+
+function paint(bits, palette){                          // cut mask -> stone tile
+  for (let y=0;y<S;y++) for (let x=0;x<S;x++){
+    const t = (x+y)/(2*(S-1));                          // lit top-left -> dark bottom-right
+    let v = lerp(palette.hi, palette.lo, t) + grain(x,y);
+    if (bits[y*S+x])                     v = v * 0.34;  // incised
+    else if (bits[(y-1)*S+(x-1)])        v = v * 1.18;  // lit lip
+    put(x,y,v);
   }
-  symmetrise(b);                                  // cannot come out asymmetric
-  return b;
 }
 ```
 
-**Audited:** all 23 stroke forms distinct from one another; every glyph in the worked
-lexicon unique; `VIRGA`/`VIRIDIS` separated by notches alone; every output vertically
-symmetric; and **zero lit pixels outside the frame** across the whole lexicon.
+`grain` is a deterministic hash of `(x,y)`, never `Math.random` — the renderer must
+produce byte-identical output.
+
+**Audited:** all 23 forms distinct; every glyph in the worked lexicon unique;
+`VITA`/`VIRGA`/`VIGILIA` separated by foot width alone; every output vertically
+symmetric; and **every glyph a single connected component**.

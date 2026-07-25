@@ -56,17 +56,17 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **three strokes + notches + one universal frame** (`GLYPH_SPEC.md`), and both derive from fields
+Glyphs are drawn as **two linked forms + a length foot, carved into a 16 × 16 stone tile** (`GLYPH_SPEC.md`), and both derive from fields
 you have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Strokes** (interior) | `lemma` | its first three letters, each drawn as one of 23 structurally distinct shapes |
-| **Notches** (edges) | `lemma` length | one notch per letter past the third, cut into both sides |
-| **Frame** (border) | — | **universal**; the same tablet on every glyph |
+| **Forms** | `lemma` | its first two letters, each one of 23 closed shapes, linked into one continuous figure |
+| **Foot** | `lemma` length | a bar whose width counts the word's letters |
+| **Stone** | — | 16 × 16 tile, lit top-left; the same for every glyph |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
-`PVL` glyph with three notches and no art file at all. **This is the intended path** — add a
+`PV` glyph with a 5-wide foot and no art file at all. **This is the intended path** — add a
 glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
@@ -74,9 +74,9 @@ boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whol
 composite, frame included, so hand-drawn glyphs must draw their own frame to stay
 readable in a line of inscription.
 
-> **No two glyphs may share their first three letters *and* their length.** Uniqueness
-> is global — the frame is universal, so it can never disambiguate for you. Fix a clash
-> with an explicit three-letter `mark`: `{ "lemma": "VIRIDIS", "mark": "VRD" }`.
+> **No two glyphs may share their first two letters *and* their length.** There is no
+> frame to disambiguate for you. Fix a clash with an explicit two-letter `mark`:
+> `{ "lemma": "VIRIDIS", "mark": "VR" }`.
 >
 > `determinative.class` still matters for **grammar** (`RUNES.md` §4.3.1) — it decides
 > whether a glyph can head a rune word. It no longer affects the art.
