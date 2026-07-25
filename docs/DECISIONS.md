@@ -32,24 +32,86 @@ a **reference layer** is explicitly permitted purely for *looking things up*:
 The rule of thumb: **no GUI ever stands between you and *doing* something; a GUI may
 exist only to *remember* what you've already done.**
 
-### D1 ✅ No GUI — in-world or on-item only
-The mod ships **no custom screens/menus of its own**. Every interaction and every
-piece of feedback is either:
+### D0 ✅ Terminology (canonical — use everywhere)
+- **Glyph** — a single **symbol**, mapping to one Latin word (`FLAMMANS`, `CHAOS`).
+  The atomic unit; **discovered** in the world.
+- **Rune word** — a **set of 2–3 glyphs** naming exactly one concrete thing
+  (`FLAMMANS · VIRGA` → Blaze Rod); **guessed** by the player and validated.
+- **Runes** — the **whole system**: the full body of glyphs and rune words.
+
+Mechanically: *glyphs are discovered, rune words are guessed.* A glyph must be
+discovered before it can be used in a guess.
+
+### D1 ✅ No GUI — in-world or on-item, with one minimal exception
+No **block or machine GUIs**. Every world interaction and every piece of feedback
+is either:
 - **in-world** — block interactions, multiblocks, block state/visual changes,
   floating in-world text/holograms above blocks, particles, items dropping,
   transformations that happen physically in the world; or
-- **on-item** — item tooltips, item name/NBT, item model/texture changes.
+- **on-item** — item tooltips, item name/NBT, item model/texture changes, and the
+  single item-borne interface described in D9.
 
-This explicitly includes the **glyph discovery & learning system**: there is no
-Codex *screen*. The "codex" becomes a physical journal item and/or an in-world
-lectern that renders glyphs as floating relief, with tier/meaning conveyed through
-item tooltips and in-world visual state. See open question **Q1** for exactly how
-knowledge is surfaced and stored.
+The rule bars *block/machine* screens outright — you never open a chest-like menu
+on an altar, pedestal, lectern, or observatory; those are worked with physically,
+in the world. All rituals and transformations remain strictly in-world.
 
-### D2 ✅ Translation is passive triangulation (Tier 1 → Tier 2)
-A glyph translates automatically once the player accumulates enough *independent*
-sightings (its `sightings_to_translate`). No decode mini-game. Rosetta tablets
-remain a shortcut. Keeps friction low and ships fast. (`GLYPHS.md` §1, `DISCOVERY.md` §3.)
+### D9 ✅ The codex interface — 20 glyph slots, minimally invasive
+The hand codex has an interface, but it is deliberately **not a menu**: it is a
+single flat grid of **20 empty glyph slots**, and nothing else.
+
+- Each slot **cycles through the glyphs the player has discovered** — you click or
+  scroll a slot to step through your known symbols. Undiscovered glyphs never
+  appear in the cycle, so the codex is physically incapable of expressing a glyph
+  you haven't found.
+- The player fills slots to spell out **rune words** (2–3 glyphs each) and hits
+  **submit** to test validity (D7).
+- No inventory, no tabs, no item slots, no crafting grid, no scrollable tree — just
+  the 20 slots and a submit action. It reads as an instrument, not a UI.
+- 20 slots is sized to lay out a **whole ritual's worth** of rune words at once
+  (~5–7 words × 2–3 glyphs), so the player can work a full puzzle in one view
+  rather than testing one word at a time. **See Q8** for exactly how submit
+  segments the grid into words.
+
+### D2 ✅ Glyph meaning is learned passively; rune word meaning is discovered actively
+Two layers, and they resolve the "active vs. passive learning" question together:
+- **Glyphs (vocabulary)** are learned **passively**: a glyph becomes readable once
+  you accumulate enough *independent* sightings (`sightings_to_translate`), or via
+  a Rosetta tablet. No minigame to learn a word.
+- **Rune words (meaning)** are discovered **actively**: you hypothesise a 2–3 glyph
+  combination in the hand codex and **submit** it to test whether it names a real
+  thing (D7/D8). This is the mod's decode loop.
+
+### D7 ✅ The hand codex: submit-to-test + seek mode
+A held **codex** item is the player's research instrument (interface spec: **D9**).
+Two functions:
+- **Submit / validate.** The player composes a **rune word** — 2 or 3 glyphs they
+  have **discovered** — and submits it. The codex answers whether that combination
+  is a real, meaningful rune word, and if so what it names (D8). This is how players
+  *test hypotheses* as they discover things in the world: wrong guesses cost nothing
+  but are not confirmed; right guesses decode a piece of the language permanently.
+  Only discovered glyphs can be entered at all (D9).
+- **Seek mode.** The codex points toward the **nearest structure containing a glyph
+  the player hasn't yet learned** — a dowsing needle, not a map marker. It gives a
+  *direction* (and rough distance) to somewhere worth exploring; it never reveals
+  *which* glyph is there or places a waypoint. This is the anti-frustration valve
+  that keeps discovery from stalling without turning the mod into a quest tracker.
+
+### D8 ✅ Glyphs hint in rune words of 2–3 words (compositional language)
+Glyphs are never used as a single long sentence. The language is **compositional**:
+a **rune word** of **2 or 3 glyphs names exactly one concrete thing** — an item, a
+block, a world condition, or an output. A ritual is described as a small set of
+such rune words, each hinting at one component.
+
+```
+ALTARE · TENEBRAE      → Blackstone Altar   (Altar + Darkness)
+FLAMMANS · VIRGA       → Blaze Rod          (Flaming + Rod)
+CAELUM · CHAOS         → Thunderstorm       (Heavens + Chaos)
+INFERNUS · METALLUM    → Netherite          (Hell + Metal)
+CHAOS · METALLUM       → Chaos Ingot        (Chaos + Metal)
+```
+
+Rune words are first-class data (`data/epigraphy/rune_words/*.json`), are what the codex
+validates on submit, and are what ritual recipes reference. See `RUNES.md` §3.
 
 ### D3 ✅ Thaumcraft-style backlash everywhere
 Dabbling has consequences *across the board*, not just on dark rituals. Attempting
@@ -81,11 +143,12 @@ the altar (D5), pedestals only ever hold catalyst items, which keeps this simple
 Leaning: ship `liquid_starlight` as the sole infusion medium in v1; add themed
 fluids (umbra, etc.) as tiers grow. No conflict with other decisions.
 
-### Q5 ❓ Form of the in-game documentation (D6)
-The reference guide populates as you learn — but what *is* it? A held **guide book**
-(a screen, acceptable since it's reference-only), or an in-world **lectern that
-projects** entries as holograms (purer no-GUI)? *Leaning: a lightweight guide book,
-since it's read-only reference and mirrors what JEI shows. Confirm when convenient.*
+### Q5 🔵 Form of the in-game documentation (D6) — likely the codex itself
+D7 gives the hand codex an item-borne interface, so the natural answer is that the
+**codex is also the documentation**: the same held item you submit rune words into has
+a reference section that fills in with learned glyphs, decoded rune words, and mastered
+rituals. One item, one mental model, no separate guide book. *Leaning strongly this
+way; confirm when convenient.*
 
 ### Q6 ❓ How is a ritual's backlash severity determined? (D3)
 Options to weigh later: fixed per-recipe `backlash` field; scaled by how *unknown*
@@ -95,8 +158,31 @@ number of untranslated glyphs in the attempt.*
 
 ---
 
+### Q8 ❓ How does submit segment the 20 slots into rune words? (D9)
+The grid holds ~5–7 rune words at once, so submit needs to know where one word ends
+and the next begins. Options:
+- **Gap-delimited (leaning).** Contiguous filled slots form a word; an empty slot
+  ends it. `[FLAMMANS][VIRGA][ ][INFERNUS][METALLUM]` = two words. Zero extra UI,
+  reads naturally left-to-right.
+- **Fixed rows.** The 20 slots are 5 rows of 4; each row is one word (2–3 used,
+  rest empty). Unambiguous, but wastes slots and feels more form-like.
+- **One word at a time.** Only the first contiguous group is evaluated per submit.
+  Simplest to build, but throws away the point of having 20 slots.
+
+*Leaning gap-delimited*, with each word validated independently so a player can
+submit five guesses and see which ones land.
+
+### Q7 ❓ What does a *wrong* codex submission cost?
+D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth
+weighing: consume a charge/ink resource per submission, add a cooldown, or feed
+failed submissions into `instability` (D3). *Leaning: free but with a short
+cooldown, so brute-forcing every glyph pair is tedious rather than optimal — see
+`RUNES.md` §3.4 on combinatorial safety.*
+
+---
+
 ## Docs reconciled with these decisions
-All bodies now reflect D1–D6; the "revision pending" banners have been removed.
+All bodies now reflect D1–D8; the "revision pending" banners have been removed.
 - `DESIGN.md` — no-GUI pillar (D1/D6), glyphs-as-research (D5), backlash in the loop (D3).
 - `DISCOVERY.md` — recording/review is in-world + on-item (D1); glyphs framed as
   research (D5); sky reading is a v1 system (D4).

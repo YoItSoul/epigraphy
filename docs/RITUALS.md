@@ -1,9 +1,9 @@
 # Rituals & Infusion
 
 The back half of the loop: the altar, the pedestals, the infusion fluid, and the
-environmental conditions that turn a glyph sentence into an actual crafting event.
-This document specifies the multiblock, the full JSON recipe schema, the backlash
-system, and worked examples.
+environmental conditions that turn a set of decoded **rune words** into an actual
+crafting event. This document specifies the multiblock, the full JSON recipe
+schema, the backlash system, and worked examples.
 
 Two decisions shape this doc: glyphs are a **research** layer, **not** physical
 altar ingredients (D5) — pedestals only ever hold catalyst items, and the altar
@@ -96,10 +96,16 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
   // lower-tier recipes unless "exact_altar": true.
   "altar": "epigraphy:blackstone_altar",
 
-  // The glyph "sentence." Drives (a) the Tier-2 instruction text and
-  // (b) the knowledge gate (see KNOWLEDGE.md §4). Order is read left→right.
-  "glyphs": ["epigraphy:altare", "epigraphy:flammans",
-             "epigraphy:caelum", "epigraphy:metallum", "epigraphy:chaos"],
+  // The ritual's hint: a set of 2-3 glyph RUNE WORDS (D8, RUNES.md §3), each naming
+  // one component. Drives (a) the hint text the player reads and (b) the research
+  // gate (KNOWLEDGE.md §4). Unordered for mechanics; order is presentational.
+  "rune_words": [
+    "epigraphy:blackstone_altar",   // ALTARE · TENEBRAE
+    "epigraphy:blaze_rod",          // FLAMMANS · VIRGA
+    "epigraphy:thunderstorm",       // CAELUM  · CHAOS
+    "epigraphy:netherite",          // INFERNUS· METALLUM
+    "epigraphy:chaos_ingot"         // CHAOS   · METALLUM  (the output)
+  ],
 
   // Catalyst items on pedestals. Matched as a multiset (order-independent).
   // Each entry is a vanilla Ingredient plus a count.
@@ -136,15 +142,15 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
 ### Matching algorithm (what the altar core does)
 1. On activation, read: altar tier, the multiset of pedestal items, the input in
    the pool, the fluid + amount available, and evaluate all condition types for
-   the current world/position. (Glyphs are **not** read from the world — they live
-   in the player's research, step 3.)
+   the current world/position. (Glyphs/rune words are **not** read from the world —
+   they live in the player's research, step 3.)
 2. Filter recipes to those whose `altar`, `pedestals`, `input`, `fluid`,
    `fluid_amount`, and required `conditions` all match the physical setup.
 3. Apply the **research check** (`KNOWLEDGE.md` §4b) against the triggering player:
-   - **Learned all** the recipe's glyphs → **clean** run.
-   - **Some glyphs unlearned/unknown** → a **blind attempt**: it still fires (the
-     build is physically correct) but triggers **backlash** (§4.1) scaled by the
-     number of untranslated glyphs.
+   - **Decoded all** the recipe's rune words → **clean** run.
+   - **Some rune words undecoded** → a **blind attempt**: it still fires (the build is
+     physically correct) but triggers **backlash** (§4.1) scaled by how many
+     rune words remain undecoded.
    - **No physical match at all** → the altar sputters (in-world particles/sound),
      nothing is consumed.
 4. Run it: consume fluid/pedestal items over `duration_ticks` with in-world
@@ -156,7 +162,7 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
 
 ### 4.1 Backlash (D3)
 A **blind attempt** (step 3) does not fail silently — it *bites*. Severity is a
-per-recipe base amplified by how many of its glyphs the player hasn't learned and
+per-recipe base amplified by how many of its rune words the player hasn't decoded and
 by the player's accrued `instability` (`KNOWLEDGE.md` §5). Escalating effects:
 
 - **Minor:** the input and some pedestal items are consumed for nothing; a puff of
@@ -177,9 +183,10 @@ Optional per-recipe tuning via a `backlash` field:
 }
 ```
 
-If omitted, a sensible default is derived from the rarest glyph in the recipe
-(rare glyphs → harsher backlash). A pack can set `require_learning_to_attempt` to
-make blind attempts simply fizzle instead (`KNOWLEDGE.md` §4).
+If omitted, a sensible default is derived from the rarest glyph appearing in the
+recipe's rune words (rare glyphs → harsher backlash). A pack can set
+`require_learning_to_attempt` to make blind attempts simply fizzle instead
+(`KNOWLEDGE.md` §4).
 
 ---
 
@@ -191,8 +198,13 @@ make blind attempts simply fizzle instead (`KNOWLEDGE.md` §4).
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
-  "glyphs": ["epigraphy:altare", "epigraphy:flammans",
-             "epigraphy:caelum", "epigraphy:metallum", "epigraphy:chaos"],
+  "rune_words": [
+    "epigraphy:blackstone_altar",   // ALTARE  · TENEBRAE
+    "epigraphy:blaze_rod",          // FLAMMANS· VIRGA
+    "epigraphy:thunderstorm",       // CAELUM  · CHAOS
+    "epigraphy:netherite",          // INFERNUS· METALLUM
+    "epigraphy:chaos_ingot"         // CHAOS   · METALLUM
+  ],
   "pedestals": [ { "item": "minecraft:blaze_rod", "count": 4 } ],
   "input": { "item": "minecraft:netherite_ingot", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
@@ -205,9 +217,41 @@ make blind attempts simply fizzle instead (`KNOWLEDGE.md` §4).
   "duration_ticks": 200
 }
 ```
-Reads as: **Upon the Altar, that which Flames — beneath the raging Heavens —
-quench Metal into Chaos.** The thunderstorm + sky-visible conditions are the
-"Heavens' fury"; blaze rods are "that which flames"; netherite is "metal."
+
+The five rune words are exactly the five things the player must work out, and each is
+a 2-word batch:
+
+| Rune word | Glyphs | Names |
+|---|---|---|
+| `blackstone_altar` | ALTARE · TENEBRAE | Blackstone Altar |
+| `blaze_rod` | FLAMMANS · VIRGA | Blaze Rod |
+| `thunderstorm` | CAELUM · CHAOS | Thunderstorm |
+| `netherite` | INFERNUS · METALLUM | Netherite |
+| `chaos_ingot` | CHAOS · METALLUM | Chaos Ingot |
+
+A player who has learned the words but decoded nothing sees *"Altar · Darkness /
+Flaming · Rod / Heavens · Chaos / Hell · Metal / Chaos · Metal"* — genuinely
+solvable, and each hunch is confirmed by submitting it in the codex.
+
+**Supporting rune word definitions** (`RUNES.md` §3.1):
+```jsonc
+// data/epigraphy/rune_words/thunderstorm.json
+{
+  "glyphs": ["epigraphy:caelum", "epigraphy:chaos"],
+  "means": { "type": "condition", "value": { "type": "epigraphy:weather", "value": "thunder" } },
+  "reading": "When the heavens turn to chaos.",
+  "hint": "A raging sky."
+}
+```
+```jsonc
+// data/epigraphy/rune_words/netherite.json
+{
+  "glyphs": ["epigraphy:infernus", "epigraphy:metallum"],
+  "means": { "type": "item", "value": "minecraft:netherite_ingot" },
+  "reading": "Metal born of hell.",
+  "hint": "Hell's own metal."
+}
+```
 
 ### 5.2 Illuminated Stone (intro, T1) — teaches the system
 ```jsonc
@@ -215,7 +259,11 @@ quench Metal into Chaos.** The thunderstorm + sky-visible conditions are the
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:stone_altar",
-  "glyphs": ["epigraphy:altare", "epigraphy:lapis", "epigraphy:caelum"],
+  "rune_words": [
+    "epigraphy:stone_altar",       // ALTARE · LAPIS
+    "epigraphy:starlit_night",     // CAELUM · NOX
+    "epigraphy:illuminated_stone"  // LAPIS  · CAELUM
+  ],
   "pedestals": [ { "item": "minecraft:glowstone_dust", "count": 2 } ],
   "input": { "item": "minecraft:stone", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
@@ -228,17 +276,22 @@ quench Metal into Chaos.** The thunderstorm + sky-visible conditions are the
   "duration_ticks": 100
 }
 ```
-A gentle first ritual: any player who has liquid starlight and can read `ALTARE ·
-LAPIS · CAELUM` can make a light-emitting stone at night. It exists to teach
-pedestals + fluid + a single condition before Chaos Ingot demands a thunderstorm.
+A gentle first ritual with only three rune words, all built from **common** glyphs.
+It's the tutorial for the whole language: `ALTARE · LAPIS` (Stone Altar) is the
+player's first likely codex submit, and its success teaches that 2-glyph batches
+name things.
 
-### 5.3 A `moon_phase` example (shows the condition breadth)
+### 5.3 A `moon_phase` example (shows a 3-glyph rune word)
 ```jsonc
 // data/epigraphy/recipes/umbral_shard.json (sketch)
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
-  "glyphs": ["epigraphy:altare", "epigraphy:tenebrae", "epigraphy:nox"],
+  "rune_words": [
+    "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELUM  (3-glyph rune word)
+    "epigraphy:umbral_shard"       // TENEBRAE · LAPIS
+  ],
   "pedestals": [ { "tag": "forge:gems/quartz", "count": 4 } ],
   "input": { "item": "minecraft:echo_shard", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
@@ -251,6 +304,9 @@ pedestals + fluid + a single condition before Chaos Ingot demands a thunderstorm
   "duration_ticks": 160
 }
 ```
+`NOX · TENEBRAE · CAELUM` ("Night · Darkness · Heavens") is the 3-glyph form —
+used when two words are too ambiguous to name a thing uniquely. Here two words
+would only get you "a dark sky"; the third pins it to the **new moon**.
 
 ---
 

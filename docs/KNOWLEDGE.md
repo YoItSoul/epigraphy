@@ -22,12 +22,14 @@ never erase it.
 
 ```
 PlayerKnowledge {
-  // Per-glyph research progress
+  // GLYPH layer — discovered in the world, learned passively (D2)
   Map<GlyphId, GlyphProgress> glyphs
 
+  // RUNE WORD layer — guessed in the codex, validated on submit (D7/D8)
+  Set<RuneWordId> decoded         // rune words this player has correctly guessed
+
   // Per-ritual progress
-  Set<RitualId> understood        // you've learned enough glyphs to read its instructions
-  Set<RitualId> mastered          // Tier 3: you've performed it / obtained its result
+  Set<RitualId> mastered          // Tier 3: performed it / obtained its result
 
   // Per-result-item unlocks (obtaining an item counts, not only crafting it)
   Set<ItemId> itemsObtained
@@ -43,12 +45,23 @@ GlyphProgress {
 }
 ```
 
+The two layers are the heart of the model and must stay distinct:
+
+| Layer | How it advances | Stored as |
+|---|---|---|
+| **Glyphs** (symbols) | **Discovered** — sight them in the world; learned automatically at threshold (D2) | `glyphs` map |
+| **Rune words** (2–3 glyph sets) | **Guessed** — composed in the codex's 20 slots and submitted (D9) | `decoded` set |
+
 Derived tiers (not stored redundantly):
 
-- **Glyph Tier 0 — Unknown** — no `GlyphProgress` entry.
-- **Glyph Tier 1 — Sighted** — entry exists, `learned == false`.
-- **Glyph Tier 2 — Learned** — `learned == true`. The glyph is now readable
-  everywhere and its knowledge unlocks understanding of recipes/systems using it.
+- **Glyph Tier 0 — Unknown** — no `GlyphProgress` entry. Not selectable in the codex.
+- **Glyph Tier 1 — Sighted** — entry exists, `learned == false`. Shape known, meaning `???`.
+- **Glyph Tier 2 — Learned** — `learned == true`. Readable everywhere, and now
+  **selectable in the codex's slots** so it can be used in guesses.
+- **Rune word — Decoded** — in `decoded`. Renders as its true referent
+  ("Blaze Rod") rather than literal glosses ("Flaming · Rod").
+- **Ritual — Understood** — all of its rune words are `decoded` (derived, not
+  stored), *or* seeded by a looted ritual tablet.
 - **Ritual Tier 3 — Mastered** — in `mastered`, *or* its result is in
   `itemsObtained`.
 
@@ -100,20 +113,25 @@ change.
 
 Two gates use research, and keeping them distinct matters:
 
-**(a) Ritual understanding** — *do you know this ritual exists and roughly how?*
-A ritual becomes **understood** (its instructions readable in the documentation,
-and its in-world hints legible) when the player has **learned** (Tier 2) the glyphs
-that define it — that's the research paying off. Partially-learned rituals read
-partially, with untranslated glyphs showing as `???`, nudging what to research next
-(`GLYPHS.md` §3). Some rituals may also be seeded directly by looting a ritual
-tablet.
+**(a) Ritual understanding** — *do you know what this ritual asks for?*
+A ritual's hint is a set of **rune words**. Each renders according to what the
+player knows, so partial knowledge is legible and directional:
+
+| Player state | Renders as |
+|---|---|
+| A glyph in the word isn't learned | `⟨symbol⟩ · ???` — unreadable |
+| Glyphs learned, word not decoded | *"Flaming · Rod"* — a solvable clue |
+| Word decoded in the codex | *"Blaze Rod"* — its true referent |
+
+A ritual is **understood** when all its rune words are decoded (or it was seeded by
+a looted ritual tablet). The un-decoded words are exactly the player's to-do list.
 
 **(b) Ritual attemptability** — *will the altar even try, and how dangerous is it?*
 When the altar core searches for a match, it checks research:
-- If the player has **learned all** the recipe's glyphs → the ritual runs cleanly.
-- If some glyphs are **only sighted or unknown** → the player may still *attempt* a
-  ritual whose physical setup happens to be correct, but it is a **blind attempt**
-  and triggers **backlash** (D3, §5) scaled by how many glyphs are untranslated.
+- If the player has **decoded all** the recipe's rune words → the ritual runs cleanly.
+- If some rune words are **undecoded** → the player may still *attempt* a ritual
+  whose physical setup happens to be correct, but it is a **blind attempt** and
+  triggers **backlash** (D3, §5) scaled by how many rune words remain undecoded.
   Reckless experimentation is possible — it just bites back.
 
 > Both behaviours are server-config tunable: `require_learning_to_attempt` (if a
@@ -127,9 +145,9 @@ When the altar core searches for a match, it checks research:
 Blind or botched rituals have consequences everywhere, not just for dark magic:
 
 - **Trigger:** an altar fires with a valid physical setup but the player hasn't
-  *learned* all the ritual's glyphs, or a partial/ambiguous match resolves badly.
+  *decoded* all the ritual's rune words, or a partial/ambiguous match resolves badly.
 - **Severity** (leaning, `DECISIONS.md` Q6): a per-recipe base amplified by the
-  count of untranslated glyphs in the attempt, and by the player's current
+  count of undecoded rune words in the attempt, and by the player's current
   `instability`.
 - **Effects (escalating):** wasted ingredients → hostile/anomaly spawns at the
   altar → lingering area corruption the world remembers → a rise in the player's
@@ -180,12 +198,15 @@ amount, conditions) is written into the reference layer only at **Tier 3**:
 
 - `PlayerKnowledge` capability + attach/persist/sync (action packets C2S; state
   packets S2C).
-- Derivation helpers: `glyphTier(id)`, `isRitualUnderstood(recipe)`,
-  `attemptResult(recipe, player)` → `{clean | blind(untranslatedCount) | no_match}`,
+- Derivation helpers: `glyphTier(id)`, `isDecoded(runeWordId)`,
+  `selectableGlyphs(player)` (what the codex slots may cycle — learned only),
+  `isRitualUnderstood(recipe)`,
+  `attemptResult(recipe, player)` → `{clean | blind(undecodedCount) | no_match}`,
   `isRitualMastered(recipe)`.
 - Mutations: `recordSighting(source, glyphId)`, `applyRosetta(glyphId)`,
-  `markUnderstood(id)`, `masterRitual(id)`, `markItemObtained(itemId)`,
-  `addInstability(n)` / decay tick.
+  `submitRuneWord(glyphIds[])` → `{decoded | no_match}` (server-authoritative
+  validation against the rune word registry), `masterRitual(id)`,
+  `markItemObtained(itemId)`, `addInstability(n)` / decay tick.
 - Hooks: inventory-acquisition listener (Tier-3 by obtaining), ritual-success and
   ritual-backlash callbacks, record/study interactions.
 - The reference layer: an in-game documentation model populated from knowledge, and

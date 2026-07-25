@@ -18,11 +18,13 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
    sky the way secret items are tucked into a Risk of Rain level — you have to
    actually look.
 
-2. **A real, learnable language.** Glyphs are not abstract skill-tree nodes.
-   Each glyph is a symbol that maps to a Latin word (`ALTARE`, `TENEBRAE`,
-   `FLAMMANS`, `VIRGA`, `CHAOS`, `CAELUM`, `INFERNUS`, `METALLUM`, …). Rituals
-   are *phrases* in that language. Once you can read, the world tells you what to
-   do in its own words.
+2. **A real, learnable, compositional language.** Glyphs are not abstract
+   skill-tree nodes. Each glyph is a symbol mapping to a Latin word (`ALTARE`,
+   `TENEBRAE`, `FLAMMANS`, `VIRGA`, `CHAOS`, `CAELUM`, `INFERNUS`, `METALLUM`, …),
+   and — crucially — **2–3 glyphs combine into a rune word that names one concrete
+   thing**: `FLAMMANS · VIRGA` → Blaze Rod, `INFERNUS · METALLUM` → Netherite. You
+   learn *words* by exploring and work out *meanings* by combining them. Once you
+   can read, the world tells you what to do in its own words.
 
 3. **Knowing ≠ having.** Learning a glyph teaches you the *instructions* (flavor
    text, translated hints). It does **not** hand you the recipe. The precise,
@@ -55,35 +57,46 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
 ## 2. The core loop
 
 ```
-        ┌────────────────────────────────────────────────────────────┐
-        │                                                            │
-        ▼                                                            │
-  ┌───────────┐   record    ┌───────────┐   translate   ┌──────────────┐
-  │  SIGHT a  │───────────▶ │  KNOW the │─────────────▶ │  READ the    │
-  │  glyph in │   (Codex)   │  glyph's  │  (cross-ref / │  glyph as    │
-  │ the world │             │  SHAPE    │   Rosetta)    │  flavor text │
-  └───────────┘             └───────────┘               └──────┬───────┘
-        ▲                                                       │
-        │                                                       │ instructions
-        │ new sightings                                         │ hint at a ritual
-        │ point to new glyphs                                   ▼
-  ┌───────────┐                                          ┌──────────────┐
-  │ EXPLORE / │◀─────────────────────────────────────────│  PERFORM the │
-  │ fight for │        reward: tablets, ingredients        │  ritual /    │
-  │  tablets  │                                            │  OBTAIN item │
-  └───────────┘                                            └──────┬───────┘
-                                                                  │ unlocks
-                                                                  ▼
-                                                          ┌──────────────┐
-                                                          │  RECIPE now  │
-                                                          │  shown in    │
-                                                          │  JEI         │
-                                                          └──────────────┘
+   ┌──────────────────────────────────────────────────────────────────┐
+   │                                                                  │
+   ▼                                                                  │
+┌───────────┐  record   ┌───────────┐ triangulate ┌──────────────┐    │
+│  SIGHT a  │─────────▶ │  KNOW the │───────────▶ │  LEARN the   │    │
+│  glyph in │ (rubbing) │  glyph's  │ (sightings/ │  word it     │    │
+│ the world │           │   SHAPE   │   Rosetta)  │  stands for  │    │
+└───────────┘           └───────────┘             └──────┬───────┘    │
+   ▲  ▲                                                  │            │
+   │  │ seek mode points                                 │ words can  │
+   │  │ toward unlearned                                 │ now be     │
+   │  │                                                  ▼ combined   │
+   │  │                                          ┌──────────────────┐ │
+   │  │                                          │ SUBMIT a 2-3     │ │
+   │  │                                          │ glyph RUNE WORD  │ │
+   │  │                                          │ in the codex     │ │
+   │  │                                          └──────┬───────────┘ │
+   │  │                                                 │ decoded:    │
+   │  │                                                 │ names a     │
+   │  │                                                 ▼ thing       │
+┌──┴──────────┐                                  ┌──────────────────┐ │
+│  EXPLORE /  │◀─────────────────────────────────│  PERFORM the     │ │
+│  fight for  │    reward: tablets, ingredients  │  ritual /        │─┘
+│   tablets   │                                  │  OBTAIN the item │
+└─────────────┘                                  └──────┬───────────┘
+                                                        │ masters
+                                                        ▼
+                                                ┌──────────────────┐
+                                                │  EXACT RECIPE    │
+                                                │  in codex + JEI  │
+                                                └──────────────────┘
 ```
 
-The loop is deliberately front-loaded on *looking*, and back-loaded on
-*confirmation*. You spend the early game unable to read; the mid game learning
-to read and guessing; the late game fluent and efficient (JEI-assisted).
+The loop is front-loaded on *looking*, middled on *reasoning*, and back-loaded on
+*confirmation*. Early game you can't read; mid game you're learning words and
+guessing at what they build; late game you're fluent and efficient.
+
+Note the two distinct learning verbs, which is what keeps the middle interesting:
+**learning a word is passive** (sight it enough times), but **decoding what words
+build is active** (hypothesise a rune word, submit it, find out).
 
 ---
 
@@ -129,7 +142,7 @@ See [`KNOWLEDGE.md`](KNOWLEDGE.md) for the data model and progression details.
 
 Each system has its own document; this section is the map.
 
-### 4.1 Glyphs & the language — [`GLYPHS.md`](GLYPHS.md)
+### 4.1 Glyphs & the language — [`RUNES.md`](RUNES.md)
 The lexicon. Every glyph is a datapack entry with an id, a Latin lemma, an
 English gloss, a category (element / place / action / material / celestial), and
 art. Rituals reference glyphs by id. This doc also defines how "sentences" are
@@ -162,36 +175,49 @@ Package layout, registry plan, dependencies, and a phased build order from
 To ground everything, here is the flagship early-mid ritual, traced through all
 three tiers. This is the example you gave, formalized.
 
-**The ritual, as a glyph sentence:**
+**The ritual, as five 2-word rune words:**
 
 ```
-ALTARE · FLAMMANS · CAELUM · METALLUM · CHAOS
-(Altar)  (Flaming)  (Heavens) (Metal)   (Chaos)
+ALTARE · TENEBRAE      → Blackstone Altar    (Altar + Darkness)
+FLAMMANS · VIRGA       → Blaze Rod           (Flaming + Rod)
+CAELUM · CHAOS         → Thunderstorm        (Heavens + Chaos)
+INFERNUS · METALLUM    → Netherite           (Hell + Metal)
+CHAOS · METALLUM       → Chaos Ingot         (Chaos + Metal)
 ```
 
-**Tier 0 → 1 (Sighted).** The player finds the `CHAOS` glyph carved into a
-blackened ruin in the Nether, `CAELUM` as a constellation on a clear night, and
-receives a `FLAMMANS` tablet from a Blaze. Using a charcoal rubbing on each carving
-(and studying the tablet at a lectern) records an independent sighting — all
-in-world, no screen.
+Five rune words, five things to work out: the altar, the catalyst, the condition, the
+input, the output.
 
-**Tier 1 → 2 (Learned).** After enough independent sightings (and maybe a Rosetta
-fragment), the research completes and the glyphs become readable. The ritual — now
-*understood* because its glyphs are learned — reads:
+**Tier 0 → 1 (Sighted).** The player finds `CHAOS` carved into a blackened ruin in
+the Nether, reads `CAELUM` as a constellation on a clear night, and gets a
+`FLAMMANS` tablet off a Blaze. A charcoal rubbing on each carving (and studying the
+tablet at a lectern) records an independent sighting — all in-world, no screen.
+When they run dry, **seek mode** on the codex points them toward the nearest
+structure holding a glyph they haven't learned.
 
-> *Raise a **Blackstone Altar**. Set upon its pedestals that which **flames** in
-> the deep. When the **Heavens** rage with storm, cast **Metal** born of the
-> nether into the pool, and it shall be remade as **Chaos**.*
+**Tier 1 → 2 (Learned).** Enough independent sightings (or a Rosetta) and the words
+become readable. The ritual hint now reads as literal glosses:
 
-The player understands the shape of the task but has no exact recipe entry yet —
-and could *attempt* it now, though doing so before learning every glyph risks
-backlash.
+> *Altar · Darkness  ·  Flaming · Rod  ·  Heavens · Chaos  ·  Hell · Metal  ·  Chaos · Metal*
 
-**Tier 2 → 3 (Mastered).** The player builds a Blackstone Altar, places blaze rods
-on the pedestals, submerges a netherite ingot in the infusion fluid, and waits for
-a thunderstorm. The ritual fires in-world; a **Chaos Ingot** is produced. The
-moment it enters their inventory, the full recipe is written into the in-game
-documentation and JEI.
+This is the good part: that's **solvable**. "Flaming Rod" is clearly a blaze rod;
+"Hell Metal" is netherite; "Heavens' Chaos" is a storm. The player has a hypothesis
+and no confirmation.
+
+**Decoding (the active step).** They open the hand codex, compose `FLAMMANS +
+VIRGA`, and **submit**. It matches — the rune word permanently decodes to **Blaze
+Rod** and now reads that way everywhere. They repeat for the other four. Each
+correct guess sharpens the ritual from poetry into a plan. (Wrong guesses cost
+nothing but confirm nothing.)
+
+They could *attempt* the ritual before decoding everything — but every undecoded
+rune word raises the **backlash** risk if they do.
+
+**Tier 2 → 3 (Mastered).** The player builds a Blackstone Altar, rings it with
+blaze rods, submerges a netherite ingot in the infusion fluid, and waits for a
+thunderstorm. The ritual fires in-world; a **Chaos Ingot** is produced. The moment
+it enters their inventory, the *exact* recipe — counts, amounts, conditions — is
+written into the codex reference and JEI.
 
 **The JSON that defines it** (see [`RITUALS.md`](RITUALS.md) for the schema):
 
@@ -243,7 +269,7 @@ is right) but incurs backlash — the tunable rule described in `KNOWLEDGE.md` �
 |-----|----------|
 | [`DECISIONS.md`](DECISIONS.md) | The decisions log — settled choices (source of truth) & open questions |
 | [`DESIGN.md`](DESIGN.md) | This file — vision, pillars, core loop, worked example |
-| [`GLYPHS.md`](GLYPHS.md) | The glyph language: lexicon, categories, sentences, translation text |
+| [`RUNES.md`](RUNES.md) | The glyph language: lexicon, categories, sentences, translation text |
 | [`DISCOVERY.md`](DISCOVERY.md) | Finding & recording glyphs (in-world/on-item); worldgen, sky, tablets |
 | [`RITUALS.md`](RITUALS.md) | Altar, pedestals, fluid, conditions, backlash; JSON schema & examples |
 | [`KNOWLEDGE.md`](KNOWLEDGE.md) | Per-player research/knowledge capability, tiers, backlash, reference gating |

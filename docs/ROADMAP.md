@@ -31,7 +31,10 @@ com.epigraphy
 │   ├─ EpiRecipes  (infusion recipe type/serializer)
 │   ├─ EpiFeatures (carving worldgen)
 │   └─ EpiGLMs     (global loot modifiers: tablet drops)
-├─ glyph/                         // Glyph = data object; GlyphManager = datapack loader
+├─ rune/                          // the language layer
+│   ├─ Glyph · GlyphManager       //   symbols; datapack loader for data/*/glyphs/
+│   └─ RuneWord · RuneWordManager //   2-3 glyph sets; loader for data/*/rune_words/
+│                                 //   + lookup by unordered glyph set (submit validation)
 ├─ knowledge/                     // PlayerKnowledge capability, tiers, sync packets
 │   ├─ PlayerKnowledge · KnowledgeProvider · KnowledgeTier
 │   └─ net/  (SyncKnowledgePacket, RecordSightingC2S, …)
@@ -54,8 +57,11 @@ com.epigraphy
 
 ## 3. What each system needs from the code (cross-refs)
 
-- **Glyphs** (`GLYPHS.md`): a `Glyph` record + a `SimpleJsonResourceReloadListener`
-  loading `data/*/glyphs/*.json`; a client-side translated-text resolver.
+- **Runes** (`RUNES.md`): a `Glyph` record and a `RuneWord` record, each with a
+  `SimpleJsonResourceReloadListener` (`data/*/glyphs/`, `data/*/rune_words/`). The
+  rune word registry needs an **unordered-glyph-set index** so codex submissions
+  validate in O(1). Plus a client-side resolver that renders a rune word at the
+  right tier (unreadable / literal glosses / true referent).
 - **Discovery** (`DISCOVERY.md`): `GlyphCarvingBlock` + BE; a `ConfiguredFeature`/
   `PlacedFeature` for carvings; Global Loot Modifiers for tablet drops; the Codex
   item + on-carving record interaction (no screen); Lectern of Study block;
@@ -81,22 +87,28 @@ Each phase ends at something runnable/testable, so the mod is never a big-bang.
 Gradle + ForgeGradle, `mods.toml`, `Epigraphy.java`, empty DeferredRegisters, a
 creative tab. Goal: `runClient` opens a world with the mod present.
 
-**Phase 1 — Glyphs as data.**
-`Glyph` object + datapack loader; ship the starter lexicon JSON (`GLYPHS.md` §2);
-`/epigraphy glyphs` debug command lists loaded glyphs. No gameplay yet.
+**Phase 1 — Runes as data.**
+`Glyph` + `RuneWord` objects and their datapack loaders; ship the starter lexicon
+(`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the unordered-glyph-set
+index for submit validation. `/epigraphy runes` debug command lists both. No
+gameplay yet.
 
 **Phase 2 — Knowledge capability (research spine).**
-`PlayerKnowledge` + persistence + sync; derived tiers; debug commands to
-grant/inspect sightings/learns. In-world/on-item surfacing stub: tablet tooltips
-reflect tier. **No screen** (D1). This is the spine everything hangs on — build it
-early.
+`PlayerKnowledge` + persistence + sync; both layers (glyph progress + decoded rune
+words); derived tiers; debug commands to grant/inspect sightings, learns, and
+decodes. On-item surfacing stub: tablet tooltips reflect tier. This is the spine
+everything hangs on — build it early.
 
-**Phase 3 — Discovery (incl. sky, D4).**
+**Phase 3 — Discovery & the codex (incl. sky, D4).**
 `GlyphCarvingBlock` + on-carving record action (charcoal rubbing → inscribed
 rubbing item); Lectern of Study + inscribed tablets; carving worldgen feature;
 tablet loot GLMs. **Observatory + Astrolabe sky reading ships here** (D4) — the
-in-world constellation projection is v1 identity, so it's core, not deferred. Now
-research can be *earned* in-world.
+in-world constellation projection is v1 identity, so it's core, not deferred.
+
+The **codex** lands here too (D9): the 20-slot grid whose slots cycle only
+*learned* glyphs, plus server-authoritative `submitRuneWord` validation and **seek
+mode** (structure-tagged locate, `DISCOVERY.md` §7.1). At the end of this phase the
+full discover → learn → guess → decode loop is playable, before any ritual exists.
 
 **Phase 4 — Rituals.**
 Infusion `RecipeType` + serializer + condition registry; Stone/Blackstone altars +
@@ -112,21 +124,26 @@ mastered state. Now "knowing ≠ having" and "research first or pay for it" are 
 end-to-end.
 
 **Phase 6 — Polish.**
-Ritual particles/FX, backlash FX, documentation art & lore text, sounds,
-advancement hooks, config (`require_learning_to_attempt`,
-`reveal_instructions_on_sighting`), and settling the documentation form (guide book
-vs. in-world lectern projection — `DECISIONS.md` Q5).
+Ritual particles/FX, backlash FX, codex art & lore text, sounds, advancement hooks,
+config (`require_learning_to_attempt`, `reveal_instructions_on_sighting`), and
+settling the reference form (`DECISIONS.md` Q5) and submit-segmentation (Q8) if not
+already fixed in Phase 3.
 
 ---
 
 ## 5. Testing strategy
 
-- **Datapack validation** — a load-time sanity pass: every ritual's `glyphs`
-  reference existing glyphs; no two recipes match identical setups (the
-  determinism rule in `RITUALS.md` §7); referenced items/fluids exist.
+- **Datapack validation** — a load-time sanity pass: every rune word's glyphs exist
+  and number 2–3; every ritual's `rune_words` reference existing rune words; **no
+  two rune words share the same unordered glyph set** (submit must be
+  deterministic); no two recipes match identical setups (`RITUALS.md` §7);
+  referenced items/fluids exist.
+- **Unit** — rune word lookup by unordered glyph set; slot-grid segmentation (Q8).
 - **GameTest** (Forge) for the altar: build altar+pedestals in a test structure,
-  force weather/time, fire the ritual, assert output + Tier-3 unlock.
-- **Manual matrix** — the three-tier walkthrough from `DESIGN.md` §5 as a QA script.
+  force weather/time, fire the ritual, assert output + mastery. A second case
+  asserts a blind attempt produces backlash instead.
+- **Manual matrix** — the full walkthrough from `DESIGN.md` §5 as a QA script:
+  sight → learn → guess in codex → decode → perform → mastered.
 
 ---
 
@@ -134,20 +151,23 @@ vs. in-world lectern projection — `DECISIONS.md` Q5).
 
 Resolved since the first draft:
 
-1. ✅ **No gameplay GUI (D1).** In-world/on-item actions only; the reference layer
-   is the sole permitted screen surface.
-2. ✅ **Translation is passive triangulation (D2).** No decode minigame.
-3. ✅ **Backlash everywhere (D3).** Blind attempts bite back — implemented in Phase 5.
-4. ✅ **Sky reading ships in v1 (D4).** Pulled into Phase 3.
-5. ✅ **Glyphs are research, not reagents (D5).** Pedestals hold catalysts only;
-   the altar reads the player's learned glyphs.
-6. ✅ **Reference layer = in-game documentation + JEI (D6).**
+1. ✅ **Terminology (D0).** Glyph = symbol; rune word = 2–3 glyph set; Runes = the
+   whole system. Glyphs are discovered, rune words are guessed.
+2. ✅ **No block/machine GUI (D1)** — with one minimal exception, the codex (D9).
+3. ✅ **Glyphs learned passively, rune words guessed actively (D2).**
+4. ✅ **Backlash everywhere (D3).** Blind attempts bite back — Phase 5.
+5. ✅ **Sky reading ships in v1 (D4).** Pulled into Phase 3.
+6. ✅ **Glyphs are research, not reagents (D5).** Pedestals hold catalysts only.
+7. ✅ **Reference layer = in-game documentation + JEI (D6).**
+8. ✅ **Codex: submit + seek (D7); 20 cycling glyph slots (D9).**
 
 Still open (don't block early phases):
 
-- 🔵 **Pedestal matching** — multiset now, patterned geometry later (D5 keeps this simple).
+- 🔵 **Pedestal matching** — multiset now, patterned geometry later.
 - 🔵 **Fluid identity** — one `liquid_starlight` now, themed fluids later.
-- ❓ **Documentation form (Q5)** — guide book vs. in-world lectern projection.
-- ❓ **Backlash severity model (Q6)** — per-recipe base × untranslated-count × instability.
+- 🔵 **Reference form (Q5)** — likely the codex itself rather than a separate book.
+- ❓ **Backlash severity model (Q6)** — per-recipe base × undecoded-count × instability.
+- ❓ **Wrong-submission cost (Q7)** — free, cooldown, or consumable.
+- ❓ **Slot segmentation (Q8)** — how submit splits 20 slots into words; leaning gap-delimited.
 
 See `DECISIONS.md` for the current standing of each.
