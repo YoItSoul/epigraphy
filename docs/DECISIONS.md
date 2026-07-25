@@ -152,41 +152,51 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — the stave path, mirrored
-Glyphs are built by a **deterministic rule where every lit pixel is meaningful**:
-it is either a letter of the glyph's own name or a stroke joining two letters in
-order. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+### D15 ✅ Glyph construction — stem and rungs
+Glyphs are built by a **deterministic rule where every lit pixel is meaningful**: it
+is part of the stem, part of a rung naming one letter, or part of the class frame.
+Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **The lattice.** A 5×5 grid of 25 nodes, one per letter of the **classical Latin
-  alphabet** — exactly 23 letters, no J/U/W, so it fits with two spare. Lemmas are
-  normalised to classical orthography (`PULVIS` → `PVLVIS`). **The letter→node map
-  is frozen at v1** — reordering would invalidate every glyph ever made.
-- **The path.** Letters map to nodes; strokes join them *in sequence*, so anagrams
-  render differently. Lemmas over 5 letters abbreviate by dropping vowels after the
-  initial (`FLAMMANS` → `FLMMN`) — the abjad principle, and what a stonecutter would
-  actually have cut.
-- **Mirror symmetry.** The seed path is reflected about the **vertical** axis and the
-  union is the glyph, so every symbol is bilaterally symmetric. Vertical rather than
-  horizontal because left–right symmetry is what reads as *writing* (runes, sigils,
-  maker's marks); top–bottom reads as a playing card. Centre-column letters
-  (`C H N S Z`) sit on the axis and draw once.
-- **Frames must be vertically symmetric too.** Plinth and open-base deliberately
-  break *horizontal* symmetry — a structure sits on something, a quality rests on a
-  baseline — which is the cue that they are not enclosures.
+- **Stem and rungs.** A vertical stem spans the glyph and meets the frame at both
+  ends. Each letter of the lemma draws one **horizontal rung**, read top to bottom.
+  A letter is identified by its rung's **width** (5 steps) and **end-form** (plain,
+  up-tick, down-tick, cross, broken) — 5 × 5 = **25 slots for the 23 letters** of
+  the classical Latin alphabet. Lemmas normalise to classical orthography
+  (`PULVIS` → `PVLVIS`); over five letters they abbreviate by dropping vowels after
+  the initial (`FLAMMANS` → `FLMMN`), the abjad principle and what a stonecutter
+  would have cut. **The letter→(width, form) map is frozen at v1.**
+- **Symmetry is structural.** Rungs are drawn outward from the stem in both
+  directions, and frames pass through a `symmetrise` step that ORs each column with
+  its mirror — so a glyph *cannot* come out asymmetric, and frame vertices need not
+  be mirror-exact.
+- **Arms never leave the frame.** Each arm stops one pixel inside the frame's inner
+  edge on its row, so strokes come to rest against the frame instead of crossing it.
+  The stem's meeting the frame top and bottom is what visually fuses the two layers.
 
-This supersedes the earlier "overlay SGA letterforms" sketch, which was
-impressionistic where this is systematic. The SGA *aesthetic* is retained — hard
-geometric strokes, square caps, dot terminals, no curves, no anti-aliasing — so
-glyphs still read as kin to the enchanting table.
+**Supersedes the lattice-path construction** (letters as scattered grid points joined
+in sequence), which produced tangled diagonals, self-crossings, uneven density, and
+strokes running outside the frame. The Ogham precedent is now closer, not further:
+Ogham encodes letters as counted strokes against a stem, and survives almost entirely
+as standing-stone inscriptions.
 
-**Precedent:** close to **Ogham**, the ancient Irish alphabet surviving almost
-entirely as standing-stone inscriptions, which encodes letters as counted strokes
-against a stem with no pictography at all; and to **Nordic bind-runes**, where
-several runes share one stave as a composite mark.
+**Three constraints are load-bearing**, each found by an audit that failed before it
+was added — they are not stylistic:
+1. **Rung rows sit in the frame's straight band (rows 8–24)**, and every frame keeps
+   vertical sides across it. Where a frame tapered into the band, wide rungs clamped
+   to the same column and distinct letters collapsed.
+2. **Widths are two pixels apart** so adjacent widths never coincide once clamped.
+3. **End-form ticks sit beside the stem, not at the arm ends.** At the ends they
+   landed on frame pixels — on curved frames especially — and vanished, collapsing
+   E/K/P/V onto one figure.
 
-**New collision class to validate:** symmetry means a seed path and its own
-reflection render identically, so `A·E` and `E·A` are the same glyph. The validator
-must compare finished figures, not letter sequences.
+Adding a frame therefore **requires re-running the letter-distinctness audit**: render
+all 23 letters in it and assert 23 distinct figures. Every collision found while
+developing this spec came from a frame intruding on the stave, never from the letter
+map. The doubled-ring frame's inner arc is clipped out of the rung band for exactly
+this reason.
+
+**Audited:** 23/23 letters distinct in all six frames, all sample words distinct,
+every output vertically symmetric.
 
 ### D16 ✅ Colour encodes nothing — shape carries all meaning
 A hard accessibility rule, not a preference: **strip every colour from the game and
@@ -194,7 +204,7 @@ zero information is lost.** Colour may only ever be redundant reinforcement.
 
 | The player must tell… | Carried by | Never by |
 |---|---|---|
-| which glyph this is | the stave path (sequence-unique) | hue |
+| which glyph this is | the rung pattern | hue |
 | what class it belongs to | frame silhouette (5 contrasting outlines) | hue |
 | whether they know it yet | how much of the glyph is drawn | hue |
 | where a clause begins | doubled ring | hue |
@@ -203,9 +213,9 @@ zero information is lost.** Colour may only ever be redundant reinforcement.
 no UI:
 
 - **Tier 0 Unknown** — frame only, stave field empty.
-- **Tier 1 Sighted** — frame + **node marks, no strokes**. The letters are literally
-  present but unconnected: you have the dots and not the line.
-- **Tier 2 Learned** — frame + nodes + **full stroke path**.
+- **Tier 1 Sighted** — frame + stem + **rung positions**, arms unextended. You can
+  see how many letters the word has, but not which.
+- **Tier 2 Learned** — frame + stem + **full rungs**.
 
 That is a precise visual metaphor for partial decipherment, conveying the same
 information as the text layer's `???` while remaining fully legible to colourblind

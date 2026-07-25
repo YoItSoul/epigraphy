@@ -34,7 +34,7 @@ The design is being developed doc-first, before code. Start here:
 - **[docs/RITUALS.md](docs/RITUALS.md)** — rite types (altar, steeping, touch,
   vigil), the altar multiblock, world conditions, and backlash.
 - **[docs/GLYPH_SPEC.md](docs/GLYPH_SPEC.md)** — the glyph construction rule: the
-  5×5 letter lattice, stave paths, mirror symmetry, pixel geometry, and the
+  stem-and-rung stave, the letter map, symmetry, pixel geometry, and the
   colourblind-safe tier reveal.
 - **[docs/AUTHORING.md](docs/AUTHORING.md)** — **the modder/datapack guide**: how to
   add glyphs, coin rune words, define rite types, and write recipes. Full JSON

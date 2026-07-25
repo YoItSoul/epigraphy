@@ -536,10 +536,10 @@ two layers:
 ```
 
 - **The stave** (interior) encodes the lemma **letter by letter, in order**, as a
-  path through a 5×5 lettered lattice — then mirrored for symmetry. Every lit pixel
-  is a letter or a stroke joining two letters; nothing is decorative. It is
-  deliberately **cryptic**: you cannot look at it and know what it means, which is
-  what preserves the decipherment loop. **Full construction rule:
+  vertical stem with **one rung per letter** read top to bottom; a rung's width and
+  end-form identify the letter. Every lit pixel is stem, rung, or frame; nothing is
+  decorative. It is deliberately **cryptic**: you cannot look at it and know what it
+  means, which is what preserves the decipherment loop. **Full construction rule:
   [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 - **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is
   readable at a glance, from across a room, at any resolution.
