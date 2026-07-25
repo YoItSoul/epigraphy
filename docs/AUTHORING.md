@@ -56,16 +56,17 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **three marks + frame** (`GLYPH_SPEC.md`), and both derive from fields
+Glyphs are drawn as **three strokes + notches + one universal frame** (`GLYPH_SPEC.md`), and both derive from fields
 you have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Marks** (interior) | `lemma` | its first three letters, drawn as three bold arms on a stem; each arm's width and shape identify one letter |
-| **Frame** (border) | `determinative.class`, or `category` if absent | hexagon / circle / plinth / basin / escutcheon / open base / doubled ring |
+| **Strokes** (interior) | `lemma` | its first three letters, each drawn as one of 23 structurally distinct shapes |
+| **Notches** (edges) | `lemma` length | one notch per letter past the third, cut into both sides |
+| **Frame** (border) | — | **universal**; the same tablet on every glyph |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
-hex-framed `PVL` mark with no art file at all. **This is the intended path** — add a
+`PVL` glyph with three notches and no art file at all. **This is the intended path** — add a
 glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
@@ -73,30 +74,12 @@ boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whol
 composite, frame included, so hand-drawn glyphs must draw their own frame to stay
 readable in a line of inscription.
 
-**Frame selection rules:**
-
-| `category` | Frame | May be a determinative? |
-|---|---|---|
-| `material` | hexagon | yes |
-| `celestial` | circle | yes |
-| `place` | plinth | yes |
-| `fluid` | basin | yes |
-| `creature` | escutcheon | yes |
-| `element` | **open base** | **no** — qualifiers are never heads |
-| `frame` | doubled ring | n/a — clause markers only |
-
-The element restriction is enforced: declaring a `determinative` block on an
-`element` glyph fails validation. That rule is why the element frame is drawn open
-rather than enclosing — the shape *is* the rule.
-
-> **No two glyphs may share their first three letters — in any class.** Uniqueness is
-> deliberately global, not per-class, so that no glyph ever depends on its frame to be
-> recognised. Fix a clash with an explicit three-letter `mark` field:
-> `{ "lemma": "VIRIDIS", "mark": "VRD" }` — `VIR` belongs to `VIRGA`.
+> **No two glyphs may share their first three letters *and* their length.** Uniqueness
+> is global — the frame is universal, so it can never disambiguate for you. Fix a clash
+> with an explicit three-letter `mark`: `{ "lemma": "VIRIDIS", "mark": "VRD" }`.
 >
-> **Adding a new frame is not a free action** either. Frames must be vertically
-> symmetric and keep straight sides across the mark band, and adding one **requires
-> re-running the letter-distinctness audit** (`GLYPH_SPEC.md` §8).
+> `determinative.class` still matters for **grammar** (`RUNES.md` §4.3.1) — it decides
+> whether a glyph can head a rune word. It no longer affects the art.
 
 ### Choosing a good glyph
 

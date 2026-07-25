@@ -152,48 +152,40 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — a three-letter mark in a class frame
-**A glyph is a three-letter abbreviation of its word**, drawn as three bold marks on a
-stem inside a frame naming its class. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+### D15 ✅ Glyph construction — structural strokes in a universal frame
+**A glyph is a three-letter abbreviation of its word**, written as three
+**structurally distinct strokes** inside **one universal frame**, with the word's
+**length notched into the frame's edges**. Full spec:
+[`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **Three marks.** The lemma normalises to classical orthography (`PULVIS` → `PVLVIS`)
-  and its **first three letters** become the marks. Each mark's **width** (5 steps) and
-  **shape** (bar, chevron up, chevron down, double bar, broken bar) identify one letter
-  — 5 × 5 = **25 slots for the 23 letters**. Marks are **2 px thick**. **The
-  letter→(width, shape) map is frozen at v1.**
-- **Every interior is unique on its own.** Strip the frames off the whole lexicon and
-  all 49 glyphs remain tellable apart. The frame adds *class*, never identity — a
-  symbol the player must pick out of a grid hundreds of times must never depend on its
-  border. Uniqueness is checked **globally**, not per class.
-- **Symmetry is structural.** Marks draw outward from the stem in both directions, and
-  frames pass through a `symmetrise` step, so a glyph *cannot* come out asymmetric.
-- **Arms never leave the frame.** Each stops one pixel inside the frame's inner edge.
+- **23 letters, 23 shapes.** Each letter is its own kind of mark — ring, saltire,
+  arch, bowtie, triangle, twin rings, three posts — not a width or thickness of a
+  shared bar. Forms are chosen for *mutual contrast* and confined to isolated zones,
+  so any three stack cleanly. **The form table is frozen at v1.**
+- **The frame is universal.** A border shared by every glyph cannot be what
+  distinguishes any of them, so identity is forced entirely into the strokes.
+- **Length is notched into the sides**, one per letter past the third — countable,
+  meaningful, and it separates words sharing three letters (`VIRGA` 5 vs `VIRIDIS` 7).
 
-**Supersedes full-lemma transcription** (five rungs, one per letter, later with a
-profile outline). That optimised the wrong thing: **players read glyphs constantly**,
-since every rune-word guess means scanning the codex for the one they want. That is a
-*recognition* task, and recognition wants **few, bold, specific** shapes — five faint
-rungs made every glyph a variation on one comb.
+**Why three earlier attempts failed**, since the pattern matters more than any one
+fix: a lattice path produced tangled diagonals; five rungs on a stem made every glyph
+a variation on one comb; two marks rendered `VIRGA`/`VITA`/`VIGILIA` identically; and
+three marks distinguished only by width and thickness still shared one skeleton. The
+common thread is that **varying parameters of a shared skeleton does not produce
+distinct symbols — only varying structure does.** Players scan these constantly, and
+two glyphs differing by two pixels of arm length are one symbol with a typo.
 
-**Two letters was then too few**: `VIRGA`, `VITA` and `VIGILIA` all abbreviate to `VI`
-and rendered identical interiors, leaning on their frames to be told apart — the exact
-failure the system exists to prevent. `VIR` / `VIT` / `VIG` are three different figures.
+**What the universal frame gives up:** the frame previously encoded the determinative
+class, so an *undecoded* glyph announced its category and the grammar was visible in
+the art. That is gone. The trade is deliberate — class is information the codex
+supplies anyway, whereas recognising the symbol at all happens hundreds of times an
+hour. A **small class pip on the frame's top edge** would restore the cue without the
+border carrying identity, if wanted.
 
-Roman inscriptions abbreviate exactly this way, and three letters is its commonest form
-(`IMP`, `AVG`, `COS`, `PON`). Once a player knows the 23 letterforms they don't
-memorise glyphs, they **read** them — `CAE` is `CAELVM`.
-
-**The trade, stated plainly:** a glyph now *names* its lemma rather than transcribing
-it. Decipherment difficulty belongs in the **rune words**, not in reading a symbol.
-
-**Two constraints are load-bearing**, each found by an audit that failed first: all
-three mark rows must sit in the frame's straight band (frames taper only outside rows
-8–24), and widths must be two pixels apart with arms stopping one pixel inside the
-frame. Adding a frame **requires re-running the distinctness audit**.
-
-**Audited:** all 23 letters distinct in all three mark positions in all seven frames;
-all 49 lexicon glyphs have unique interiors with frames ignored; every output
-vertically symmetric.
+**Audited:** all 23 stroke forms distinct from one another; every glyph in the worked
+lexicon unique; `VIRGA`/`VIRIDIS` separated by notches alone; every output vertically
+symmetric. Because the frame is shared and zones are isolated, a single 23-way audit
+now suffices — there is no per-frame matrix to re-check.
 
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is

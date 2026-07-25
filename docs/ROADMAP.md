@@ -47,8 +47,8 @@ com.epigraphy
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
 ├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
 ├─ art/                           // procedural glyph rendering (D14)
-│   ├─ MarkRenderer               //   lemma -> stem + three bold letter-marks
-│   ├─ ClassFrame                 //   class -> hex/circle/plinth/basin/open/ring
+│   ├─ StrokeRenderer             //   lemma -> three structural strokes + notches
+│   ├─ Tablet                     //   the one universal frame
 │   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
 ├─ doc/                           // in-game documentation model, populated from knowledge
 ├─ client/                        // in-world renderers (readable carvings, sky projection,
@@ -100,8 +100,8 @@ creative tab. Goal: `runClient` opens a world with the mod present.
 starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the
 **ordered-sequence** index for submit validation and the clause-order validator.
 
-Also here: the **procedural glyph renderer** (D14/D15) — three bold letter-marks from
-`lemma`, class frame from `determinative.class`, composited and atlased, with
+Also here: the **procedural glyph renderer** (D14/D15) — three structural strokes from
+`lemma`, length notches, one universal frame, composited and atlased, with
 `texture` as an override. Worth doing early: every later phase (carvings, tablets, codex, in-world
 inscriptions) renders glyphs, and generated art means no phase is ever blocked
 waiting on an artist. `/epigraphy runes` debug command lists loaded glyphs and dumps
@@ -183,8 +183,9 @@ Resolved since the first draft:
     read left to right in formula order.
 11. ✅ **Determinatives may prefix or suffix (Q9).** Structures prefix, materials
     suffix — as Sumerian prefixes `DINGIR` but suffixes `KI`.
-12. ✅ **Glyph art = three-letter mark + class frame (D14/D15).** Generated from data,
-    every interior globally unique; pictographs rejected for undercutting decipherment.
+12. ✅ **Glyph art = three structural strokes + universal frame (D14/D15).** Generated
+    from data, every glyph its own shape; pictographs rejected for undercutting
+    decipherment.
 
 Still open (don't block early phases):
 

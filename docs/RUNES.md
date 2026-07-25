@@ -374,7 +374,7 @@ fourteen glyphs for roughly forty-five words, and a player who has decoded
 
 ### 3.1.4 Mobs — one head, borrowed qualifiers
 
-Creatures take their own frame (an escutcheon) and are almost all
+Mobs are almost all
 **`[quality] · BESTIA`**. The striking thing is how little new vocabulary they need:
 
 | Mob | Rune word | Qualifier borrowed from |
@@ -643,97 +643,64 @@ still comes last, so the rule scales without a new pattern to learn.
 
 ---
 
-## 5. The visual system: monogram + frame (D14)
+## 5. The visual system: structural strokes (D14/D15)
 
-Glyph art is not decoration — it is **part of the grammar**. Every glyph is drawn as
-two layers:
+Glyph art is generated, never hand-drawn. Every glyph is:
 
 ```
-      CAELVM  ->  "CAE"
+      VIRGA -> "VIR"
    ┌─────────────────┐
-   │    ════╬════    │   ← FRAME: the determinative CLASS (§4.3)
-   │        ╬        │        shape = what kind of thing this names
-   │      ══╬══      │   ← THREE MARKS: the lemma's first three letters,
-   │        ╬        │        each a bold arm; width + shape = a letter
-   │     ══╬══╬══    │
+ ──┤     ◇ ◇ ◇       │  ← three STROKES, one per letter of the
+   │       ○         │     three-letter abbreviation; each letter
+ ──┤     \_____/      │     is its own shape, not a width of one bar
    └─────────────────┘
+    ↑ NOTCHES = word length      one UNIVERSAL frame
 ```
 
-- **Three bold marks** (interior) spell the lemma's **first three letters** — exactly
-  as Roman inscriptions abbreviate (`IMP`, `AVG`, `COS`). Each mark's width and shape
-  identify one letter. Every lit pixel is stem, mark or frame; nothing is decorative.
-  Kept short deliberately: **players scan these constantly** while guessing rune words,
-  so each must be simple, specific and instantly told apart — and **every interior is
-  unique on its own**, so no glyph leans on its frame to be recognised. It is deliberately **cryptic**: you cannot look at it and know what it
-  means, which is what preserves the decipherment loop. **Full construction rule:
-  [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
-- **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is
-  readable at a glance, from across a room, at any resolution.
+- **Three strokes** carry the lemma's first three letters. Each of the 23 letters is a
+  **structurally distinct shape** — ring, saltire, arch, bowtie, triangle, twin rings —
+  so no two glyphs share a skeleton.
+- **One universal frame.** A border shared by every glyph cannot be what distinguishes
+  them, so identity is forced into the strokes where it can be seen.
+- **Length notches** cut into the sides count the word's letters past the third.
 
-Both layers are **vertically symmetric**, and **colour encodes nothing** — every
-distinction is carried by shape, position, or presence (`GLYPH_SPEC.md` §4, §6).
+**Full construction rule: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 
 ### 5.1 Why not pictographs
 
 The rejected alternative was drawing each glyph as its referent — a flame for
-`FLAMMANS`, a cloud for `CAELUM`. It fails on the mod's central pillar: **if the
-symbol is a picture, there is nothing to decipher.** The codex, the sightings, and
-the submit loop all become ceremony around a puzzle that solved itself on sight.
+`FLAMMANS`. It fails the mod's central pillar: **if the symbol is a picture, there is
+nothing to decipher.** Sumerian confirms the instinct — it *began* pictographic and
+abstracted within a few centuries, and that drift is what turned drawing into
+**writing**. Pictography stays on tablet frames, block textures and structure motifs,
+never on glyphs.
 
-Real scripts confirm the instinct. Sumerian *began* pictographic and abstracted
-within a few centuries — that drift away from depiction is precisely what turned it
-from drawing into **writing**. Pictography stays in the mod, but on **tablet frames,
-block textures, and structure motifs**, never on the glyphs themselves.
+### 5.2 Why structure beats parameters
 
-### 5.2 The frame vocabulary
+Several revisions varied *parameters* of a shared skeleton — bar widths, rung counts,
+tick directions on one vertical stem. Every glyph came out a variation on a ladder.
+**Two glyphs differing by two pixels of arm length are not two symbols; they are one
+symbol with a typo.** Players scan these constantly while guessing rune words, and
+recognition needs shapes that differ in *kind*, not degree.
 
-Five shapes, learned once, then readable forever:
+### 5.3 The trade: class is no longer visible
 
-| Frame | Class | Determinative glyphs | Reads as |
-|---|---|---|---|
-| **Hexagon** | Material | `METALLUM` `LAPIS` `VIRGA` `PULVIS` `OSSA` `TERRA` | a substance or object |
-| **Circle** | Celestial | `CAELUM` `LUNA` `NOX` | sky, time, a condition |
-| **Plinth** (square on a base) | Structure | `ALTARE` `INFERNUS` | a place or built thing |
-| **Open base** (no enclosure) | Element | `FLAMMANS` `TENEBRAE` `CHAOS` `VITA` `AQUA` `DULCIS` `PLENUS` | a quality |
-| **Doubled ring** | Formula | `OPUS` `MERSIO` `TACTUS` `VIGILIA` `FIAT` | a clause marker |
+Earlier the frame encoded the determinative class — hexagon for materials, circle for
+celestial — so an *undecoded* glyph still announced its category, making the grammar
+visible in the art. **The universal frame gives that up.** Class is information the
+codex supplies anyway, whereas recognising a symbol happens hundreds of times an hour.
+A small class pip on the frame's top edge could restore the cue without the border
+carrying identity (`DECISIONS.md` D15).
 
-**The element frame is deliberately *open*** — a base stroke, not an enclosure.
-Quality glyphs modify; they are never the head of a word. That asymmetry is a
-grammar rule the eye learns without being taught it, and it is enforced in data:
-a glyph with `category: element` may not declare a `determinative` block.
+### 5.4 Knowledge tier is drawn, not tinted
 
-### 5.3 What this buys
+**Colour encodes nothing** — strip every colour and zero information is lost.
 
-**The grammar becomes visible.** Read the Chaos Ingot inscription by its frames
-alone, ignoring every monogram:
-
-```
- ring · plinth · open  │ open · hex │ open · circle │ plinth · hex │ ring · open · hex
-└─── invocation ──────┘└─ offering ┘└──── hour ────┘└── subject ──┘└─── consecration ──┘
-```
-
-Completely illiterate, you can still see where the rite opens, that its third clause
-is celestial, and where the result is named. This is the mechanic from
-`KNOWLEDGE.md` §4a — *the clause label is legible even when the word is not* — made
-visual rather than merely stated.
-
-**Glyphs generate themselves.** Monogram derives from `lemma`, frame from
-`determinative.class`. A modder who writes a glyph in JSON gets usable art without
-opening an image editor (`AUTHORING.md` §2.1) — the strongest possible answer to
-the datapack-friendliness goal (D13).
-
-**It survives 32×32.** The frame carries silhouette, the monogram carries identity.
-That split is why framed glyphs stay distinguishable when scaled down, where bare
-monograms blur into siblings.
-
-### 5.4 The honest caveat
-
-SGA is a plain substitution cipher, so a determined player can decode the alphabet
-externally on day one. Treat this as **authentic rather than broken** — real
-inscriptions are decipherable, and someone who cracks the alphabet has done exactly
-what the mod is about. The consequence for design: **the difficulty must live in the
-rune words, not the letters.** Knowing that a mark spells `PULVIS` tells you nothing
-about which powders `… · PULVIS` names.
+| Tier | Rendered | Reads as |
+|---|---|---|
+| **0 · Unknown** | frame only | "a symbol, meaning nothing" |
+| **1 · Sighted** | frame + **length notches** | "I know how long the word is, not what it says" |
+| **2 · Learned** | frame + notches + **all three strokes** | complete, legible |
 
 ---
 
