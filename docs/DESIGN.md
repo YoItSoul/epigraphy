@@ -18,13 +18,15 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
    sky the way secret items are tucked into a Risk of Rain level — you have to
    actually look.
 
-2. **A real, learnable, compositional language.** Glyphs are not abstract
-   skill-tree nodes. Each glyph is a symbol mapping to a Latin word (`ALTARE`,
-   `TENEBRAE`, `FLAMMANS`, `VIRGA`, `CHAOS`, `CAELUM`, `INFERNUS`, `METALLUM`, …),
-   and — crucially — **2–3 glyphs combine into a rune word that names one concrete
-   thing**: `FLAMMANS · VIRGA` → Blaze Rod, `INFERNUS · METALLUM` → Netherite. You
-   learn *words* by exploring and work out *meanings* by combining them. Once you
-   can read, the world tells you what to do in its own words.
+2. **A real language, with a real grammar.** Glyphs are not abstract skill-tree
+   nodes. Each is a symbol mapping to a Latin word (`ALTARE`, `TENEBRAE`,
+   `FLAMMANS`, `VIRGA`, `CHAOS`, `CAELUM`, `INFERNUS`, `METALLUM`, …), and **2–3
+   glyphs *in order* form a rune word naming one concrete thing**: `FLAMMANS ·
+   VIRGA` → Blaze Rod. Those words then fill a fixed **inscription formula** —
+   `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` — so a ritual is one readable
+   sentence. Like real epigraphy, the pattern is the point: once you know the
+   formula, you can approach an inscription you've never seen and know what each
+   part *is* before you know what it *says*.
 
 3. **Knowing ≠ having.** Learning a glyph teaches you the *instructions* (flavor
    text, translated hints). It does **not** hand you the recipe. The precise,
@@ -175,18 +177,17 @@ Package layout, registry plan, dependencies, and a phased build order from
 To ground everything, here is the flagship early-mid ritual, traced through all
 three tiers. This is the example you gave, formalized.
 
-**The ritual, as five 2-word rune words:**
+**The ritual, as one inscription in the formula:**
 
 ```
-ALTARE · TENEBRAE      → Blackstone Altar    (Altar + Darkness)
-FLAMMANS · VIRGA       → Blaze Rod           (Flaming + Rod)
-CAELUM · CHAOS         → Thunderstorm        (Heavens + Chaos)
-INFERNUS · METALLUM    → Netherite           (Hell + Metal)
-CHAOS · METALLUM       → Chaos Ingot         (Chaos + Metal)
+ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM  →  CHAOS·METALLUM
+────────┬───────  ───────┬──────   ──────┬─────   ────────┬────────     ───────┬──────
+  VESSEL            OFFERING          HOUR           SUBJECT              ISSUE
+Blackstone Altar    Blaze Rod      Thunderstorm      Netherite         Chaos Ingot
 ```
 
-Five rune words, five things to work out: the altar, the catalyst, the condition, the
-input, the output.
+Five clauses, five things to work out — and the formula tells you what *kind* of
+thing each one is before you can read any of them.
 
 **Tier 0 → 1 (Sighted).** The player finds `CHAOS` carved into a blackened ruin in
 the Nether, reads `CAELUM` as a constellation on a clear night, and gets a
@@ -196,22 +197,28 @@ When they run dry, **seek mode** on the codex points them toward the nearest
 structure holding a glyph they haven't learned.
 
 **Tier 1 → 2 (Learned).** Enough independent sightings (or a Rosetta) and the words
-become readable. The ritual hint now reads as literal glosses:
+become readable. The inscription now reads as literal glosses, still in formula
+order:
 
-> *Altar · Darkness  ·  Flaming · Rod  ·  Heavens · Chaos  ·  Hell · Metal  ·  Chaos · Metal*
+```
+  VESSEL           OFFERING         HOUR            SUBJECT           ISSUE
+Altar·Darkness   Flaming·Rod    Chaos·Heavens    Hell·Metal       Chaos·Metal
+```
 
-This is the good part: that's **solvable**. "Flaming Rod" is clearly a blaze rod;
-"Hell Metal" is netherite; "Heavens' Chaos" is a storm. The player has a hypothesis
-and no confirmation.
+This is the good part: that's **solvable**, and doubly so because of the grammar.
+"Flaming Rod" is clearly a blaze rod. "Chaos Heavens" sits in the HOUR slot, so it
+must be *weather* — a storm. And `· METALLUM` ending two different words tells the
+player, unprompted, that `METALLUM` is the head for metals.
 
-**Decoding (the active step).** They open the hand codex, compose `FLAMMANS +
-VIRGA`, and **submit**. It matches — the rune word permanently decodes to **Blaze
-Rod** and now reads that way everywhere. They repeat for the other four. Each
-correct guess sharpens the ritual from poetry into a plan. (Wrong guesses cost
-nothing but confirm nothing.)
+**Decoding (the active step).** They open the codex, inscribe `FLAMMANS · VIRGA` in
+that order, and **submit**. It matches — the word permanently decodes to **Blaze
+Rod** and reads that way everywhere. They repeat for the other four; with 20 slots
+they can lay out the whole inscription and test every clause at once. Each correct
+guess sharpens the ritual from poetry into a plan. (Wrong guesses cost nothing but
+confirm nothing — and `VIRGA · FLAMMANS`, reversed, is simply not a word.)
 
 They could *attempt* the ritual before decoding everything — but every undecoded
-rune word raises the **backlash** risk if they do.
+clause raises the **backlash** risk if they do.
 
 **Tier 2 → 3 (Mastered).** The player builds a Blackstone Altar, rings it with
 blaze rods, submerges a netherite ingot in the infusion fluid, and waits for a
@@ -226,8 +233,16 @@ written into the codex reference and JEI.
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
-  "glyphs": ["epigraphy:altare", "epigraphy:flammans",
-             "epigraphy:caelum", "epigraphy:metallum", "epigraphy:chaos"],
+
+  // The inscription — one rune word per clause, in formula order.
+  "inscription": {
+    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
+    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+  },
+
   "pedestals": [
     { "item": "minecraft:blaze_rod", "count": 4 }
   ],
@@ -242,10 +257,11 @@ written into the codex reference and JEI.
 }
 ```
 
-Notice the `glyphs` array doubles as the Tier-2 instruction generator *and* the
-research gate: learning all of them makes the ritual *understood* and its run
-*clean*; attempting it with any glyph unlearned still fires (if the physical build
-is right) but incurs backlash — the tunable rule described in `KNOWLEDGE.md` §4.
+The `inscription` is the same recipe stated twice: once in the player's language,
+once in exact quantities. The former is what they can read at Tier 2; the latter is
+what they earn at Tier 3. It doubles as the research gate — decoding every clause
+makes the run *clean*, while attempting it with clauses undecoded still fires (if
+the physical build is right) but incurs backlash (`KNOWLEDGE.md` §4).
 
 ---
 

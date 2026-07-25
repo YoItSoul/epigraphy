@@ -33,8 +33,10 @@ com.epigraphy
 │   └─ EpiGLMs     (global loot modifiers: tablet drops)
 ├─ rune/                          // the language layer
 │   ├─ Glyph · GlyphManager       //   symbols; datapack loader for data/*/glyphs/
-│   └─ RuneWord · RuneWordManager //   2-3 glyph sets; loader for data/*/rune_words/
-│                                 //   + lookup by unordered glyph set (submit validation)
+│   ├─ RuneWord · RuneWordManager //   ordered 2-3 glyph sequences; data/*/rune_words/
+│   │                             //   + lookup by ORDERED sequence (submit validation)
+│   └─ Inscription · Clause       //   the ritual formula: VESSEL/OFFERING/HOUR/
+│                                 //   SUBJECT/ISSUE; parses & validates clause order
 ├─ knowledge/                     // PlayerKnowledge capability, tiers, sync packets
 │   ├─ PlayerKnowledge · KnowledgeProvider · KnowledgeTier
 │   └─ net/  (SyncKnowledgePacket, RecordSightingC2S, …)
@@ -59,9 +61,11 @@ com.epigraphy
 
 - **Runes** (`RUNES.md`): a `Glyph` record and a `RuneWord` record, each with a
   `SimpleJsonResourceReloadListener` (`data/*/glyphs/`, `data/*/rune_words/`). The
-  rune word registry needs an **unordered-glyph-set index** so codex submissions
-  validate in O(1). Plus a client-side resolver that renders a rune word at the
-  right tier (unreadable / literal glosses / true referent).
+  rune word registry is keyed by **ordered glyph sequence** (e.g. a list-keyed map)
+  so codex submissions validate in O(1) and reversed sequences correctly miss. Plus
+  an `Inscription` type modelling the five-clause formula, and a client-side
+  resolver that renders each word at the right tier (unreadable / literal glosses /
+  true referent) while always showing its clause label.
 - **Discovery** (`DISCOVERY.md`): `GlyphCarvingBlock` + BE; a `ConfiguredFeature`/
   `PlacedFeature` for carvings; Global Loot Modifiers for tablet drops; the Codex
   item + on-carving record interaction (no screen); Lectern of Study block;
@@ -88,10 +92,10 @@ Gradle + ForgeGradle, `mods.toml`, `Epigraphy.java`, empty DeferredRegisters, a
 creative tab. Goal: `runClient` opens a world with the mod present.
 
 **Phase 1 — Runes as data.**
-`Glyph` + `RuneWord` objects and their datapack loaders; ship the starter lexicon
-(`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the unordered-glyph-set
-index for submit validation. `/epigraphy runes` debug command lists both. No
-gameplay yet.
+`Glyph` + `RuneWord` + `Inscription` objects and their datapack loaders; ship the
+starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the
+**ordered-sequence** index for submit validation and the clause-order validator.
+`/epigraphy runes` debug command lists both. No gameplay yet.
 
 **Phase 2 — Knowledge capability (research spine).**
 `PlayerKnowledge` + persistence + sync; both layers (glyph progress + decoded rune
@@ -134,11 +138,14 @@ already fixed in Phase 3.
 ## 5. Testing strategy
 
 - **Datapack validation** — a load-time sanity pass: every rune word's glyphs exist
-  and number 2–3; every ritual's `rune_words` reference existing rune words; **no
-  two rune words share the same unordered glyph set** (submit must be
-  deterministic); no two recipes match identical setups (`RITUALS.md` §7);
-  referenced items/fluids exist.
-- **Unit** — rune word lookup by unordered glyph set; slot-grid segmentation (Q8).
+  and number 2–3; **no two rune words share the same ordered glyph sequence**
+  (submit must be deterministic — this bites early, see `RITUALS.md` §5.3); every
+  recipe's `inscription` fills all five clauses with existing rune words, and each
+  clause's `means.type` suits its slot (HOUR must be a `condition`, SUBJECT/ISSUE an
+  `item`, …); no two recipes match identical setups (`RITUALS.md` §7); referenced
+  items/fluids exist.
+- **Unit** — rune word lookup by ordered sequence (and that reversed sequences
+  miss); gap-delimited slot-grid segmentation; clause-order validation.
 - **GameTest** (Forge) for the altar: build altar+pedestals in a test structure,
   force weather/time, fire the ritual, assert output + mastery. A second case
   asserts a blind attempt produces backlash instead.
@@ -151,15 +158,19 @@ already fixed in Phase 3.
 
 Resolved since the first draft:
 
-1. ✅ **Terminology (D0).** Glyph = symbol; rune word = 2–3 glyph set; Runes = the
-   whole system. Glyphs are discovered, rune words are guessed.
-2. ✅ **No block/machine GUI (D1)** — with one minimal exception, the codex (D9).
-3. ✅ **Glyphs learned passively, rune words guessed actively (D2).**
-4. ✅ **Backlash everywhere (D3).** Blind attempts bite back — Phase 5.
-5. ✅ **Sky reading ships in v1 (D4).** Pulled into Phase 3.
-6. ✅ **Glyphs are research, not reagents (D5).** Pedestals hold catalysts only.
-7. ✅ **Reference layer = in-game documentation + JEI (D6).**
-8. ✅ **Codex: submit + seek (D7); 20 cycling glyph slots (D9).**
+1. ✅ **Terminology (D0).** Glyph = symbol; rune word = ordered 2–3 glyph sequence;
+   Runes = the whole system. Glyphs are discovered, rune words are guessed.
+2. ✅ **Order is meaningful; the Runes have a grammar (D10).** `QUALIFIER · HEAD`
+   within a word; `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` across an inscription.
+3. ✅ **No block/machine GUI (D1)** — with one minimal exception, the codex (D9).
+4. ✅ **Glyphs learned passively, rune words guessed actively (D2).**
+5. ✅ **Backlash everywhere (D3).** Blind attempts bite back — Phase 5.
+6. ✅ **Sky reading ships in v1 (D4).** Pulled into Phase 3.
+7. ✅ **Glyphs are research, not reagents (D5).** Pedestals hold catalysts only.
+8. ✅ **Reference layer = in-game documentation + JEI (D6).**
+9. ✅ **Codex: submit + seek (D7); 20 cycling glyph slots (D9).**
+10. ✅ **Slot segmentation (Q8).** The grid is one inscription, gap-delimited,
+    read left to right in formula order.
 
 Still open (don't block early phases):
 
@@ -168,6 +179,7 @@ Still open (don't block early phases):
 - 🔵 **Reference form (Q5)** — likely the codex itself rather than a separate book.
 - ❓ **Backlash severity model (Q6)** — per-recipe base × undecoded-count × instability.
 - ❓ **Wrong-submission cost (Q7)** — free, cooldown, or consumable.
-- ❓ **Slot segmentation (Q8)** — how submit splits 20 slots into words; leaning gap-delimited.
+- ❓ **Vessel clause order (Q9)** — `ALTARE · TENEBRAE` exception vs. strict
+  `QUALIFIER · HEAD`. **Blocks lexicon authoring — settle before Phase 1.**
 
 See `DECISIONS.md` for the current standing of each.

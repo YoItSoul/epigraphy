@@ -50,7 +50,7 @@ The two layers are the heart of the model and must stay distinct:
 | Layer | How it advances | Stored as |
 |---|---|---|
 | **Glyphs** (symbols) | **Discovered** — sight them in the world; learned automatically at threshold (D2) | `glyphs` map |
-| **Rune words** (2–3 glyph sets) | **Guessed** — composed in the codex's 20 slots and submitted (D9) | `decoded` set |
+| **Rune words** (ordered 2–3 glyph sequences) | **Guessed** — inscribed in the codex's 20 slots, in order, and submitted (D9/D10) | `decoded` set |
 
 Derived tiers (not stored redundantly):
 
@@ -114,8 +114,9 @@ change.
 Two gates use research, and keeping them distinct matters:
 
 **(a) Ritual understanding** — *do you know what this ritual asks for?*
-A ritual's hint is a set of **rune words**. Each renders according to what the
-player knows, so partial knowledge is legible and directional:
+A ritual's hint is an **inscription**: five clauses in formula order
+(`RUNES.md` §4). Each word renders according to what the player knows, so partial
+knowledge is legible and directional:
 
 | Player state | Renders as |
 |---|---|
@@ -123,8 +124,13 @@ player knows, so partial knowledge is legible and directional:
 | Glyphs learned, word not decoded | *"Flaming · Rod"* — a solvable clue |
 | Word decoded in the codex | *"Blaze Rod"* — its true referent |
 
-A ritual is **understood** when all its rune words are decoded (or it was seeded by
-a looted ritual tablet). The un-decoded words are exactly the player's to-do list.
+Crucially, the **clause label is always legible even when the word is not** — an
+undecoded word in the HOUR slot is still known to name *a condition*. The formula
+gives the player a category before it gives them a meaning, which is what makes
+guessing reasoned rather than combinatorial.
+
+A ritual is **understood** when every clause is decoded (or it was seeded by a
+looted ritual tablet). The undecoded clauses are exactly the player's to-do list.
 
 **(b) Ritual attemptability** — *will the altar even try, and how dangerous is it?*
 When the altar core searches for a match, it checks research:
@@ -204,8 +210,9 @@ amount, conditions) is written into the reference layer only at **Tier 3**:
   `attemptResult(recipe, player)` → `{clean | blind(undecodedCount) | no_match}`,
   `isRitualMastered(recipe)`.
 - Mutations: `recordSighting(source, glyphId)`, `applyRosetta(glyphId)`,
-  `submitRuneWord(glyphIds[])` → `{decoded | no_match}` (server-authoritative
-  validation against the rune word registry), `masterRitual(id)`,
+  `submitInscription(slots[])` → per-word `{decoded | no_match}` (server-authoritative;
+  segments the 20 slots gap-delimited and looks each word up by **ordered glyph
+  sequence**), `masterRitual(id)`,
   `markItemObtained(itemId)`, `addInstability(n)` / decay tick.
 - Hooks: inventory-acquisition listener (Tier-3 by obtaining), ritual-success and
   ritual-backlash callbacks, record/study interactions.

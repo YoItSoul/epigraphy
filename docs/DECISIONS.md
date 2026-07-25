@@ -35,12 +35,15 @@ exist only to *remember* what you've already done.**
 ### D0 ✅ Terminology (canonical — use everywhere)
 - **Glyph** — a single **symbol**, mapping to one Latin word (`FLAMMANS`, `CHAOS`).
   The atomic unit; **discovered** in the world.
-- **Rune word** — a **set of 2–3 glyphs** naming exactly one concrete thing
-  (`FLAMMANS · VIRGA` → Blaze Rod); **guessed** by the player and validated.
-- **Runes** — the **whole system**: the full body of glyphs and rune words.
+- **Rune word** — an **ordered sequence of 2–3 glyphs** naming exactly one concrete
+  thing (`FLAMMANS · VIRGA` → Blaze Rod); **guessed** by the player and validated.
+- **Inscription** — a full ritual written in the formula (D10/D11): several rune
+  words in fixed clause order.
+- **Runes** — the **whole system**: glyphs, rune words, and the grammar binding them.
 
-Mechanically: *glyphs are discovered, rune words are guessed.* A glyph must be
-discovered before it can be used in a guess.
+Mechanically: *glyphs are discovered, rune words are guessed, inscriptions are
+written.* A glyph must be discovered before it can be used in a guess, and **order
+is meaningful at every level** (D10).
 
 ### D1 ✅ No GUI — in-world or on-item, with one minimal exception
 No **block or machine GUIs**. Every world interaction and every piece of feedback
@@ -63,14 +66,13 @@ single flat grid of **20 empty glyph slots**, and nothing else.
   scroll a slot to step through your known symbols. Undiscovered glyphs never
   appear in the cycle, so the codex is physically incapable of expressing a glyph
   you haven't found.
-- The player fills slots to spell out **rune words** (2–3 glyphs each) and hits
-  **submit** to test validity (D7).
+- The player fills slots to write an **inscription** — rune words in formula order,
+  separated by empty slots — and hits **submit** to test it (D7/D11).
 - No inventory, no tabs, no item slots, no crafting grid, no scrollable tree — just
   the 20 slots and a submit action. It reads as an instrument, not a UI.
-- 20 slots is sized to lay out a **whole ritual's worth** of rune words at once
-  (~5–7 words × 2–3 glyphs), so the player can work a full puzzle in one view
-  rather than testing one word at a time. **See Q8** for exactly how submit
-  segments the grid into words.
+- 20 slots is sized to hold a **whole inscription** at once (five clauses of up to
+  3 glyphs, plus separators), so the player works the full puzzle in one view rather
+  than testing one word at a time. Segmentation is gap-delimited, left to right (Q8).
 
 ### D2 ✅ Glyph meaning is learned passively; rune word meaning is discovered actively
 Two layers, and they resolve the "active vs. passive learning" question together:
@@ -96,6 +98,60 @@ Two functions:
   *which* glyph is there or places a waypoint. This is the anti-frustration valve
   that keeps discovery from stalling without turning the mod into a quest tracker.
 
+### D10 ✅ Order is meaningful — the Runes have a grammar
+The Runes are a **language with structure**, not a bag of ingredient tokens. Order
+carries meaning at both levels, and the pattern is learnable and followable the way
+real epigraphic formulae are:
+
+**Within a rune word** — the glyph sequence is part of the word's identity.
+`FLAMMANS · VIRGA` names a blaze rod; `VIRGA · FLAMMANS` is not the same expression
+and is not valid. Convention: **`QUALIFIER · HEAD`** — the last glyph names the kind
+of thing, earlier glyphs narrow it. A third glyph inserts another qualifier *before*
+the head, never after.
+
+**Across an inscription** — a ritual is a fixed clause sequence, read left to right:
+
+```
+[ VESSEL ]  [ OFFERING ]  [ HOUR ]  [ SUBJECT ]  →  [ ISSUE ]
+ the altar   catalysts     when      the input       the result
+```
+
+The Chaos Ingot inscription, literally:
+```
+ALTARE·TENEBRAE  FLAMMANS·VIRGA  CHAOS·CAELUM  INFERNUS·METALLUM → CHAOS·METALLUM
+Blackstone Altar    Blaze Rod     Thunderstorm      Netherite        Chaos Ingot
+```
+
+Consequences: the rune word registry is indexed by **ordered sequence** (exact-match
+lookup on submit); a grammatically wrong inscription is not a valid ritual; and
+position tells the player what *category* of thing an undecoded word names, which is
+what keeps guessing tractable rather than combinatorial. Full treatment in
+`RUNES.md` §4.
+
+### D11 🔵 The inscription frame: `OPUS` … `FIAT` (recommended, awaiting confirmation)
+Real inscriptions are readable because invariant **frame formulae** bracket the
+variable content — a Roman votive opens `I.O.M.` and closes `V.S.L.M.`. Proposal:
+give Epigraphy the same, with two glyphs that appear on *every* ritual inscription
+and nowhere else:
+
+- **`OPUS`** ("the work / the rite") — opens the inscription, prefixing the vessel.
+- **`FIAT`** ("let it be made") — opens the final clause, prefixing the result.
+
+```
+OPUS·ALTARE·TENEBRAE  FLAMMANS·VIRGA  CHAOS·CAELUM  INFERNUS·METALLUM  FIAT·CHAOS·METALLUM
+└──── INVOCATION ───┘ └─ OFFERING ──┘ └── HOUR ───┘ └──── SUBJECT ───┘ └── CONSECRATION ──┘
+```
+
+*"The rite of the Dark Altar — by the Flaming Rod — when the Heavens turn to Chaos —
+upon the Metal of Hell — let there be Chaos Metal."*
+
+Rationale: the frame teaches the formula for free (being the most-seen glyphs, they
+are learned first, and learning them teaches where inscriptions begin and where the
+result lives); it makes the codex grid unambiguous about clause boundaries; and it
+gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M.`
+Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
+Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
+
 ### D8 ✅ Glyphs hint in rune words of 2–3 words (compositional language)
 Glyphs are never used as a single long sentence. The language is **compositional**:
 a **rune word** of **2 or 3 glyphs names exactly one concrete thing** — an item, a
@@ -105,7 +161,7 @@ such rune words, each hinting at one component.
 ```
 ALTARE · TENEBRAE      → Blackstone Altar   (Altar + Darkness)
 FLAMMANS · VIRGA       → Blaze Rod          (Flaming + Rod)
-CAELUM · CHAOS         → Thunderstorm       (Heavens + Chaos)
+CHAOS · CAELUM         → Thunderstorm       (Chaos + Heavens)
 INFERNUS · METALLUM    → Netherite          (Hell + Metal)
 CHAOS · METALLUM       → Chaos Ingot        (Chaos + Metal)
 ```
@@ -158,19 +214,33 @@ number of untranslated glyphs in the attempt.*
 
 ---
 
-### Q8 ❓ How does submit segment the 20 slots into rune words? (D9)
-The grid holds ~5–7 rune words at once, so submit needs to know where one word ends
-and the next begins. Options:
-- **Gap-delimited (leaning).** Contiguous filled slots form a word; an empty slot
-  ends it. `[FLAMMANS][VIRGA][ ][INFERNUS][METALLUM]` = two words. Zero extra UI,
-  reads naturally left-to-right.
-- **Fixed rows.** The 20 slots are 5 rows of 4; each row is one word (2–3 used,
-  rest empty). Unambiguous, but wastes slots and feels more form-like.
-- **One word at a time.** Only the first contiguous group is evaluated per submit.
-  Simplest to build, but throws away the point of having 20 slots.
+### Q8 ✅ Resolved by D10 — the grid is an inscription, read left to right
+The 20 slots hold a **full ritual inscription** in formula order, gap-delimited:
+contiguous filled slots form one rune word, an empty slot ends it, and the words
+are read left to right as `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE`.
 
-*Leaning gap-delimited*, with each word validated independently so a player can
-submit five guesses and see which ones land.
+```
+[ALTARE][TENEBRAE][ ][FLAMMANS][VIRGA][ ][CHAOS][CAELUM][ ][INFERNUS][METALLUM][ ]…
+└──── VESSEL ────┘   └──── OFFERING ──┘   └──── HOUR ───┘   └──── SUBJECT ─────┘
+```
+
+20 slots is sized for exactly this: five clauses of up to 3 glyphs plus separators.
+Each word is validated independently, so a player can inscribe a whole ritual and
+see which clauses land — and the inscription as a whole is only a valid ritual if
+the clause order is right.
+
+### Q9 ❓ Does the VESSEL clause break `QUALIFIER · HEAD`? (D10)
+Every other word follows qualifier-then-head (`FLAMMANS · VIRGA`), but the source
+example's vessel reads `ALTARE · TENEBRAE` — head first. Two resolutions:
+- **(a) Vessel is a named exception.** An inscription opens by naming its subject,
+  then qualifies it — as Latin dedications name the dedicatee first
+  (`ALTARE TENEBRARUM`, "altar of darkness"). Keeps the original example literal
+  and gives the formula a distinctive opening.
+- **(b) Strict `QUALIFIER · HEAD` everywhere** → `TENEBRAE · ALTARE`. One rule, no
+  exceptions, at the cost of flipping that one word.
+
+*No strong lean — (a) is more characterful and matches the example as given;
+(b) is easier to teach.* Needs a call before the lexicon is authored.
 
 ### Q7 ❓ What does a *wrong* codex submission cost?
 D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth

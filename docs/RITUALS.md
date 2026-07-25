@@ -1,9 +1,15 @@
 # Rituals & Infusion
 
 The back half of the loop: the altar, the pedestals, the infusion fluid, and the
-environmental conditions that turn a set of decoded **rune words** into an actual
-crafting event. This document specifies the multiblock, the full JSON recipe
-schema, the backlash system, and worked examples.
+environmental conditions that turn a decoded **inscription** into an actual crafting
+event. This document specifies the multiblock, the full JSON recipe schema, the
+backlash system, and worked examples.
+
+Every recipe carries an inscription written in the ritual formula (`RUNES.md` §4) —
+`VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` — and each clause is one rune word.
+The inscription *is* the recipe, expressed in the language the player is learning:
+the schema below is simply that sentence plus the exact quantities the player only
+earns at Tier 3.
 
 Two decisions shape this doc: glyphs are a **research** layer, **not** physical
 altar ingredients (D5) — pedestals only ever hold catalyst items, and the altar
@@ -96,16 +102,18 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
   // lower-tier recipes unless "exact_altar": true.
   "altar": "epigraphy:blackstone_altar",
 
-  // The ritual's hint: a set of 2-3 glyph RUNE WORDS (D8, RUNES.md §3), each naming
-  // one component. Drives (a) the hint text the player reads and (b) the research
-  // gate (KNOWLEDGE.md §4). Unordered for mechanics; order is presentational.
-  "rune_words": [
-    "epigraphy:blackstone_altar",   // ALTARE · TENEBRAE
-    "epigraphy:blaze_rod",          // FLAMMANS · VIRGA
-    "epigraphy:thunderstorm",       // CAELUM  · CHAOS
-    "epigraphy:netherite",          // INFERNUS· METALLUM
-    "epigraphy:chaos_ingot"         // CHAOS   · METALLUM  (the output)
-  ],
+  // The ritual's INSCRIPTION: rune words in strict formula order (D10, RUNES.md §4)
+  //   VESSEL / OFFERING / HOUR / SUBJECT / ISSUE
+  // Order is mechanical, not presentational — a wrong order is a wrong inscription.
+  // Drives (a) the hint text the player reads and (b) the research gate
+  // (KNOWLEDGE.md §4).
+  "inscription": {
+    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
+    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+  },
 
   // Catalyst items on pedestals. Matched as a multiset (order-independent).
   // Each entry is a vanilla Ingredient plus a count.
@@ -147,10 +155,10 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
 2. Filter recipes to those whose `altar`, `pedestals`, `input`, `fluid`,
    `fluid_amount`, and required `conditions` all match the physical setup.
 3. Apply the **research check** (`KNOWLEDGE.md` §4b) against the triggering player:
-   - **Decoded all** the recipe's rune words → **clean** run.
-   - **Some rune words undecoded** → a **blind attempt**: it still fires (the build is
+   - **Decoded every word of the inscription** → **clean** run.
+   - **Some words undecoded** → a **blind attempt**: it still fires (the build is
      physically correct) but triggers **backlash** (§4.1) scaled by how many
-     rune words remain undecoded.
+     words remain undecoded.
    - **No physical match at all** → the altar sputters (in-world particles/sound),
      nothing is consumed.
 4. Run it: consume fluid/pedestal items over `duration_ticks` with in-world
@@ -198,13 +206,13 @@ recipe's rune words (rare glyphs → harsher backlash). A pack can set
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
-  "rune_words": [
-    "epigraphy:blackstone_altar",   // ALTARE  · TENEBRAE
-    "epigraphy:blaze_rod",          // FLAMMANS· VIRGA
-    "epigraphy:thunderstorm",       // CAELUM  · CHAOS
-    "epigraphy:netherite",          // INFERNUS· METALLUM
-    "epigraphy:chaos_ingot"         // CHAOS   · METALLUM
-  ],
+  "inscription": {
+    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
+    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+  },
   "pedestals": [ { "item": "minecraft:blaze_rod", "count": 4 } ],
   "input": { "item": "minecraft:netherite_ingot", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
@@ -218,26 +226,33 @@ recipe's rune words (rare glyphs → harsher backlash). A pack can set
 }
 ```
 
-The five rune words are exactly the five things the player must work out, and each is
-a 2-word batch:
+Read as a single inscription, in formula order:
 
-| Rune word | Glyphs | Names |
-|---|---|---|
-| `blackstone_altar` | ALTARE · TENEBRAE | Blackstone Altar |
-| `blaze_rod` | FLAMMANS · VIRGA | Blaze Rod |
-| `thunderstorm` | CAELUM · CHAOS | Thunderstorm |
-| `netherite` | INFERNUS · METALLUM | Netherite |
-| `chaos_ingot` | CHAOS · METALLUM | Chaos Ingot |
+```
+ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM  →  CHAOS·METALLUM
+────────┬───────  ───────┬──────   ──────┬─────   ────────┬────────     ───────┬──────
+  VESSEL            OFFERING          HOUR           SUBJECT              ISSUE
+Blackstone Altar    Blaze Rod      Thunderstorm      Netherite         Chaos Ingot
+```
+
+| Clause | Rune word | Glyphs | Names |
+|---|---|---|---|
+| VESSEL | `blackstone_altar` | ALTARE · TENEBRAE | Blackstone Altar |
+| OFFERING | `blaze_rod` | FLAMMANS · VIRGA | Blaze Rod |
+| HOUR | `thunderstorm` | CHAOS · CAELUM | Thunderstorm |
+| SUBJECT | `netherite` | INFERNUS · METALLUM | Netherite |
+| ISSUE | `chaos_ingot` | CHAOS · METALLUM | Chaos Ingot |
 
 A player who has learned the words but decoded nothing sees *"Altar · Darkness /
-Flaming · Rod / Heavens · Chaos / Hell · Metal / Chaos · Metal"* — genuinely
-solvable, and each hunch is confirmed by submitting it in the codex.
+Flaming · Rod / Chaos · Heavens / Hell · Metal / Chaos · Metal"* — genuinely
+solvable, and made more so by the formula: they know the third word must be a
+*condition* before they've decoded a single glyph of it.
 
 **Supporting rune word definitions** (`RUNES.md` §3.1):
 ```jsonc
 // data/epigraphy/rune_words/thunderstorm.json
 {
-  "glyphs": ["epigraphy:caelum", "epigraphy:chaos"],
+  "glyphs": ["epigraphy:chaos", "epigraphy:caelum"],   // QUALIFIER · HEAD, ordered
   "means": { "type": "condition", "value": { "type": "epigraphy:weather", "value": "thunder" } },
   "reading": "When the heavens turn to chaos.",
   "hint": "A raging sky."
@@ -259,13 +274,15 @@ solvable, and each hunch is confirmed by submitting it in the codex.
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:stone_altar",
-  "rune_words": [
-    "epigraphy:stone_altar",       // ALTARE · LAPIS
-    "epigraphy:starlit_night",     // CAELUM · NOX
-    "epigraphy:illuminated_stone"  // LAPIS  · CAELUM
-  ],
+  "inscription": {
+    "vessel":   "epigraphy:stone_altar",         // ALTARE   · LAPIS
+    "offering": "epigraphy:glowstone",           // FLAMMANS · LAPIS
+    "hour":     "epigraphy:starlit_night",       // NOX      · CAELUM
+    "subject":  "epigraphy:deepslate",           // TENEBRAE · LAPIS
+    "issue":    "epigraphy:illuminated_stone"    // CAELUM   · LAPIS
+  },
   "pedestals": [ { "item": "minecraft:glowstone_dust", "count": 2 } ],
-  "input": { "item": "minecraft:stone", "count": 1 },
+  "input": { "item": "minecraft:deepslate", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
   "fluid_amount": 250,
   "conditions": [
@@ -276,10 +293,19 @@ solvable, and each hunch is confirmed by submitting it in the codex.
   "duration_ticks": 100
 }
 ```
-A gentle first ritual with only three rune words, all built from **common** glyphs.
-It's the tutorial for the whole language: `ALTARE · LAPIS` (Stone Altar) is the
-player's first likely codex submit, and its success teaches that 2-glyph batches
-name things.
+
+The tutorial ritual, and deliberately built to **teach the grammar**. Four of its
+five words share the head `LAPIS`:
+
+```
+ALTARE·LAPIS    FLAMMANS·LAPIS   NOX·CAELUM    TENEBRAE·LAPIS  →  CAELUM·LAPIS
+ Stone Altar      Glowstone      Starlit Night   Deepslate       Illuminated Stone
+```
+
+Once a player decodes any one of these, the pattern is visible: *"…· LAPIS names a
+kind of stone."* Their next guesses aren't shots in the dark — they're informed by
+the rule they just inferred. That's the whole language taught in one ritual,
+without a tutorial popup.
 
 ### 5.3 A `moon_phase` example (shows a 3-glyph rune word)
 ```jsonc
@@ -287,11 +313,13 @@ name things.
 {
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
-  "rune_words": [
-    "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELUM  (3-glyph rune word)
-    "epigraphy:umbral_shard"       // TENEBRAE · LAPIS
-  ],
+  "inscription": {
+    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "offering": "epigraphy:quartz",            // INFERNUS · LAPIS  ("hell's stone")
+    "hour":     "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELUM  (3-glyph)
+    "subject":  "epigraphy:echo_shard",        // NOX      · LAPIS
+    "issue":    "epigraphy:umbral_shard"       // CHAOS    · TENEBRAE
+  },
   "pedestals": [ { "tag": "forge:gems/quartz", "count": 4 } ],
   "input": { "item": "minecraft:echo_shard", "count": 1 },
   "fluid": "epigraphy:liquid_starlight",
@@ -305,8 +333,21 @@ name things.
 }
 ```
 `NOX · TENEBRAE · CAELUM` ("Night · Darkness · Heavens") is the 3-glyph form —
-used when two words are too ambiguous to name a thing uniquely. Here two words
-would only get you "a dark sky"; the third pins it to the **new moon**.
+used when two glyphs are too ambiguous to name a thing uniquely. Here two would only
+get you "a dark sky"; the third pins it to the **new moon**.
+
+> **Authoring constraint worth flagging early.** Every ingredient, condition, and
+> output in a ritual needs its own rune word, and **no two rune words may share the
+> same ordered glyph sequence** (submit validation must be deterministic). With a
+> ~10-glyph starter lexicon this gets tight fast — writing these three examples
+> already forced `INFERNUS · LAPIS` for quartz and `NOX · LAPIS` for echo shards to
+> avoid colliding with `TENEBRAE · LAPIS` (deepslate). Two implications:
+> 1. **Ingredients are chosen partly for nameability.** A recipe wanting an item
+>    with no natural 2-glyph name is a signal to pick a different ingredient or add
+>    a glyph.
+> 2. **The lexicon must grow alongside the recipe list.** Budget roughly one new
+>    glyph per handful of new rituals; the load-time validator (`ROADMAP.md` §5)
+>    catches collisions, but the *design* pressure shows up before the validator does.
 
 ---
 
