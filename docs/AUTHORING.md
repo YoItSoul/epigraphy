@@ -56,16 +56,16 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **stave + frame** (`GLYPH_SPEC.md`), and both derive from fields
+Glyphs are drawn as **two marks + frame** (`GLYPH_SPEC.md`), and both derive from fields
 you have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Stave** (interior) | `lemma` | a stem with one rung per letter; each rung's width and shape identify the letter, and the rung tips are joined into a profile so the silhouette is the word's own |
+| **Marks** (interior) | `lemma` | its first two letters, drawn as two bold arms on a stem; each arm's width and shape identify one letter |
 | **Frame** (border) | `determinative.class`, or `category` if absent | hexagon / circle / plinth / basin / open base / doubled ring |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a
-hex-framed stave with no art file at all. **This is the intended path** — add a
+hex-framed `PV` mark with no art file at all. **This is the intended path** — add a
 glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
@@ -88,11 +88,14 @@ The element restriction is enforced: declaring a `determinative` block on an
 `element` glyph fails validation. That rule is why the element frame is drawn open
 rather than enclosing — the shape *is* the rule.
 
-> **Adding a new frame is not a free action.** Frames must be vertically symmetric
-> and must keep straight sides across the stave band, and adding one **requires
-> re-running the letter-distinctness audit** (`GLYPH_SPEC.md` §8). Every glyph
-> collision found while building this system came from a frame intruding on the
-> stave, never from the letter map.
+> **Two glyphs in the same class may not share their first two letters.** That is the
+> collision that actually fires — `VIRGA`/`VITA`/`VIGILIA` are fine because their
+> classes differ, but a second `VI` *material* is not. Fix it with an explicit
+> two-letter `mark` field: `{ "lemma": "VIRIDIS", "mark": "VR" }`.
+>
+> **Adding a new frame is not a free action** either. Frames must be vertically
+> symmetric and keep straight sides across the mark band, and adding one **requires
+> re-running the letter-distinctness audit** (`GLYPH_SPEC.md` §8).
 
 ### Choosing a good glyph
 

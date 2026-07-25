@@ -152,120 +152,49 @@ gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
 Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
 
-### D15 ✅ Glyph construction — stem and rungs
-Glyphs are built by a **deterministic rule where every lit pixel is meaningful**: it
-is part of the stem, part of a rung naming one letter, or part of the class frame.
-Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
+### D15 ✅ Glyph construction — a two-letter mark in a class frame
+**A glyph is a two-letter abbreviation of its word**, drawn as two bold marks on a
+stem inside a frame naming its class. That is the whole rule. Full spec:
+[`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
-- **Stem and rungs.** A vertical stem carries one **rung per letter**, read top to
-  bottom.
-  A letter is identified by its rung's **width** (5 steps) and **shape** (bar,
-  chevron up, chevron down, double bar, broken bar) — 5 × 5 = **25 slots for the 23
-  letters** of the classical Latin alphabet. Lemmas normalise to classical orthography
-  (`PULVIS` → `PVLVIS`); over five letters they abbreviate by dropping vowels after
-  the initial (`FLAMMANS` → `FLMMN`), the abjad principle and what a stonecutter
-  would have cut. **The letter→(width, shape) map is frozen at v1.**
-- **Three variables keep glyphs from looking alike.** An earlier revision fixed every
-  glyph at five rows with a full-height stem and used 1-pixel end-ticks, so every
-  symbol had the same bounding box and read as a variation on one comb. Fixed without
-  adding any information, only by making what was already there visible at a glance:
-  **figure height encodes word length** (rows are centred, only as many as there are
-  letters, and the stem spans just those rows), **a profile outline joins the rung
-  tips** so the silhouette is the word's own width-sequence, and **the letter group is
-  a rung's shape rather than a tick**. Stroke *form* is also Ogham's own device, so this is the
-  more authentic encoding as well as the more legible one.
-- **Symmetry is structural.** Rungs are drawn outward from the stem in both
-  directions, and frames pass through a `symmetrise` step that ORs each column with
-  its mirror — so a glyph *cannot* come out asymmetric, and frame vertices need not
-  be mirror-exact.
-- **Arms never leave the frame.** Each arm stops one pixel inside the frame's inner
-  edge on its row, so strokes come to rest against the frame instead of crossing it.
-  The stem's meeting the frame top and bottom is what visually fuses the two layers.
+- **Two marks.** The lemma normalises to classical orthography (`PULVIS` → `PVLVIS`)
+  and its **first two letters** become the upper and lower mark. Each mark's **width**
+  (5 steps) and **shape** (bar, chevron up, chevron down, double bar, broken bar)
+  identify one letter — 5 × 5 = **25 slots for the 23 letters**. Marks are **2 px
+  thick**. **The letter→(width, shape) map is frozen at v1.**
+- **Identity is frame × upper mark × lower mark** — three features to parse, not five
+  faint rungs. The frame *disambiguates*: `VIRGA`, `VITA` and `VIGILIA` all abbreviate
+  to `VI` and stay distinct as material, element and formula. Only a same-class
+  same-abbreviation pair collides; the validator rejects it and the author supplies an
+  explicit `mark`.
+- **Symmetry is structural.** Marks draw outward from the stem in both directions, and
+  frames pass through a `symmetrise` step, so a glyph *cannot* come out asymmetric.
+- **Arms never leave the frame.** Each stops one pixel inside the frame's inner edge.
 
-**Supersedes the lattice-path construction** (letters as scattered grid points joined
-in sequence), which produced tangled diagonals, self-crossings, uneven density, and
-strokes running outside the frame. The Ogham precedent is now closer, not further:
-Ogham encodes letters as counted strokes against a stem, and survives almost entirely
-as standing-stone inscriptions.
+**Supersedes full-lemma transcription** (five rungs, one per letter, later with a
+profile outline). That optimised the wrong thing: **players read glyphs constantly**,
+since every rune-word guess means scanning the codex for the one they want. That is a
+*recognition* task, and recognition wants **few, bold, specific** shapes — five faint
+rungs made every glyph a variation on one comb. Two letters is ample (23 × 23 pairs ×
+6 frames), and dropping to two marks frees the room to draw each boldly.
 
-**Two constraints are load-bearing**, each found by an audit that failed before it
-was added — they are not stylistic:
-1. **Rung rows stay within rows 8–24**, the frame's straight band, and every frame
-   keeps vertical sides across it. Where a frame tapered into the band, wide rungs
-   clamped to the same column and distinct letters collapsed.
-2. **Widths are two pixels apart** so adjacent widths never coincide once clamped.
+Roman inscriptions abbreviate exactly this way (`D.M.`, `I.O.M.`, `COS`). Once a
+player knows the 23 letterforms they don't memorise glyphs, they **read** them — `CA`
+is `CAELVM`.
 
-A third constraint applied while letters were distinguished by 1-pixel end-ticks —
-they had to sit beside the stem, since at the arm ends they landed on frame pixels
-and vanished, collapsing E/K/P/V. **Rung shapes make that moot**: a chevron or double
-bar cannot be swallowed by a frame the way a single pixel could.
+**The trade, stated plainly:** a glyph now *names* its lemma rather than transcribing
+it. That is the right way round — decipherment difficulty belongs in the **rune
+words**, not in reading a symbol the player must pick out of a grid hundreds of times.
 
-Adding a frame therefore **requires re-running the letter-distinctness audit**: render
-all 23 letters in it and assert 23 distinct figures. Every collision found while
-developing this spec came from a frame intruding on the stave, never from the letter
-map. The doubled-ring frame's inner arc is clipped out of the rung band for exactly
-this reason.
+**Two constraints are load-bearing**, each found by an audit that failed first: both
+mark rows must sit in the frame's straight band (frames taper only outside rows 8–24),
+and widths must be two pixels apart with arms stopping one pixel inside the frame.
+Adding a frame **requires re-running the distinctness audit** — every collision found
+while developing this came from a frame intruding on the marks, never from the letter
+map.
 
-**Audited:** 23/23 letters distinct in all six frames, all sample words distinct,
-every output vertically symmetric.
-
-### D16 ✅ Colour encodes nothing — shape carries all meaning
-A hard accessibility rule, not a preference: **strip every colour from the game and
-zero information is lost.** Colour may only ever be redundant reinforcement.
-
-| The player must tell… | Carried by | Never by |
-|---|---|---|
-| which glyph this is | the rung pattern | hue |
-| what class it belongs to | frame silhouette (5 contrasting outlines) | hue |
-| whether they know it yet | how much of the glyph is drawn | hue |
-| where a clause begins | doubled ring | hue |
-
-**Knowledge tier is drawn, not tinted** — a progressive reveal needing no colour and
-no UI:
-
-- **Tier 0 Unknown** — frame only, stave field empty.
-- **Tier 1 Sighted** — frame + stem + **rung positions**, arms unextended. You can
-  see how many letters the word has, but not which.
-- **Tier 2 Learned** — frame + stem + **full rungs**.
-
-That is a precise visual metaphor for partial decipherment, conveying the same
-information as the text layer's `???` while remaining fully legible to colourblind
-players.
-
-### D14 ✅ Glyph art — a mark inside a class frame
-Every glyph is drawn as two layers, and the art is **part of the grammar**:
-
-- **Interior mark** — derived from the lemma (construction rule in D15).
-  Deliberately cryptic: you cannot read it by looking, which is what preserves the
-  decipherment loop.
-- **Frame** (exterior) — encodes the **determinative class**: hexagon = material,
-  circle = celestial, plinth = structure, **open base** = element, doubled ring =
-  formula marker.
-
-**Pictographs were rejected.** A flame drawn as a flame has nothing to decipher —
-the codex, sightings, and submit loop become ceremony around a solved puzzle. Real
-scripts agree: Sumerian began pictographic and abstracted within centuries, and that
-drift is what made it writing rather than drawing. Pictography stays on tablet
-frames, block textures, and structure motifs — never on glyphs.
-
-Three consequences:
-1. **The grammar is visible.** Read an inscription's frames alone and you can see
-   where the rite opens, which clause is celestial, and where the result is named —
-   while completely illiterate. This makes `KNOWLEDGE.md` §4a's "the clause label is
-   legible even when the word is not" a visual fact rather than a stated rule.
-2. **Art generates from data.** Monogram from `lemma`, frame from
-   `determinative.class` — a modder writes JSON and gets usable art with no image
-   editor, with `texture` available as a hand-drawn override (D13, `AUTHORING.md` §2.1).
-3. **The element frame is open, not enclosing**, because quality glyphs are never
-   heads. Validation enforces it: an `element` glyph may not declare a
-   `determinative`. The shape *is* the rule.
-
-**Accepted caveat:** SGA is a substitution cipher and can be decoded externally.
-That's authentic — real inscriptions are decipherable — but it means **difficulty
-must live in the rune words, not the letters**. Knowing a mark spells `PULVIS` says
-nothing about which powders `… · PULVIS` names.
-
-Full treatment: `RUNES.md` §5.
+**Audited:** all 23 letters distinct in both mark positions in all six frames, every
+lexicon glyph unique, every output vertically symmetric.
 
 ### D12 ✅ Rite types — not everything is an altar
 A **rite type** is a grammar template plus a trigger, declared in data. Each is

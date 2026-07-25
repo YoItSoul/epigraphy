@@ -565,19 +565,21 @@ Glyph art is not decoration — it is **part of the grammar**. Every glyph is dr
 two layers:
 
 ```
+      CAELVM  ->  "CA"
    ┌─────────────────┐
-   │  ╱────╬────╲    │  ← FRAME: the determinative CLASS (§4.3)
-   │  │  ══╬══  │    │       shape = what kind of thing this names
-   │  │   ╱╬╲   │    │  ← STAVE: the LEMMA, one rung per letter,
-   │  ╲────╬────╱    │       tips joined into a profile silhouette
+   │        ╬        │   ← FRAME: the determinative CLASS (§4.3)
+   │    ════╬════    │        shape = what kind of thing this names
+   │        ╬        │   ← TWO MARKS: the lemma's first two letters,
+   │      ══╬══      │        each a bold arm; width + shape = a letter
    └─────────────────┘
 ```
 
-- **The stave** (interior) encodes the lemma **letter by letter, in order**, as a
-  vertical stem with **one rung per letter** read top to bottom; a rung's width and
-  shape identify the letter, and the rung tips are joined into a **profile** so the
-  glyph's silhouette is the word's own. Every lit pixel is stem, rung, profile or
-  frame; nothing is decorative. It is deliberately **cryptic**: you cannot look at it and know what it
+- **Two bold marks** (interior) spell the lemma's **first two letters** — a
+  two-letter abbreviation, exactly as Roman inscriptions abbreviate (`D.M.`, `COS`).
+  Each mark's width and shape identify one letter. Every lit pixel is stem, mark or
+  frame; nothing is decorative. Kept short deliberately: **players scan these
+  constantly** while guessing rune words, so each must be simple, specific and
+  instantly told apart. It is deliberately **cryptic**: you cannot look at it and know what it
   means, which is what preserves the decipherment loop. **Full construction rule:
   [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
 - **The frame** (exterior) encodes the glyph's **determinative class**. Its shape is
