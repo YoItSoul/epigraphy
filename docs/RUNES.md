@@ -412,7 +412,7 @@ just another beast. That matters when the word is a warning carved on a wall.
 
 ---
 
-### 3.4 Three commissions, and what they cost
+### 3.5 Three commissions, and what they cost
 
 | Word | Glyphs | Reading | New glyphs |
 |---|---|---|---|
