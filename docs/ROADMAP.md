@@ -98,7 +98,7 @@ creative tab. Goal: `runClient` opens a world with the mod present.
 
 **Phase 1 — Runes as data, and the glyph renderer.**
 `Glyph` + `RuneWord` + `Inscription` objects and their datapack loaders; ship the
-starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build the
+starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §4); build the
 **ordered-sequence** index for submit validation and the clause-order validator.
 
 Also here: the **procedural glyph renderer** (D14/D15/D17/D18/D19) — two linked
@@ -206,7 +206,7 @@ Still open (don't block early phases):
   Wants the lexicon's classes settled first; revisit before Phase 3.
 - ❓ **Backlash severity model (Q6)** — per-recipe base × undecoded-count × instability.
 - ❓ **Wrong-submission cost (Q7)** — free, cooldown, or consumable.
-- ❓ **Vessel clause order (Q9)** — `ALTARE · TENEBRAE` exception vs. strict
+- ❓ **Vessel clause order (Q9)** — `TENEBRAE · SAXVM` exception vs. strict
   `QUALIFIER · HEAD`. **Blocks lexicon authoring — settle before Phase 1.**
 
 See `DECISIONS.md` for the current standing of each.

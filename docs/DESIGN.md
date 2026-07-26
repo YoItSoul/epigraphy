@@ -19,10 +19,10 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
    actually look.
 
 2. **A real language, with a real grammar.** Glyphs are not abstract skill-tree
-   nodes. Each is a symbol mapping to a Latin word (`ALTARE`, `TENEBRAE`,
-   `FLAMMANS`, `VIRGA`, `CHAOS`, `CAELUM`, `INFERNUS`, `METALLUM`, …), and **2–3
-   glyphs *in order* form a rune word naming one concrete thing**: `FLAMMANS ·
-   VIRGA` → Blaze Rod. Those words then fill a fixed **inscription formula** —
+   nodes. Each is a symbol mapping to a Latin word (`SAXVM`, `TENEBRAE`,
+   `IGNIS`, `OSSA`, `CHAOS`, `CAELVM`, `INFERNVS`, `FERRVM`, …), and **2–3
+   glyphs *in order* form a rune word naming one concrete thing**: `IGNIS ·
+   OSSA` → Blaze Rod. Those words then fill a fixed **inscription formula** —
    `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` — so a ritual is one readable
    sentence. Like real epigraphy, the pattern is the point: once you know the
    formula, you can approach an inscription you've never seen and know what each
@@ -180,7 +180,7 @@ three tiers. This is the example you gave, formalized.
 **The ritual, as one inscription in the formula:**
 
 ```
-ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM  →  CHAOS·METALLUM
+TENEBRAE·SAXVM   IGNIS·OSSA   CHAOS·CAELVM   INFERNVS·FERRVM  →  CHAOS·FERRVM
 ────────┬───────  ───────┬──────   ──────┬─────   ────────┬────────     ───────┬──────
   VESSEL            OFFERING          HOUR           SUBJECT              ISSUE
 Blackstone Altar    Blaze Rod      Thunderstorm      Netherite         Chaos Ingot
@@ -190,8 +190,8 @@ Five clauses, five things to work out — and the formula tells you what *kind* 
 thing each one is before you can read any of them.
 
 **Tier 0 → 1 (Sighted).** The player finds `CHAOS` carved into a blackened ruin in
-the Nether, reads `CAELUM` as a constellation on a clear night, and gets a
-`FLAMMANS` tablet off a Blaze. A charcoal rubbing on each carving (and studying the
+the Nether, reads `CAELVM` as a constellation on a clear night, and gets a
+`IGNIS` tablet off a Blaze. A charcoal rubbing on each carving (and studying the
 tablet at a lectern) records an independent sighting — all in-world, no screen.
 When they run dry, **seek mode** on the codex points them toward the nearest
 structure holding a glyph they haven't learned.
@@ -207,15 +207,15 @@ Altar·Darkness   Flaming·Rod    Chaos·Heavens    Hell·Metal       Chaos·Met
 
 This is the good part: that's **solvable**, and doubly so because of the grammar.
 "Flaming Rod" is clearly a blaze rod. "Chaos Heavens" sits in the HOUR slot, so it
-must be *weather* — a storm. And `· METALLUM` ending two different words tells the
-player, unprompted, that `METALLUM` is the head for metals.
+must be *weather* — a storm. And `· FERRVM` ending two different words tells the
+player, unprompted, that `FERRVM` is the head for metals.
 
-**Decoding (the active step).** They open the codex, inscribe `FLAMMANS · VIRGA` in
+**Decoding (the active step).** They open the codex, inscribe `IGNIS · OSSA` in
 that order, and **submit**. It matches — the word permanently decodes to **Blaze
 Rod** and reads that way everywhere. They repeat for the other four; with 20 slots
 they can lay out the whole inscription and test every clause at once. Each correct
 guess sharpens the ritual from poetry into a plan. (Wrong guesses cost nothing but
-confirm nothing — and `VIRGA · FLAMMANS`, reversed, is simply not a word.)
+confirm nothing — and `OSSA · IGNIS`, reversed, is simply not a word.)
 
 They could *attempt* the ritual before decoding everything — but every undecoded
 clause raises the **backlash** risk if they do.
@@ -236,11 +236,11 @@ written into the codex reference and JEI.
 
   // The inscription — one rune word per clause, in formula order.
   "inscription": {
-    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
-    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
-    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
-    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+    "vessel":   "epigraphy:blackstone_altar",  // SAXVM   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // IGNIS · OSSA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELVM
+    "subject":  "epigraphy:netherite",         // INFERNVS · FERRVM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · FERRVM
   },
 
   "pedestals": [

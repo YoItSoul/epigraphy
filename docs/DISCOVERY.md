@@ -38,9 +38,9 @@ patterns form a glyph. Cloud cover, moon phase, and dimension gate which are
 visible, echoing Astral Sorcery's sky mechanic but with the glyph language as the
 payload.
 
-- Requires `NOX` (Night) conditions to attempt — you must be able to see the sky
+- Requires `LVNA` (Night) conditions to attempt — you must be able to see the sky
   and it must be dark.
-- Reading `CAELUM` from the sky, then later seeing it carved, counts as two
+- Reading `CAELVM` from the sky, then later seeing it carved, counts as two
   independent sightings toward translation.
 
 ### 1.3 Inscribed tablets (combat)

@@ -11,8 +11,8 @@ don't unlock progression by grinding — you unlock it by *learning to read*.
 
 | Term | Meaning |
 |------|---------|
-| **Glyph** | A single symbol, mapping to one Latin word (`FLAMMANS`, `CHAOS`). **Discovered** in the world. |
-| **Rune word** | A set of 2–3 glyphs naming one concrete thing — `FLAMMANS · VIRGA` → Blaze Rod. **Guessed** by the player. |
+| **Glyph** | A single symbol, mapping to one Latin word (`IGNIS`, `CHAOS`). **Discovered** in the world. |
+| **Rune word** | A set of 2–3 glyphs naming one concrete thing — `IGNIS · OSSA` → Blaze Rod. **Guessed** by the player. |
 | **Runes** | The whole system: every glyph and rune word together. |
 
 *Glyphs are discovered; rune words are guessed.*

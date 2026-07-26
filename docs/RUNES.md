@@ -1,429 +1,264 @@
-# Runes — Glyphs & Rune Words
+# The Runes
 
-Epigraphy's magic is a written language. This document defines the vocabulary, the
-starter lexicon, how glyphs combine into rune words, and how readable text is
-generated at each tier of knowledge.
+The language. **Every Latin word here is translated** — you never need to know Latin to
+read this document, and neither does a player.
 
-## 0. Terminology (use these words consistently)
-
-| Term | Meaning |
-|------|---------|
-| **Glyph** | A single **symbol**. Maps to one Latin word (`FLAMMANS`, `VIRGA`, `CHAOS`). The atomic unit — what you find carved in the world and learn by sighting. |
-| **Rune word** | An **ordered sequence of 2–3 glyphs** that together name exactly one concrete thing. `FLAMMANS · VIRGA` → Blaze Rod. This is what you *guess* and inscribe in the codex. |
-| **Runes** | The **whole system** — the glyphs, the rune words, and the grammar binding them. "The Runes" is the language itself. |
-
-Two mechanical points follow:
-
-1. **Glyphs are discovered; rune words are guessed.** You cannot use a glyph in a
-   guess until you have found it in the world.
-2. **Order is meaningful at both levels** (D10). Within a word, `FLAMMANS · VIRGA`
-   and `VIRGA · FLAMMANS` are different expressions and only one is valid. Across a
-   ritual, the words follow a fixed **inscription formula** (§4) — the pattern that
-   makes the language readable, exactly as real epigraphic formulae do.
+- **How the symbols are drawn:** [`GLYPH_SPEC.md`](GLYPH_SPEC.md)
+- **How recipes use them:** [`RITUALS.md`](RITUALS.md)
+- **Why things are the way they are:** [`DECISIONS.md`](DECISIONS.md)
 
 ---
 
-## 1. What a glyph is
+## 1. Three words, used precisely
 
-Every glyph is a datapack entry. Rituals, tablets, worldgen, and the codex all
-reference glyphs by their id, so the lexicon is fully data-driven and extensible.
+| Term | Means |
+|---|---|
+| **Glyph** | **one symbol**, one tile. `IGNIS` (*fire*) is a glyph. Glyphs are **discovered** in the world. |
+| **Rune word** | an **ordered 2–3 glyph sequence** naming one thing. `IGNIS · GERMEN` (*fire-seed*) is a rune word. Rune words are **guessed** in the codex. |
+| **Inscription** | a full ritual, written as rune words in formula order (§3.2). |
+| **The Runes** | the whole system — glyphs, words and grammar together. |
 
-```jsonc
-// data/epigraphy/glyphs/chaos.json
-{
-  "lemma": "CHAOS",            // the Latin word the symbol translates to
-  "gloss": "Chaos",           // short English meaning shown once translated
-  "category": "element",      // element | place | action | material | celestial
-  "rarity": "rare",           // common | uncommon | rare — affects where it hides
-  "texture": "epigraphy:glyph/chaos",   // 32x32 monochrome symbol
-  "sightings_to_translate": 3,          // how many independent sightings to reach Tier 2
-  "description": "The unmaking that precedes remaking; the churn beneath order."
-}
-```
-
-Fields:
-
-- **`lemma`** — the Latin word. This is what a fluent player "reads." Latin is
-  chosen for the same reason Astral uses star-lore and Thaumcraft uses aspects:
-  it feels ancient, it's terse, and it lets short symbol strings carry meaning.
-- **`gloss`** — the plain-English meaning revealed at Tier 2. Kept to one or two
-  words so translated ritual text stays readable.
-- **`category`** — governs both *where the glyph tends to hide* (see
-  `DISCOVERY.md`) and *what role it can play in a rune word* — broadly, `material`
-  and `place` glyphs tend to be **heads**, while `element` and `celestial` glyphs
-  tend to be **qualifiers** (§4.3).
-- **`rarity`** — biases worldgen and mob-drop tables. Rare glyphs (like `CHAOS`)
-  are the payoff for deep exploration or boss kills.
-- **`sightings_to_translate`** — how many separate in-world sightings it takes to
-  crack the meaning without a Rosetta tablet. Rarer glyphs take more.
+**Order is meaningful.** `IGNIS · GERMEN` and `GERMEN · IGNIS` are different words. A
+reversed guess simply fails.
 
 ---
 
-## 2. The lexicon: 28 axes, 56 runes
+## 2. The lexicon: 26 axes, 52 runes
 
-**Every rune has an opposite.** The lexicon is not a list of words — it is a list of
-**axes**, each one a dimension of the world, each with two opposed poles. `CAELVM` has no
-meaning that doesn't imply `INFERNVS`; `VITA` implies `MORS`.
+**Every rune has an opposite.** The lexicon is not a list of words but a list of **axes** —
+each one a dimension of the world, each with two opposed poles.
 
-That has three consequences worth stating before the table:
+Three things follow, and they are the whole reason for the design:
 
-1. **The axis is itself a concept.** `PLENVM`/`VACVVM` is *fullness*; `NOVVM`/`SENEX` is
-   *age*. A player who learns one pole has half-learned the other, which makes the
-   language cheaper to teach than its size suggests.
-2. **Description replaces naming.** There is no rune for "stairs". A thing is located by
-   naming its poles — which is why 56 runes can describe far more than 56 things.
-3. **Coining is constrained.** A new rune is only admissible if it completes an axis. That
-   is the discipline that stops the lexicon sprawling.
+1. **The axis is itself a concept.** `PLENVM`/`VACVVM` is *fullness*. `NOVVM`/`SENEX` is
+   *age*. Learn one pole and you have half-learned the other, which makes the language far
+   cheaper to teach than 52 words would suggest.
+2. **Description replaces naming.** There is no rune for "stairs". A thing is *located* by
+   naming its poles — which is how 52 runes describe far more than 52 things.
+3. **Coining is disciplined.** A new rune is admissible only if it **completes an axis**.
+   That is what stops the lexicon sprawling.
 
-A pole marked **\*** may **head** a rune word (it names a kind of thing). The rest are
-qualifiers only. Head rule unchanged: the head is the last determinative-capable glyph.
+A pole marked **✦** may **head** a rune word (it names a *kind of thing*). The rest are
+qualifiers only — see the head rule (§3.1).
 
 ### The World
-| | | | |
-|---|---|---|---|
-| `CAELVM`\* | heavens, sky, the above | `INFERNVS`\* | hells, the fire below |
-| `ORIGO`\* | source, home, the middle | `FINIS`\* | end, edge, the beyond |
-| `LVX` | light | `TENEBRAE` | darkness |
-| `ORDO` | order, law, pattern | `CHAOS` | ruin, the unmade |
-| `SOL`\* | sun, the day | `LVNA`\* | moon, the night |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `CAELVM` ✦ | heavens, sky, the above | ↔ | `INFERNVS` ✦ | hells, the fire below |
+| `ORIGO` ✦ | source, home, the middle | ↔ | `FINIS` ✦ | end, edge, the beyond |
+| `LVX` | light | ↔ | `TENEBRAE` | darkness |
+| `ORDO` | order, law, pattern | ↔ | `CHAOS` | ruin, the unmade |
+| `SOL` ✦ | sun, the day | ↔ | `LVNA` ✦ | moon, the night |
 
 ### The Elements
-| | | | |
-|---|---|---|---|
-| `IGNIS`\* | fire, heat | `GELV`\* | ice, cold |
-| `VNDA`\* | flow, liquid | `SAXVM`\* | stone, solid |
-| `VENTVS`\* | air, wind, breath | `TERRA`\* | earth, ground |
-| `PLENVM` | full, dense | `VACVVM` | void, empty |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `IGNIS` ✦ | fire, heat | ↔ | `GELV` ✦ | ice, cold |
+| `VNDA` ✦ | flow, liquid | ↔ | `SAXVM` ✦ | stone, solid |
+| `VENTVS` ✦ | air, wind, breath | ↔ | `TERRA` ✦ | earth, ground |
+| `PLENVM` | full, dense | ↔ | `VACVVM` ✦ | void, empty, hollow |
 
 ### The Living
-| | | | |
-|---|---|---|---|
-| `VITA` | living | `MORS` | dead |
-| `GERMEN`\* | seed, sprout, growth | `TABES`\* | rot, decay, blight |
-| `CARO`\* | flesh | `OSSA`\* | bone |
-| `HERBA`\* | green, leaf | `LIGNVM`\* | wood, timber |
-| `HOMO`\* | folk, the upright kind | `BESTIA`\* | beast |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `VITA` | living | ↔ | `MORS` | dead |
+| `GERMEN` ✦ | seed, sprout, growth | ↔ | `TABES` ✦ | rot, decay, blight |
+| `CARO` ✦ | flesh | ↔ | `OSSA` ✦ | bone |
+| `HERBA` ✦ | green, leaf | ↔ | `LIGNVM` ✦ | wood, timber |
+| `HOMO` ✦ | folk, the upright kind | ↔ | `BESTIA` ✦ | beast |
 
 ### Matter
-| | | | |
-|---|---|---|---|
-| `FERRVM`\* | iron, the working metal | `AVRVM`\* | gold, the precious metal |
-| `AES`\* | copper, the metal that ages | `ADAMAS`\* | diamond, which cannot be marred |
-| `GEMMA`\* | gem, crystal | `PVLVIS`\* | dust, powder |
-| `CANDIDVM` | refined, pure | `SORDES` | raw, dross, ore |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `FERRVM` ✦ | iron, the working metal | ↔ | `AVRVM` ✦ | gold, the precious metal |
+| `AES` ✦ | copper, the metal that ages | ↔ | `ADAMAS` ✦ | diamond, which cannot be marred |
+| `GEMMA` ✦ | gem, crystal | ↔ | `PVLVIS` ✦ | dust, powder |
+| `CANDIDVM` | refined, pure, shining | ↔ | `SORDES` | raw, dross, ore |
 
 ### Making
-| | | | |
-|---|---|---|---|
-| `OPVS` | wrought by hand | `NATVM` | natural, found so |
-| `NOVVM` | new, fresh | `SENEX` | old, aged, weathered |
-| `TOTVM` | whole, uncut | `FRACTVM` | cut, broken, worked |
-| `TEGMEN` | sealed, covered, waxed | `NVDVM` | bare, exposed |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `OPVS` | wrought by hand | ↔ | `NATVM` | natural, found so |
+| `NOVVM` | new, fresh | ↔ | `SENEX` | old, aged, weathered |
+| `TOTVM` | whole, uncut | ↔ | `FRACTVM` | cut, broken, worked |
+| `TEGMEN` ✦ | a covering — wax, hide, shell | ↔ | `NVDVM` | bare, exposed |
 
 ### Form
-| | | | |
-|---|---|---|---|
-| `PORTA`\* | gate, a way through | `VALLVM`\* | wall, barrier, hold |
-| `VAS`\* | vessel, hollow | `MOLES`\* | mass, solid block |
-| `GRADVS`\* | step, stair | `AEQVVM`\* | flat, level |
-| `ACIES`\* | edge, blade | `SCVTVM`\* | guard, shield |
+
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `PORTA` ✦ | gate, a way through | ↔ | `VALLVM` ✦ | wall, rampart, hold |
+| `GRADVS` ✦ | step, stair | ↔ | `AEQVVM` ✦ | flat, level |
 
 ### Will
-| | | | |
-|---|---|---|---|
-| `HOSTIS` | hostile, foe | `MITIS` | tame, friend |
-| `VNICVM` | one, single | `GREX`\* | throng, swarm, many |
 
-### 2.1 Four words are second choices
+| Rune | English | | Rune | English |
+|---|---|---|---|---|
+| `HOSTIS` | hostile, foe | ↔ | `MITIS` | tame, gentle, friend |
+| `VNICVM` | one, single | ↔ | `GREX` ✦ | throng, swarm, flock |
 
-`TOTVM`, `MITIS`, `AEQVVM` and `VNICVM` are not the obvious Latin. The obvious words —
-`SANVM`, `SOCIVS`, `PLANVM`, `VNVM` — each **render identically** to a rune already in the
-lexicon, because the mark is (letter 1, letter 2, length tally):
+### 2.1 Words the language does *not* need
 
-| Wanted | Collides with | Shipped instead |
-|---|---|---|
-| `SANVM` | `SAXVM` | `TOTVM` |
-| `SOCIVS` | `SORDES` | `MITIS` |
-| `PLANVM` | `PLENVM` | `AEQVVM` |
-| `VNVM` | `VNDA` | `VNICVM` |
+Two axes were cut because another axis already did their work:
 
-**A homograph is a language bug, and the fix is a synonym — never the art.** Latin has one
-for nearly everything, which is what makes that rule affordable. The audit renders all 56
-at load and refuses a duplicate.
-
----
-
-## 3. Rune words: 2–3 glyphs, **in order**, that name one thing (D8/D10)
-
-The language is **compositional and ordered**. A **rune word** is **2 or 3 glyphs
-in a specific sequence** that together name exactly **one concrete thing** — an
-item, a block, a world condition, or a ritual output.
-
-**Order is meaningful.** `FLAMMANS · VIRGA` is not the same expression as
-`VIRGA · FLAMMANS`; only one of them is the word for a blaze rod. This is what
-makes the Runes a *language* rather than a set of ingredient checkboxes, and it is
-what the player is really learning.
-
-```
-ALTARE · TENEBRAE      → Blackstone Altar   (Altar + Darkness)
-FLAMMANS · VIRGA       → Blaze Rod          (Flaming + Rod)
-CHAOS · CAELUM         → Thunderstorm       (Chaos + Heavens)
-INFERNUS · METALLUM    → Netherite          (Hell + Metal)
-CHAOS · METALLUM       → Chaos Ingot        (Chaos + Metal)
-```
-
-This is the heart of the decode loop: the player *learns words passively* (D2) and
-then *works out what those words build, and in what order,* by inscribing them in
-the hand codex (D7).
-
-### 3.1 Rune words as data
-
-```jsonc
-// data/epigraphy/rune_words/blaze_rod.json
-{
-  // ORDERED sequence of 2-3 glyphs. Sequence is part of the word's identity;
-  // the reverse sequence is a different (usually invalid) expression.
-  "glyphs": ["epigraphy:flammans", "epigraphy:virga"],
-  "means": { "type": "item", "value": "minecraft:blaze_rod" },
-  "reading": "That which flames, in the shape of a rod.",  // flavor shown once decoded
-  "hint": "A rod that burns."                              // terse form for in-world text
-}
-```
-
-`means.type` is one of:
-- `item` / `tag` — names an ingredient or output.
-- `block` — names a structure component (e.g. the altar itself).
-- `condition` — names a world condition, matching the condition types in
-  `RITUALS.md` §3 (e.g. thunderstorm, night, new moon).
-
-Because rune words are data, the whole language — and every hint the player ever
-reads — is authorable and pack-extensible without code. The registry is indexed by
-**ordered glyph sequence**, so submission validation is an exact-sequence lookup.
-
-### 3.1.1 Worked vocabulary
-
-Six words showing the system across all three `means` types. New glyphs are marked †
-— note the ratio: **three new glyphs bought six words**, which is the budget
-`AUTHORING.md` §3 recommends.
-
-| Names | Rune word | Reads as | `means.type` |
-|---|---|---|---|
-| **Lava** | `FLAMMANS · UNDA†` | Flaming Flow | `fluid` |
-| **Water** | `VITA · UNDA†` | Living Flow | `fluid` |
-| **Full Moon** | `PLENUS · LUNA` | Full Moon | `condition` — `moon_phase: full` |
-| **Netherite Sword** | `INFERNUS · METALLUM · GLADIUS†` | Hell-Metal Blade | `item` |
-| **Mountain Top** | `CAELUM · TERRA` | Sky-Earth | `condition` — `y_level: {min:190}` |
-| **Near Bedrock** | `FUNDUS† · TERRA` | Foundation-Earth | `condition` — `y_level: {max:-50}` |
-
-Three things this set demonstrates:
-
-**Minimal pairs teach themselves.** Lava and water differ by exactly one glyph, and
-that glyph is the difference between them: `FLAMMANS` vs `VITA` on a shared `UNDA`
-head. A player who decodes either can guess the other, and has learned "`· UNDA`
-names a liquid" in the process. Liquid starlight then falls out for free as
-`CAELUM · UNDA`.
-
-**Opposites share a head.** `CAELUM · TERRA` (high ground) and `FUNDUS · TERRA`
-(bedrock) are a matched vertical pair — same head, opposed qualifiers. The lexicon
-should be authored in these pairs wherever the fiction allows; it is the cheapest
-teaching device available.
-
-**Composition pays off.** `INFERNUS · METALLUM` already means netherite. Appending
-`GLADIUS` gives the sword — so a player who knows the metal can *predict* the
-weapon without ever having seen it. This is the moment the language stops being a
-lookup table and starts being a language, and it is worth authoring toward
-deliberately: prefer building new words out of known ones over coining fresh glyphs.
-
-### 3.1.2 The realms — authoring a grid, not a list
-
-Dimensions are headed by `REGNUM` (Realm), giving a matched set one qualifier apart:
-
-| Names | Rune word | Reads as |
-|---|---|---|
-| **The Overworld** | `CAELUM · REGNUM` | Realm of Sky |
-| **The Nether** | `INFERNUS · REGNUM` | Realm of Hell |
-| **The End** | `FINIS · REGNUM` | Realm of the End |
-
-`CAELUM · REGNUM` is worth noting as a piece of design: the Overworld is genuinely
-*the dimension with an open sky*, so the word is both guessable from fiction and true
-to the mechanics. Words that are right in both registers at once are the ones to
-reach for.
-
-The real payoff is that those qualifiers extend downward onto other heads. Author the
-**grid**, not the list:
-
-| Qualifier | `· REGNUM` (realm) | `· LAPIS` (stone) | `· GEMMA` (gem) |
-|---|---|---|---|
-| `INFERNUS` | the Nether | Netherrack | Nether Quartz |
-| `FINIS` | the End | End Stone | Ender Pearl |
-| `CAELUM` | the Overworld | — | — |
-
-Two new glyphs (`REGNUM`, `FINIS`) plus one new head (`GEMMA`) buy **seven words**,
-and a player who has decoded *the Nether* and *End Stone* can derive *Netherrack*
-without ever meeting it. Filling a grid is strictly cheaper — in glyphs and in
-player effort — than coining words one at a time.
-
-> **A correction this forced.** Nether Quartz was previously `INFERNUS · LAPIS`, which
-> squatted on the natural name for **Netherrack**. Reassigning quartz to
-> `INFERNUS · GEMMA` frees it and reads better besides. Exactly the lexicon pressure
-> `AUTHORING.md` §3 warns about — it surfaces when you author a family and see the
-> gaps.
-
-### 3.2 The codex submit loop (D7 / D9)
-
-1. The player has discovered and learned, say, `FLAMMANS` and `VIRGA`.
-2. They notice blaze rods keep appearing near fire-themed ruins and hypothesise a
-   link. In the codex's 20-slot grid they cycle two slots to `FLAMMANS` and
-   `VIRGA`, and hit **submit**.
-3. The codex validates against the rune word registry:
-   - **Match** → the rune word is *decoded*, permanently. It now reads as "Blaze Rod"
-     wherever it appears, and any ritual hint using it becomes that much clearer.
-   - **No match** → nothing happens beyond a soft negative cue. No penalty, no
-     progress. (Cost model still open — `DECISIONS.md` Q7.)
-4. Slots only cycle through **discovered** glyphs, so you cannot brute-force with
-   symbols you haven't found. The grid holds several guesses at once, separated by
-   empty slots (`DECISIONS.md` Q8).
-
-### 3.3 How rune words render at each tier
-
-A ritual hint is a list of rune words, and each rune word renders according to what the
-player knows — which is what makes partial knowledge legible and directional:
-
-| Player state | How the rune word renders |
+| Cut | Say instead |
 |---|---|
-| Hasn't learned one or more of its glyphs | `⟨glyph⟩ · ???` — the raw symbols, unreadable |
-| Learned all its glyphs, rune word **not** decoded | *"Flaming · Rod"* — literal glosses, meaning unresolved |
-| Rune word **decoded** via codex submit | *"Blaze Rod"* — the rune word's true referent |
+| `VAS` / `MOLES` — vessel / solid mass | a vessel **is** a made void: `OPVS · VACVVM` |
+| `ACIES` / `SCVTVM` — blade / guard | a blade **is** worked metal: `FRACTVM · FERRVM`; armour **is** covering metal: `TEGMEN · FERRVM` |
 
-The middle row is the good part: *"Flaming · Rod"* is a genuine, solvable clue. The
-player can reason their way to "blaze rod" before the game confirms it — and the
-codex submit is how they check that hunch.
+That is the axis system working as intended: **if a concept can be described, it does not
+need naming.**
 
-Two rules keep hints hints:
-1. Rune words never emit counts or exact amounts — `FLAMMANS · VIRGA` says *blaze rod*,
-   never *4 blaze rods*. Exact quantities arrive only at Tier 3 (mastered).
-2. Order is **mechanical, not presentational** — both within a word and across the
-   inscription (§4).
+### 2.2 Five runes are second choices
 
-### 3.4 Combinatorial safety
+Five poles are not the obvious Latin, because the obvious word **collided under the mark
+rule** with a rune already in the lexicon (`GLYPH_SPEC.md` §3.0). Words must sit at least
+12 px apart; these did not:
 
-Ordering roughly doubles the raw search space (an ordered pair from 10 glyphs has
-90 possibilities, not 45), which sounds like it makes brute-forcing worse. It
-doesn't, because the **grammar** (§4) collapses it: once a player knows the formula,
-they know a rod-shaped catalyst word is `QUALIFIER · VIRGA`, and they only have to
-guess the qualifier. Structure turns a combinatorial search into a small, reasoned
-one — which is exactly the fantasy of decipherment.
+| Wanted | English | Collided with | At | Ships as |
+|---|---|---|---|---|
+| `TVRBA` | crowd, throng | `TERRA` (*earth*) | **0 px — identical** | `GREX` |
+| `PVRVM` | pure, unmixed | `PORTA` (*gate*) | **0 px — identical** | `CANDIDVM` |
+| `SANVM` | whole, sound | `SENEX` (*old*) | **0 px — identical** | `TOTVM` |
+| `VETVS` | old, hoary | `VITA` (*living*) | 6 px | `SENEX` |
+| `MVRVM` | wall | `MORS` (*dead*) | 6 px | `VALLVM` |
 
-- **You can only inscribe glyphs you've learned**, so the practical search space
-  early on is tiny and grows only as you explore.
-- **The formula constrains position**, so most slots are determined before you guess.
-- **Valid rune words are sparse and thematic** — "Hell + Metal" is guessable from
-  fiction, so reasoning is strictly faster than enumerating.
-- **A submission cooldown** (leaning, Q7) makes brute force tedious rather than
-  optimal, without punishing genuine experimentation.
+Each replacement is at least as good a word as what it replaced — `GREX` is a *flock*
+rather than a *mob*, `CANDIDVM` is *shining-pure* rather than merely *unmixed*.
 
-### 3.1.3 Tools — a grid of material × implement
+`MITIS`, `AEQVVM` and `VNICVM` were also second choices under the **old** mark rule.
+Taking the mark from the first and third letters instead of the first and second freed
+`AMICVS`, `PLANVM` and `VNVM` (18 px, 14 px and 16 px clear today). They were kept anyway,
+on meaning: *tame* beats *friendly* for a temper pole, and *level* beats *flat*.
 
-Every tool is **`[material] · [implement]`**, implement always the head. The tool tree
-is therefore a grid to fill, not a list to coin:
-
-| | `· GLADIUS` | `· DOLABRA` | `· SECURIS` | `· PALA` | `· FALX` |
-|---|---|---|---|---|---|
-| `LIGNUM` | Wooden Sword | Wooden Pickaxe | Wooden Axe | Wooden Shovel | Wooden Hoe |
-| `LAPIS` | Stone Sword | Stone Pickaxe | Stone Axe | Stone Shovel | Stone Hoe |
-| `FERRUM` | Iron Sword | Iron Pickaxe | Iron Axe | Iron Shovel | Iron Hoe |
-| `ADAMAS` | Diamond Sword | Diamond Pickaxe | Diamond Axe | Diamond Shovel | Diamond Hoe |
-| `AURUM` | Golden Sword | … | … | … | … |
-| `INFERNUS · METALLUM` | Netherite Sword | … | … | … | … |
-
-Plus the non-tiered implements: `LIGNUM · ARCUS` (Bow), `LIGNUM · HAMUS` (Fishing
-Rod), `LIGNUM · SCUTUM` (Shield), `FERRUM · FORFEX` (Shears), `FERRUM · LORICA`
-(Iron Chestplate).
-
-**Nine implement heads and five material qualifiers describe every vanilla tool** —
-fourteen glyphs for roughly forty-five words, and a player who has decoded
-`FERRUM · SECURIS` and `LAPIS · DOLABRA` reads `FERRUM · DOLABRA` on sight.
-
-### 3.1.4 Mobs — one head, borrowed qualifiers
-
-Mobs are almost all
-**`[quality] · BESTIA`**. The striking thing is how little new vocabulary they need:
-
-| Mob | Rune word | Qualifier borrowed from |
-|---|---|---|
-| Zombie | `MORS · BESTIA` | new |
-| Skeleton | `OSSA · BESTIA` | bone meal |
-| Creeper | `CHAOS · BESTIA` | the Chaos Ingot |
-| Spider | `VENENUM · BESTIA` | new |
-| Enderman | `FINIS · BESTIA` | the End |
-| Blaze | `FLAMMANS · BESTIA` | blaze rods |
-| Ghast | `CAELUM · BESTIA` | the Overworld / sky |
-| Piglin | `INFERNUS · BESTIA` | netherite |
-| Sheep | `LANA · BESTIA` | new (mark `LN`) |
-| Chicken | `PLUMA · BESTIA` | new |
-| Warden | `TENEBRAE · CUSTOS` | deepslate / darkness |
-| Ender Dragon | `FINIS · DRACO` | the End |
-
-**Eight of twelve reuse a qualifier coined for something else entirely.** That is the
-compounding return on a well-chosen glyph: `CHAOS` was minted for an ingot and now
-names a Creeper.
-
-Bosses take a **distinct head** — `DRACO`, `CUSTOS` — so their words don't read as
-just another beast. That matters when the word is a warning carved on a wall.
+**A homograph is a language bug, and the fix is a synonym — never the art.**
 
 ---
 
+## 3. Grammar
+
+### 3.1 Inside a word: the head rule
+
+A rune word is `QUALIFIER · HEAD`, and **the head is the last ✦ glyph in the sequence.**
+Everything before it qualifies.
+
+```
+INFERNVS  ·  HOMO          hell · folk   →   "Hell-Folk"  (a Piglin)
+    ↑          ↑
+qualifier     head
+```
+
+This is head-final compounding — the same rule English uses in *black-bird* and Chinese in
+火山 *fire-mountain* (volcano). Defining the head by **position** rather than by a
+per-glyph rule is what lets it handle every order with no exceptions.
+
+### 3.2 Across a ritual: the formula
+
+An inscription is five clauses, always in this order:
+
+```
+VESSEL   /   OFFERING   /   HOUR   /   SUBJECT   /   ISSUE
+ where         given        when       acted on      produced
+```
+
+**The formula is the biggest decipherment aid in the game.** A player who has decoded
+nothing still knows the third word must be a *condition* and the last a *result*, purely
+from position. Roman inscriptions worked the same way: a reader seeing `V.S.L.M.` knew the
+shape of the sentence before reading a word of it.
+
+Recipe schema and worked examples: [`RITUALS.md`](RITUALS.md).
+
 ---
 
-### 3.5 Nine tests
+## 4. The lexicon at work
 
-Everything below is built from the 56. **Nothing was minted to make any of it work** —
-which is the only real test of an axis language: if the axes are the right ones, the words
-are already there.
+Everything below is built from the 52. **Nothing was minted for any of it** — which is the
+only real test of an axis language.
+
+### 4.1 Creatures
 
 | Thing | Rune word | Reads |
 |---|---|---|
-| **Enderman** | `FINIS · HOMO` | End-Folk |
-| **Piglin** | `INFERNVS · HOMO` | Hell-Folk |
-| **Illager** | `HOSTIS · HOMO` | Foe-Folk |
-| **Villager** | `MITIS · HOMO` | Friend-Folk |
-| **Bee Nest** | `GREX · VAS` | Throng-Vessel |
-| **Beehive** | `OPVS · GREX · VAS` | Wrought Throng-Vessel |
-| **Iron Ore** | `SAXVM · FERRVM` | Stone-Iron |
-| **Raw Iron** | `SORDES · FERRVM` | Dross-Iron |
-| **Iron Ingot** | `CANDIDVM · FERRVM` | Pure-Iron |
-| **Nether Fortress** | `INFERNVS · VALLVM` | Hell-Hold |
-| **End City** | `FINIS · GREX · VALLVM` | End Throng-Hold |
-| **Chorus Fruit** | `FINIS · GERMEN` | End-Seed |
-| **Popped Chorus Fruit** | `IGNIS · FINIS · GERMEN` | Fire End-Seed |
+| Enderman | `FINIS · HOMO` | End-Folk |
+| Piglin | `INFERNVS · HOMO` | Hell-Folk |
+| Illager | `HOSTIS · HOMO` | Foe-Folk |
+| Villager | `MITIS · HOMO` | Friend-Folk |
+| Zombie | `MORS · HOMO` | Dead-Folk |
+| Skeleton | `OSSA · HOMO` | Bone-Folk |
+| Ender Dragon | `FINIS · BESTIA` | End-Beast |
+| Bee | `VNICVM · GREX` | One-of-the-Throng |
 
-Four things the axes do that a flat word-list can't:
+**Opposites come free** — Illager and Villager are the *same word* with the pole swapped.
+**Heads travel:** `HOMO` (*folk*) heads six of these, so decoding one gives you most of
+the rest.
 
-- **Opposites come free.** Illager and Villager are the *same word* with the poles
-  swapped. So are the three iron states, and the bee nest against the beehive.
-- **Silence is meaningful.** The Enderman is `FINIS · HOMO` and carries **no** temper
-  pole — neither `HOSTIS` nor `MITIS` — because it is neither until you look at it. An
-  unmarked axis is a statement.
-- **Heads travel.** `HOMO` heads the Enderman, the Piglin, the Illager and the Villager;
-  only the qualifier changes. Decode one and you have most of four.
-- **Compounds are literal.** A city *is* a throng's wall, so End City is
-  `FINIS · GREX · VALLVM` and needs no word for "city".
+**Silence is meaningful.** The Enderman carries **no** temper pole — neither `HOSTIS`
+(*foe*) nor `MITIS` (*friend*) — because it is neither until you look at it. An unmarked
+axis is a statement.
 
-### 3.6 The one that isn't a word
+### 4.2 Materials
+
+| Thing | Rune word | Reads |
+|---|---|---|
+| Iron Ore | `SAXVM · FERRVM` | Stone-Iron |
+| Raw Iron | `SORDES · FERRVM` | Dross-Iron |
+| Iron Ingot | `CANDIDVM · FERRVM` | Pure-Iron |
+| Gold Ingot | `CANDIDVM · AVRVM` | Pure-Gold |
+| Copper Block | `OPVS · AES` | Wrought-Copper |
+| Bone Meal | `OSSA · PVLVIS` | Bone-Dust |
+| Rotten Flesh | `TABES · CARO` | Rot-Flesh |
+| Glowstone Dust | `LVX · PVLVIS` | Light-Dust |
+
+One axis pair plus one material gives the whole ore → ingot chain, for every metal, with no
+new vocabulary.
+
+### 4.3 Places and structures
+
+| Thing | Rune word | Reads |
+|---|---|---|
+| The Overworld | `ORIGO` | the Middle |
+| The Nether | `INFERNVS` | the Hells |
+| The End | `FINIS` | the Beyond |
+| Nether Fortress | `INFERNVS · VALLVM` | Hell-Hold |
+| End City | `FINIS · GREX · VALLVM` | End Throng-Hold |
+| Bee Nest | `GREX · VACVVM` | Throng-Hollow |
+| Beehive | `OPVS · GREX · VACVVM` | Wrought Throng-Hollow |
+
+**Compounds are literal.** A city *is* a throng's wall, so End City needs no word for
+"city". A hive *is* a made hollow for a swarm — and dropping `OPVS` (*wrought*) turns the
+hive into the natural nest, which is exactly the distinction Minecraft draws.
+
+### 4.4 Made things
+
+| Thing | Rune word | Reads |
+|---|---|---|
+| Iron Sword | `FRACTVM · FERRVM` | Worked-Iron |
+| Iron Chestplate | `TEGMEN · FERRVM` | Covering-Iron |
+| Chorus Fruit | `FINIS · GERMEN` | End-Seed |
+| Popped Chorus Fruit | `IGNIS · FINIS · GERMEN` | Fire End-Seed |
+| Stone Stairs | `FRACTVM · GRADVS` | Cut-Step |
+| Torch | `IGNIS · LIGNVM` | Fire-Wood |
+| Chest | `OPVS · LIGNVM · VACVVM` | Wrought Wood-Hollow |
+
+### 4.5 The one that is not a word
 
 **Weathered Waxed Cut Copper Stairs** carries five facts — sealed, aged, copper, cut,
 stepped. A rune word holds three. So it **is not a rune word**; it is a phrase of two:
 
 ```
-TEGMEN · SENEX · AES        FRACTVM · GRADVS
-   Sealed-Aged-Copper           Cut-Step
+TEGMEN  ·  SENEX  ·  AES            FRACTVM  ·  GRADVS
+ sealed     aged     copper            cut        step
 ```
 
-**This is correct, not a shortfall.** "Weathered waxed cut copper stairs" is not a word in
-English either — it is a noun with four stacked modifiers, and the runes reproduce that
-structure exactly. The 2–3 glyph limit is what forces the language to distinguish *naming*
-from *describing*, and a language that could name that in one word would be a language
-where nothing was a word.
+**This is correct, not a shortfall.** It is not a word in English either — it is a noun
+with four stacked modifiers, and the runes reproduce that structure exactly. The 2–3 glyph
+limit is what forces the language to distinguish **naming** from **describing**, and a
+language that could name that in one word would be one where nothing was a word.
 
 The whole oxidation ladder falls out of two axes, with no vocabulary added:
 
@@ -432,380 +267,150 @@ The whole oxidation ladder falls out of two axes, with no vocabulary added:
 | **fresh** | `NOVVM · AES` | `TEGMEN · NOVVM · AES` |
 | **weathered** | `SENEX · AES` | `TEGMEN · SENEX · AES` |
 
+### 4.6 The thirty-item test
 
-## 4. Grammar: the inscription formula (D10)
+The claim being tested is a strong one: **52 runes describe anything in Minecraft.** So the
+lexicon was run against thirty things picked to spread across mobs, blocks, materials,
+tools, structures and biomes — including several chosen specifically because they looked
+hard. **Nothing was minted.** Twenty-six came out clean; four did not, and the four are
+worth more than the twenty-six.
 
-Real epigraphy is readable because inscriptions follow **formulae**. A Roman votive
-runs *deity (dative) → dedicant (nominative) → `V.S.L.M.`*, in that order, every
-time; once you know the formula you can read a stone you've never seen. Epigraphy's
-Runes work the same way, and this is the pattern the player is really learning.
+**Creatures**
 
-### 4.1 The ritual formula
-
-A ritual inscription is a fixed sequence of clauses, read left to right, framed by
-invariant formulae at each end (§4.4):
-
-```
-  OPUS·[ VESSEL ]   [ OFFERING ]   [ HOUR ]   [ SUBJECT ]   FIAT·[ ISSUE ]
-       the altar     what rings     when it    what is            what it
-       it needs      the altar      must be    transformed        becomes
-  └ INVOCATION ─┘                                            └ CONSECRATION ┘
-```
-
-| Clause | Answers | Maps to (recipe) |
+| Thing | Rune word | Reads |
 |---|---|---|
-| **INVOCATION** (`OPUS` + vessel) | *Where?* | the altar block/tier |
-| **OFFERING** | *With what?* | the pedestal catalysts |
-| **HOUR** | *When?* | the world conditions |
-| **SUBJECT** | *Upon what?* | the input item |
-| **CONSECRATION** (`FIAT` + issue) | *Yielding what?* | the result |
+| Creeper | `CHAOS · HERBA · BESTIA` | Ruin Green-Beast |
+| Blaze | `IGNIS · BESTIA` | Fire-Beast |
+| Ghast | `INFERNVS · VENTVS · BESTIA` | Hell Air-Beast |
+| Slime | `VNDA · BESTIA` | Flow-Beast |
+| Wolf, wild | `HOSTIS · BESTIA` | Foe-Beast |
+| Wolf, tamed | `MITIS · BESTIA` | Friend-Beast |
+| Axolotl | `VNDA · MITIS · BESTIA` | Water Friend-Beast |
+| Warden | `TENEBRAE · HOSTIS · BESTIA` | Dark Foe-Beast |
+| Allay | `VACVVM · MITIS · BESTIA` | Hollow Friend-Beast |
+| Glow Squid | `LVX · VNDA · BESTIA` | Light Water-Beast |
 
-Each clause is filled by exactly one **rune word** (2–3 glyphs). The Chaos Ingot
-inscription, read literally in order:
+Taming a wolf **flips one pole and changes nothing else** — the language says out loud what
+the game means by taming. The Allay works because *incorporeal* was already on the board as
+`VACVVM` (*hollow*); no spirit axis was needed.
 
-```
-ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM  →  CHAOS·METALLUM
-────────┬───────  ───────┬──────   ──────┬─────   ────────┬────────     ───────┬──────
- VESSEL           OFFERING          HOUR            SUBJECT               ISSUE
-Blackstone Altar   Blaze Rod      Thunderstorm      Netherite          Chaos Ingot
-```
+**Blocks and materials**
 
-That is the whole recipe, written as one sentence in a language with rules. A
-player who knows the formula can look at an unfamiliar inscription and immediately
-say *"the third word is the condition"* — even before decoding it.
-
-### 4.2 Why the formula matters mechanically
-
-- **It makes partial knowledge productive.** An undecoded word in the HOUR position
-  is still known to be *a condition*, so the player can reason about it from the
-  category alone.
-- **It makes guessing tractable.** Position tells you what kind of thing you're
-  naming, turning a wild guess into a narrow one (§3.4).
-- **It makes forgeries fail.** A grammatically wrong inscription — right words,
-  wrong order — is not a valid ritual, which is what gives the language teeth.
-
-### 4.3 What real writing systems do (and which one we're building)
-
-Three features of real scripts do all the work here. Epigraphy uses all three, and
-the design is stronger for naming them explicitly.
-
-#### (i) Compounding — two signs, one meaning
-
-Every logographic script builds new words by **juxtaposing existing signs**. The
-compound means something the parts don't:
-
-| Language | Compound | Literally | Means |
-|---|---|---|---|
-| Chinese | 火山 | fire · mountain | **volcano** |
-| Chinese | 电脑 | electric · brain | **computer** |
-| Chinese | 手机 | hand · machine | **mobile phone** |
-| Japanese | 手紙 | hand · paper | **letter** |
-| German | Handschuh | hand · shoe | **glove** |
-| English | firewood, blackbird, doorbell | — | — |
-
-Notice every single one is **head-final**: the *last* element says what the thing
-**is**, the earlier one narrows it. A blackbird is a *bird*. Firewood is *wood*. 火山
-is a *mountain*. This is overwhelmingly the cross-linguistic norm for compounds, and
-it is exactly `FLAMMANS · VIRGA` → a *rod*, that flames.
-
-**This is the single most important pattern to hold.** It is why the language feels
-natural to players who have never thought about linguistics: they already speak a
-language that does this.
-
-#### (ii) Determinatives — the feature you'd already half-invented
-
-This is the big one. Sumerian and Egyptian both use **determinatives**: signs that
-are *not read aloud* and carry no sound — they exist purely to tell the reader
-**what category the word belongs to**.
-
-| Script | Sign | Position | Marks |
-|---|---|---|---|
-| Sumerian | 𒀭 `DINGIR` | **prefix** | the word is a **god** |
-| Sumerian | 𒆠 `KI` | **suffix** | the word is a **place** |
-| Sumerian | 𒄑 `GIŠ` | **prefix** | the object is **wooden** |
-| Sumerian | 𒐕 `DIŠ` | prefix | the word is a **man's name** |
-| Egyptian | 𓀀 seated man | suffix | the word is a **person** |
-| Egyptian | 𓂻 walking legs | suffix | the word is a **motion verb** |
-
-So a Sumerian scribe writing "the city of Ur" writes `URI₅` followed by `KI` — and
-the reader knows it's a place *before* knowing which place. Egyptian readers can
-tell a person-word from a motion-word at a glance, purely from the trailing sign.
-
-**Your head glyphs are determinatives.** `· VIRGA` means "this word names a
-rod-class thing." `· LAPIS` means "a stone-class thing." `· METALLUM`, "a metal."
-That's not an approximation of a real feature — it *is* the real feature, and it's
-why the language is learnable: a player who has decoded one `· LAPIS` word can
-correctly guess the *category* of every other one they meet.
-
-It also resolves the `ALTARE · TENEBRAE` question (see below), because Sumerian
-proves determinatives can go on **either** end.
-
-#### (iii) Isolating grammar — why order must carry the meaning
-
-Latin can scramble word order (*puella rosam amat* / *rosam puella amat* both mean
-"the girl loves the rose") because **case endings** mark who does what. Chinese
-cannot: it has no inflection, so **position is the grammar** — 我打你 and 你打我 are
-different sentences made of identical signs.
-
-A glyph script has no endings to inflect. So Epigraphy is necessarily an
-**isolating/analytic** language, and that is precisely why the fixed clause formula
-(§4.1) isn't an arbitrary game rule — it's the only way a script like this *can*
-encode roles. Order is grammar because there's nothing else to be grammar.
-
-#### Verdict: what we're building
-
-> **A logographic, isolating script that forms head-final compounds marked by
-> determinatives, framed by fixed formulae.**
-
-In plain terms: **Chinese-style compound words + Sumerian-style category markers +
-Roman-style inscription formulae.** Every one of those is a real, attested system,
-and together they make a language that a player can genuinely *learn to read*
-rather than memorise.
-
-### 4.3.1 Word-internal order: the head rule
-
-One rule governs every rune word, with no exceptions:
-
-> ### The head is the **last determinative-capable glyph** in the word.
-> Everything before it qualifies it.
-
-Scan the word right to left; the first glyph you meet that *can* be a determinative
-is the head, and it names the word's category. Glyphs that can never be
-determinatives — the **element/quality** glyphs (`FLAMMANS`, `TENEBRAE`, `CHAOS`,
-`VITA`, `PLENUS`) — are skipped over, because they can only ever modify.
-
-| Word | Scanning right to left | Head | Names |
-|---|---|---|---|
-| `FLAMMANS · VIRGA` | `VIRGA` is a determinative → stop | **VIRGA** (rod) | Blaze Rod |
-| `INFERNUS · METALLUM` | `METALLUM` is a determinative → stop | **METALLUM** (metal) | Netherite |
-| `CHAOS · CAELUM` | `CAELUM` is a determinative → stop | **CAELUM** (heavens) | Thunderstorm |
-| `ALTARE · TENEBRAE` | `TENEBRAE` is an element, skip → `ALTARE` | **ALTARE** (structure) | Blackstone Altar |
-| `INFERNUS · METALLUM · GLADIUS` | `GLADIUS` is a determinative → stop | **GLADIUS** (blade) | Netherite Sword |
-
-**This is why `ALTARE · TENEBRAE` looks "backwards" and isn't.** It reads head-first
-only because the glyph after it is a quality that could never head a word. Nothing
-special is happening — the same single rule produces both orders.
-
-The earlier formulation ("places prefix, materials suffix") described the *symptom*
-and broke on the first word containing two determinative-capable glyphs:
-`INFERNUS · METALLUM` would have been ambiguous between "a hellish place" and "a
-hell-metal". The head rule resolves it — `METALLUM` is last, so it wins, and the
-word means a metal.
-
-The Sumerian precedent still holds: determinatives genuinely do appear on either
-side of a word (`DINGIR` prefixes, `KI` suffixes). What the head rule adds is a
-deterministic way to know *which* sign is doing the work when more than one could.
-
-Player-facing, it stays teachable in one line:
-- **Read to the end. The last real "kind of thing" word is what it is.**
-
-Which glyphs may serve as determinatives is declared per-glyph in data — see
-`AUTHORING.md` — so modders extend the system without touching code.
-
-### 4.4 The frame: invocation and consecration (recommended)
-
-Real inscriptions are readable at a glance because they are **framed by invariant
-formulae**. A Roman votive opens with the deity (`I.O.M.` — *Iovi Optimo Maximo*)
-and closes with `V.S.L.M.` (*Votum Solvit Libens Merito*, "fulfilled his vow,
-willingly and deservedly"). The middle varies; the frame never does. That's what
-lets you read a stone you've never seen: you recognise the edges, so you know what
-the inside must be.
-
-**Recommendation: give Epigraphy the same frame.** Two glyphs that appear in
-*every* ritual inscription and nowhere else:
-
-| Glyph | Lemma | Role |
+| Thing | Rune word | Reads |
 |---|---|---|
-| `epigraphy:opus` | **OPUS** | *The work / the rite.* Opens every inscription. |
-| `epigraphy:fiat` | **FIAT** | *Let it be made.* Opens the final clause. |
+| Obsidian | `IGNIS · VNDA · SAXVM` | Fire Water-Stone |
+| Netherrack | `INFERNVS · SAXVM` | Hell-Stone |
+| Redstone Dust | `ORDO · PVLVIS` | Order-Dust |
+| Prismarine | `VNDA · SAXVM` | Water-Stone |
+| Sea Lantern | `VNDA · LVX · SAXVM` | Water Light-Stone |
+| Amethyst Cluster | `GREX · GEMMA` | Throng-Gem |
+| Sculk Catalyst | `MORS · GERMEN` | Death-Seed |
+| Blaze Powder | `IGNIS · PVLVIS` | Fire-Dust |
+| Ender Pearl | `FINIS · GEMMA` | End-Gem |
+| Ancient Debris | `INFERNVS · SENEX · FERRVM` | Hell Old-Metal |
 
-The full structure becomes:
+Obsidian's word **is its recipe** — fire meeting water in stone. `ORDO · PVLVIS` for
+redstone is the one the axis system earns outright: redstone is not a red mineral, it is
+*powdered law*, and no lexicon built by listing nouns would have reached it.
 
-```
-OPUS·ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM   FIAT·CHAOS·METALLUM
-└───── INVOCATION ───┘  └─ OFFERING ─┘  └── HOUR ───┘  └──── SUBJECT ────┘  └── CONSECRATION ──┘
- "The rite of the           by Blaze        when the       upon Hell's          let there be
-  Dark Altar…"                Rod          Heavens rage      Metal…              Chaos Metal."
-```
+**Made things**
 
-Read aloud: *"The rite of the Dark Altar — by the Flaming Rod — when the Heavens
-turn to Chaos — upon the Metal of Hell — let there be Chaos Metal."*
+| Thing | Rune word | Reads |
+|---|---|---|
+| Diamond Pickaxe | `SAXVM · FRACTVM · ADAMAS` | Stone-Cutting Diamond |
+| Iron Axe | `LIGNVM · FRACTVM · FERRVM` | Wood-Cutting Iron |
+| Iron Shovel | `TERRA · FRACTVM · FERRVM` | Earth-Cutting Iron |
+| Shield | `HOSTIS · TEGMEN` | Foe-Covering |
+| Water Bucket | `VNDA · OPVS · VACVVM` | Water Wrought-Hollow |
+| Bookshelf | `ORDO · LIGNVM` | Order-Wood |
+| Lodestone | `ORIGO · SAXVM` | Home-Stone |
 
-That is a sentence. It scans, it has an opening and a close, and it is the recipe.
+**The whole tool family fell out of one pattern** — `WHAT IT CUTS · FRACTVM · WHAT IT IS`
+— without a rune for "tool", "pickaxe" or "blade". That is the strongest evidence the axis
+design works: the tools name their *object*, so the material tier and the tool type are
+independent, and every combination in the game is already spelled.
 
-**Why the frame earns its two glyphs:**
+**Places**
 
-- **It teaches the formula for free.** `OPUS` is the most common glyph in the game —
-  every inscription starts with it. A player will learn it almost immediately and,
-  in doing so, learn *where inscriptions begin*. `FIAT` teaches them where the
-  result lives. The invariant parts bootstrap comprehension of the variable parts,
-  which is precisely how real decipherment works.
-- **It makes the codex unambiguous.** In the 20-slot grid, `OPUS` and `FIAT` mark
-  the boundaries, so there is never a question about where the inscription starts or
-  which clause is the output.
-- **It makes forgery legible.** An inscription missing its frame is obviously not a
-  rite — a nice, readable failure state rather than a silent mismatch.
-- **It gives the mod its `V.S.L.M.`** — a signature the player will come to
-  recognise on sight, carved on every ruin. That's identity.
+| Thing | Rune word | Reads |
+|---|---|---|
+| Deep Dark | `TENEBRAE · TERRA` | Dark-Earth |
+| Woodland Mansion | `HOSTIS · HOMO · VALLVM` | Foe-Folk Hold |
+| Nether Portal | `INFERNVS · PORTA` | Hell-Gate |
 
-**Flavour worth stealing:** real inscriptions abbreviate the frame to initials. A
-weathered carving can show the terse form — `O·A·T … F·C·M` — with the full reading
-available once you're fluent. Same trick as `V.S.L.M.`, and it makes worn stones
-feel genuinely worn.
+### 4.7 What the test broke
 
-**The lean alternative:** skip the frame and run the five bare clauses
-(`VESSEL / OFFERING / HOUR / SUBJECT / ISSUE`). Two fewer glyphs, marginally less
-typing, but the inscription reads as a list rather than a sentence and the codex
-needs another rule to mark the output clause. *Recommended: take the frame.*
+Four of the thirty failed, and each failure named a defect rather than a missing word.
 
-### 4.5 Three-glyph words
+**1. `VACVVM` could not head a word.** The Bee Nest, the Beehive and the Chest were already
+written with `VACVVM` as head (§4.3, §4.4) while the lexicon had it unmarked — those three
+words were ungrammatical and the Water Bucket exposed it. **A hollow is a kind of thing.**
+`VACVVM` is now ✦.
 
-A third glyph is used when two are ambiguous. It inserts an **additional qualifier
-before the head**, never after:
+**2. `TEGMEN`/`NVDVM` had no ✦ pole at all**, so wax, hide, shell and membrane could not be
+named — only used as adjectives. Honeycomb (*the throng's wax*) was unwriteable.
+**`TEGMEN` is now ✦**, which also shortens the Shield from three glyphs to two. Neither fix
+minted a rune; both corrected a mis-marked one.
 
-```
-NOX · TENEBRAE · CAELUM   →  New Moon
-(Night)(Darkness)(Heavens)    "the darkened night sky"
-```
+| Now writeable | Rune word | Reads |
+|---|---|---|
+| Honeycomb | `GREX · TEGMEN` | Throng-Wax |
+| Turtle Shell | `VNDA · TEGMEN` | Water-Shell |
+| Leather | `BESTIA · TEGMEN` | Beast-Hide |
 
-Two words would only get you "a dark sky"; the third pins it. The head (`CAELUM`)
-still comes last, so the rule scales without a new pattern to learn.
+**3. There is no axis of nourishment.** Bread, Cake and Cooked Beef all land on
+`OPVS · GERMEN` / `IGNIS · CARO` with nothing to separate a prepared food from its
+ingredient. This is the one gap a fix would have to *mint* for, so it is left open rather
+than papered over — see Q11.
+
+**4. `VNDA · SAXVM` is overloaded.** Prismarine, Pointed Dripstone and Clay all read
+*water-stone*. The rune words are legal and distinct from each other only by context,
+which the codex cannot accept (§5). Two of the three need a second qualifier before they
+ship — `GRADVS` (*step*, for dripstone's spike) and `NATVM` (*found so*) are the
+candidates. **A collision inside the language is a content bug, and it is caught by the
+same validator that catches identical glyphs.**
+
+**The score is 26 clean, 2 bugs found and fixed, 2 open.** A test where everything passes
+would have meant the test was too easy.
 
 ---
 
-## 5. The visual system: chiselled stone at 16 × 16 (D14/D15/D17/D18)
+## 5. Rune words as data
 
-Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**.
-
-```
-       VIRGA -> "VI"                blank
-    ╱▔▔▔▔▔▔▔▔▔▔╲            ╱▔▔▔▔▔▔▔▔▔▔╲
-   ╱   ╱▔▔╲     ╲ ← V      ╱            ╲    bare stone:
-   │   ╲__╱      │         │             │   unknown glyph,
-   │   ╱▔▔╲      │ ← I     │             │   empty codex slot,
-   ╲ ▁▁▁▁▁▁▁▁▁  ╱ ← foot   ╲            ╱    uninscribed tablet
-    ╲▁▁▁▁▁▁▁▁▁▁╱            ╲▁▁▁▁▁▁▁▁▁▁╱
-      = word length
+```jsonc
+// data/epigraphy/rune_words/piglin.json
+{
+  "glyphs": ["epigraphy:infernus", "epigraphy:homo"],   // QUALIFIER · HEAD, ordered
+  "means":  { "type": "entity", "value": "minecraft:piglin" },
+  "reading": "Folk of the hells.",                      // shown once decoded
+  "hint":    "Something that walks upright, where it burns."
+}
 ```
 
-- **Two letter-forms stack**, and the foot hangs off the lower one. Neither mirror
-  symmetry nor forced continuity is a rule any more: **which side a mark is on carries
-  meaning**, and mirroring a glyph would make it a different word.
-- **21 letters, 21 figures.** A gable, a thorn, a grate, a diamond, a coffer, a saltire —
-  each built from five shared carved parts (stave, bar, diagonal, chevron, stone). The
-  alphabet is the **classical 21**: `Y` folds to `I` and `Z` to `S`, as Latin did.
-- **Two letters + a tally.** The forms carry the lemma's first two letters; the foot
-  tallies its length — width 1–3 plus a serif for "and a hand" — which is what keeps
-  `VITA`, `VIRGA` and `VIGILIA` distinct despite sharing `VI`.
-- **An octagonal tile** — corners chamfered by 2, transparent outside — so the
-  silhouette reads as a cut stone rather than a sprite. It is **universal**: the outline
-  never varies per glyph (D17).
-- **Chiselled, not painted.** One height field and one top-left light give the tile's
-  bevelled rim, the shadowed upper-left wall of every groove and the lit lower-right
-  wall (D18).
-- **The groove is inlaid** with a pigment: an authored `pigment` hex where the glyph has
-  one, otherwise hashed from the lemma. Either way it is renormalised so every hue cuts
-  to the same depth, and it is redundant reinforcement only — see §5.3.
-- **Nothing comes within 3 px of the stone's edge**, chamfered corners included, and the
-  audit fails the build if it does. It is the tightest constraint in the system — it is
-  what fixes the chamfer depth and the tally's ceiling.
-- **A blank tile** covers unknown glyphs, empty slots and uninscribed tablets.
+Two validation rules matter most:
 
-**Full construction rule: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**
+- **No two rune words may share the same ordered glyph sequence.** Codex submission has to
+  be deterministic, and a reversed sequence must correctly *miss*.
+- **The last glyph must be ✦ head-capable.** A word headed by a qualifier is a grammar
+  error and should fail the datapack load rather than ship.
 
-### 5.1 Why not pictographs
+Authoring guide: [`AUTHORING.md`](AUTHORING.md).
 
-**If the symbol is a picture, there is nothing to decipher.** Sumerian began
-pictographic and abstracted within a few centuries — that drift is what turned drawing
-into **writing**. Pictography stays on tablet frames, block textures and structure
-motifs, never on glyphs.
+---
 
-### 5.2 What the iterations taught
+## 6. What a player actually sees
 
-Each attempt failed for a recorded reason, and the pattern is the lesson:
+A glyph reads differently depending on how much the player knows:
 
-| Attempt | Why it failed |
-|---|---|
-| Lattice path | tangled diagonals, strokes leaving the frame |
-| Five rungs on a stem | every glyph a variation on one comb |
-| Two bold marks | `VIRGA`/`VITA`/`VIGILIA` rendered identically |
-| Three marks by width × thickness | still one shared skeleton |
-| Heavy structural strokes | distinct but muddy, and notches escaped the border |
-| Lozenges at three widths | one shape at three sizes — a *relative* difference |
-| One outline + interior marks | four letters shared an identical silhouette |
-| Distinct outlines (shells, posts) | passed every metric, but every letter was an ornate figure |
-| Stave with six join heights | marks one row apart — the relative difference again |
-| Stave, three places, **mirrored** | still needed two- and three-mark letters |
-| Stave + one mark, 4 px bar | 12 of 17 px identical in every letter; 28 pairs at 4 px |
-
-**Every one of those before the stave drew outlines**, and each rebuild made them more
-elaborate in order to keep them apart. That was the wrong direction:
-
-> **An outline is a picture, and pictures must be intricate to differ. Writing is not
-> made of outlines; it is made of strokes.**
-
-What finally held was giving up the shared skeleton altogether. Every earlier alphabet
-was one frame with different decorations, so most of each letter's pixels were identical
-to every other letter's — and no amount of redecorating fixes that. Now each letter is
-**its own figure**, built from five shared *parts*: stave, bar, diagonal, chevron, stone.
-Shared parts, not a shared frame, which is also what keeps them reading as one script.
-
-The distinctness rule, applied to letters exactly as to glyphs: **a difference must be
-nameable.** Where a mark sits, which side, which way it points — you can say each of
-those out loud. A width is not nameable: telling a lozenge from a slightly wider lozenge
-needs both in front of you, and a reader never gets that.
-
-### 5.3 Knowledge tier is depth, not tint
-
-**Colour never carries anything on its own.** The groove's pigment is authored per glyph
-(falling back to a hash of the lemma), but every pigment is renormalised to a single
-luminance, so hue never changes how strongly a cut reads. Desaturate the whole atlas and
-all 49 glyphs stay distinct — verified in the audit. Two glyphs may even share a hue. Colour is a second, faster channel onto an identity that shape
-already carries in full.
-
-| Tier | Rendered | Reads as |
+| Tier | The tile | The text |
 |---|---|---|
-| **0 · Unknown** | the blank tile — uncut stone | "a stone, meaning nothing" |
-| **1 · Sighted** | the figure cut **shallow and unfilled** — bare stone-grey, no pigment | "seen, not yet taken down" |
-| **2 · Learned** | cut to **full depth and inlaid** | complete, legible |
+| **0 · Unknown** | uncut stone | nothing |
+| **1 · Sighted** | a shallow, unfilled scratch | nothing |
+| **2 · Learned** | cut deep and inlaid | the glyph's literal gloss — *hell*, *folk* |
+| **3 · Decoded** | unchanged | the word's true referent — *Piglin* |
 
-The ladder is **uncut → shallow and empty → deep and filled** — a *value* difference
-before it is a colour one, so it reads identically to a colourblind player (D19).
+So a player who has learned both glyphs of an undecoded word sees **"hell · folk"** and has
+to make the leap themselves. **That leap is the game.**
 
----
-
-## 6. Readable text at each tier
-
-When a glyph reaches Tier 2, three text surfaces become available and are worth
-authoring per-glyph:
-
-1. **Gloss** — the one-word meaning (from the glyph JSON).
-2. **Description** — a sentence of lore (from `description`), shown on the glyph's
-   in-game documentation entry and on inscribed-tablet tooltips. This is where the
-   *feel* of the language lives.
-3. **Rune word readings** — each *rune word* carries its own `reading` and `hint` strings
-   (§3.1), which is where the 2–3 word batches get their voice. The glyph gloss is
-   the fallback used before a rune word is decoded.
-
-All of it lives in datapack + lang files, so it localizes cleanly and pack makers
-can reskin the whole language.
-
----
-
-## 7. Design notes
-
-- **Why Latin, not a conlang?** A real language the player can partially
-  recognize ("infernus… inferno… hell") rewards attention without a decoder ring,
-  and it sidesteps inventing (and localizing) a fake grammar. Symbols stay
-  abstract; the *translation* is the familiar word.
-- **Ambiguity is a feature.** `METALLUM` meaning "any metal" and `VIRGA` meaning
-  "any rod" is what makes *composition* meaningful: neither word alone names a
-  thing, but `INFERNUS · METALLUM` and `FLAMMANS · VIRGA` each name exactly one.
-  Broad words + narrow rune words is the whole trick.
-- **Reuse is the reward.** A learned glyph pays off across every rune word it appears
-  in — `METALLUM` unlocks progress on netherite *and* chaos ingots *and* every
-  future metal. Vocabulary compounds; that's what makes late-game fluency feel
-  earned rather than granted.
-- **Growth path.** New glyphs *and new rune words* are pure datapack additions; no
-  code change is needed to expand the language, only to introduce genuinely new
-  *condition types* or *categories*.
+**Colour never carries anything on its own.** Desaturate the whole atlas and every glyph
+stays distinct — verified in the audit, not asserted. Identity lives in the shapes.

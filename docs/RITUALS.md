@@ -17,7 +17,7 @@ opens a Roman funerary inscription and `I.O.M.` a votive one:
 | **`OPUS`** | *The Work* | altar multiblock + pedestals + pool | no |
 | **`MERSIO`** | *The Steeping* | throw items into a fluid in-world | **yes — full stacks** |
 | **`TACTUS`** | *The Touch* | use one item on another item/block | no |
-| **`VIGILIA`** | *The Vigil* | observe the sky through an Observatory | no |
+| **`LVNA`** | *The Vigil* | observe the sky through an Observatory | no |
 
 `OPUS` is the heavyweight — precise, structural, one output at a time. `MERSIO` is
 the everyday one: no structure at all, just items thrown together into water under
@@ -25,7 +25,7 @@ the right sky, and it processes **whole stacks in one go**. That spread matters 
 pacing: players meet the language through cheap, batched steeping rites long before
 they can build an altar.
 
-Every recipe carries an inscription (`RUNES.md` §4), and the inscription *is* the
+Every recipe carries an inscription (`RUNES.md` §3.2), and the inscription *is* the
 recipe expressed in the language the player is learning — the JSON is simply that
 sentence plus the exact quantities they only earn at Tier 3.
 
@@ -129,17 +129,17 @@ Rituals are Minecraft recipes of type `epigraphy:infusion`, loaded from
   // lower-tier recipes unless "exact_altar": true.
   "altar": "epigraphy:blackstone_altar",
 
-  // The ritual's INSCRIPTION: rune words in strict formula order (D10, RUNES.md §4)
+  // The ritual's INSCRIPTION: rune words in strict formula order (D10, RUNES.md §3.2)
   //   VESSEL / OFFERING / HOUR / SUBJECT / ISSUE
   // Order is mechanical, not presentational — a wrong order is a wrong inscription.
   // Drives (a) the hint text the player reads and (b) the research gate
   // (KNOWLEDGE.md §4).
   "inscription": {
-    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
-    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
-    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
-    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+    "vessel":   "epigraphy:blackstone_altar",  // SAXVM   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // IGNIS · OSSA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELVM
+    "subject":  "epigraphy:netherite",         // INFERNVS · FERRVM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · FERRVM
   },
 
   // Catalyst items on pedestals. Matched as a multiset (order-independent).
@@ -234,11 +234,11 @@ recipe's rune words (rare glyphs → harsher backlash). A pack can set
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
   "inscription": {
-    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:blaze_rod",         // FLAMMANS · VIRGA
-    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELUM
-    "subject":  "epigraphy:netherite",         // INFERNUS · METALLUM
-    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · METALLUM
+    "vessel":   "epigraphy:blackstone_altar",  // SAXVM   · TENEBRAE
+    "offering": "epigraphy:blaze_rod",         // IGNIS · OSSA
+    "hour":     "epigraphy:thunderstorm",      // CHAOS    · CAELVM
+    "subject":  "epigraphy:netherite",         // INFERNVS · FERRVM
+    "issue":    "epigraphy:chaos_ingot"        // CHAOS    · FERRVM
   },
   "pedestals": [ { "item": "minecraft:blaze_rod", "count": 4 } ],
   "input": { "item": "minecraft:netherite_ingot", "count": 1 },
@@ -256,7 +256,7 @@ recipe's rune words (rare glyphs → harsher backlash). A pack can set
 Read as a single inscription, in formula order:
 
 ```
-ALTARE·TENEBRAE   FLAMMANS·VIRGA   CHAOS·CAELUM   INFERNUS·METALLUM  →  CHAOS·METALLUM
+TENEBRAE·SAXVM   IGNIS·OSSA   CHAOS·CAELVM   INFERNVS·FERRVM  →  CHAOS·FERRVM
 ────────┬───────  ───────┬──────   ──────┬─────   ────────┬────────     ───────┬──────
   VESSEL            OFFERING          HOUR           SUBJECT              ISSUE
 Blackstone Altar    Blaze Rod      Thunderstorm      Netherite         Chaos Ingot
@@ -264,18 +264,18 @@ Blackstone Altar    Blaze Rod      Thunderstorm      Netherite         Chaos Ing
 
 | Clause | Rune word | Glyphs | Names |
 |---|---|---|---|
-| VESSEL | `blackstone_altar` | ALTARE · TENEBRAE | Blackstone Altar |
-| OFFERING | `blaze_rod` | FLAMMANS · VIRGA | Blaze Rod |
-| HOUR | `thunderstorm` | CHAOS · CAELUM | Thunderstorm |
-| SUBJECT | `netherite` | INFERNUS · METALLUM | Netherite |
-| ISSUE | `chaos_ingot` | CHAOS · METALLUM | Chaos Ingot |
+| VESSEL | `blackstone_altar` | TENEBRAE · SAXVM | Blackstone Altar |
+| OFFERING | `blaze_rod` | IGNIS · OSSA | Blaze Rod |
+| HOUR | `thunderstorm` | CHAOS · CAELVM | Thunderstorm |
+| SUBJECT | `netherite` | INFERNVS · FERRVM | Netherite |
+| ISSUE | `chaos_ingot` | CHAOS · FERRVM | Chaos Ingot |
 
 A player who has learned the words but decoded nothing sees *"Altar · Darkness /
 Flaming · Rod / Chaos · Heavens / Hell · Metal / Chaos · Metal"* — genuinely
 solvable, and made more so by the formula: they know the third word must be a
 *condition* before they've decoded a single glyph of it.
 
-**Supporting rune word definitions** (`RUNES.md` §3.1):
+**Supporting rune word definitions** (`RUNES.md` §5):
 ```jsonc
 // data/epigraphy/rune_words/thunderstorm.json
 {
@@ -302,11 +302,11 @@ solvable, and made more so by the formula: they know the third word must be a
   "type": "epigraphy:infusion",
   "altar": "epigraphy:stone_altar",
   "inscription": {
-    "vessel":   "epigraphy:stone_altar",         // ALTARE   · LAPIS
-    "offering": "epigraphy:glowstone",           // FLAMMANS · LAPIS
-    "hour":     "epigraphy:starlit_night",       // NOX      · CAELUM
-    "subject":  "epigraphy:deepslate",           // TENEBRAE · LAPIS
-    "issue":    "epigraphy:illuminated_stone"    // CAELUM   · LAPIS
+    "vessel":   "epigraphy:stone_altar",         // SAXVM   · SAXVM
+    "offering": "epigraphy:glowstone",           // IGNIS · SAXVM
+    "hour":     "epigraphy:starlit_night",       // NOX      · CAELVM
+    "subject":  "epigraphy:deepslate",           // TENEBRAE · SAXVM
+    "issue":    "epigraphy:illuminated_stone"    // CAELVM   · SAXVM
   },
   "pedestals": [ { "item": "minecraft:glowstone_dust", "count": 2 } ],
   "input": { "item": "minecraft:deepslate", "count": 1 },
@@ -322,14 +322,14 @@ solvable, and made more so by the formula: they know the third word must be a
 ```
 
 The tutorial ritual, and deliberately built to **teach the grammar**. Four of its
-five words share the head `LAPIS`:
+five words share the head `SAXVM`:
 
 ```
-ALTARE·LAPIS    FLAMMANS·LAPIS   NOX·CAELUM    TENEBRAE·LAPIS  →  CAELUM·LAPIS
+SAXVM·SAXVM    IGNIS·SAXVM   NOX·CAELVM    TENEBRAE·SAXVM  →  CAELVM·SAXVM
  Stone Altar      Glowstone      Starlit Night   Deepslate       Illuminated Stone
 ```
 
-Once a player decodes any one of these, the pattern is visible: *"…· LAPIS names a
+Once a player decodes any one of these, the pattern is visible: *"…· SAXVM names a
 kind of stone."* Their next guesses aren't shots in the dark — they're informed by
 the rule they just inferred. That's the whole language taught in one ritual,
 without a tutorial popup.
@@ -341,10 +341,10 @@ without a tutorial popup.
   "type": "epigraphy:infusion",
   "altar": "epigraphy:blackstone_altar",
   "inscription": {
-    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:quartz",            // INFERNUS · GEMMA  ("hell's gem")
-    "hour":     "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELUM  (3-glyph)
-    "subject":  "epigraphy:echo_shard",        // NOX      · LAPIS
+    "vessel":   "epigraphy:blackstone_altar",  // SAXVM   · TENEBRAE
+    "offering": "epigraphy:quartz",            // INFERNVS · GEMMA  ("hell's gem")
+    "hour":     "epigraphy:dark_moon",         // NOX · TENEBRAE · CAELVM  (3-glyph)
+    "subject":  "epigraphy:echo_shard",        // NOX      · SAXVM
     "issue":    "epigraphy:umbral_shard"       // CHAOS    · TENEBRAE
   },
   "pedestals": [ { "tag": "forge:gems/quartz", "count": 4 } ],
@@ -359,7 +359,7 @@ without a tutorial popup.
   "duration_ticks": 160
 }
 ```
-`NOX · TENEBRAE · CAELUM` ("Night · Darkness · Heavens") is the 3-glyph form —
+`NOX · TENEBRAE · CAELVM` ("Night · Darkness · Heavens") is the 3-glyph form —
 used when two glyphs are too ambiguous to name a thing uniquely. Here two would only
 get you "a dark sky"; the third pins it to the **new moon**.
 
@@ -367,8 +367,8 @@ get you "a dark sky"; the third pins it to the **new moon**.
 > output in a ritual needs its own rune word, and **no two rune words may share the
 > same ordered glyph sequence** (submit validation must be deterministic). With a
 > ~10-glyph starter lexicon this gets tight fast — writing these three examples
-> already forced `INFERNUS · LAPIS` for quartz and `NOX · LAPIS` for echo shards to
-> avoid colliding with `TENEBRAE · LAPIS` (deepslate). Two implications:
+> already forced `INFERNVS · SAXVM` for quartz and `NOX · SAXVM` for echo shards to
+> avoid colliding with `TENEBRAE · SAXVM` (deepslate). Two implications:
 > 1. **Ingredients are chosen partly for nameability.** A recipe wanting an item
 >    with no natural 2-glyph name is a signal to pick a different ingredient or add
 >    a glyph.
@@ -382,7 +382,7 @@ get you "a dark sky"; the third pins it to the **new moon**.
 
 `CAELVM · FERRVM` — *Sky-Iron*, which is what meteoric iron has always been called. **Both glyphs already existed**, which is the whole
 argument for authoring in families: a player who has decoded *Netherite*
-(`INFERNVS · METALLVM`) and any star word reads this on sight, having never met it.
+(`INFERNVS · FERRVM`) and any star word reads this on sight, having never met it.
 
 `MERSIO` because Starmetal is a **bulk material**. Throw a stack of iron into liquid
 starlight under a clear night sky and the whole stack converts at once — the rite type
@@ -394,11 +394,11 @@ exists precisely so tier-2 materials don't become 64 altar cycles.
   "type": "epigraphy:infusion",
   "rite": "epigraphy:mersio",
   "inscription": {
-    "vessel":   "epigraphy:liquid_starlight",  // STELLA · UNDA
-    "offering": "epigraphy:glowstone_dust",    // STELLA · PULVIS
-    "hour":     "epigraphy:night_sky",         // NOX    · CAELUM
-    "subject":  "epigraphy:iron",              // FERRUM
-    "issue":    "epigraphy:starmetal"          // STELLA · METALLUM
+    "vessel":   "epigraphy:liquid_starlight",  // CAELVM · VNDA
+    "offering": "epigraphy:glowstone_dust",    // CAELVM · PVLVIS
+    "hour":     "epigraphy:night_sky",         // NOX    · CAELVM
+    "subject":  "epigraphy:iron",              // FERRVM
+    "issue":    "epigraphy:starmetal"          // CAELVM · FERRVM
   },
   "fluid": "epigraphy:liquid_starlight",
   "input": { "item": "minecraft:iron_ingot" },   // MERSIO: whole stacks
@@ -413,19 +413,19 @@ exists precisely so tier-2 materials don't become 64 altar cycles.
 ```
 
 ```
-STELLA·UNDA      STELLA·PULVIS   NOX·CAELUM    FERRUM   →  STELLA·METALLUM
+CAELVM·VNDA      CAELVM·PVLVIS   NOX·CAELVM    FERRVM   →  CAELVM·FERRVM
 Liquid Starlight  Glowstone Dust   Night Sky     Iron        Starmetal
 ```
 
-**New glyphs: none.** New rune words: `STELLA · VNDA`, `STELLA · PVLVIS`, `NOX · CAELVM`,
-`STELLA · METALLVM` — four words, zero glyphs.
+**New glyphs: none.** New rune words: `CAELVM · VNDA`, `LVX · PVLVIS`, `TENEBRAE · CAELVM`,
+`CAELVM · FERRVM` — four words, zero glyphs.
 
 ---
 
 ### 5.5 Coralium (corrupting, T2) — `MERSIO` in still water
 
 `TABES · GEMMA` — *Rot-Gem*. Three glyphs, all of them already in the
-lexicon. `FVNDVS` was minted for *near bedrock* (`FVNDVS · TERRA`); here it carries the
+lexicon. `INFERNVS` was minted for *near bedrock* (`INFERNVS · TERRA`); here it carries the
 abyss, which is the same word doing a second job.
 
 The name states all three facts a player needs: it is **corrupting**, it is
@@ -437,11 +437,11 @@ The name states all three facts a player needs: it is **corrupting**, it is
   "type": "epigraphy:infusion",
   "rite": "epigraphy:mersio",
   "inscription": {
-    "vessel":   "epigraphy:water",             // AQUA
-    "offering": "epigraphy:fermented_eye",     // VENENUM · PULVIS
-    "hour":     "epigraphy:near_bedrock",      // FUNDUS  · TERRA
+    "vessel":   "epigraphy:water",             // VNDA
+    "offering": "epigraphy:fermented_eye",     // TABES · PVLVIS
+    "hour":     "epigraphy:near_bedrock",      // INFERNVS  · TERRA
     "subject":  "epigraphy:lapis",             // TERRA   · GEMMA
-    "issue":    "epigraphy:coralium"           // FUNDUS · VENENUM · GEMMA
+    "issue":    "epigraphy:coralium"           // INFERNVS · TABES · GEMMA
   },
   "fluid": "minecraft:water",
   "input": { "item": "minecraft:lapis_lazuli" },
@@ -468,10 +468,10 @@ mind losing — a spatial decision the other rites never ask for.
 
 `TENEBRAE · PORTA` — *Dark Gate*. **`PORTA` (gate) is the only glyph minted
 for all three commissions**, and it is a *head*: every portal to come is
-`[somewhere] · REGNVM · PORTA`, so the one glyph buys the whole dimension tree rather
+`[somewhere] · ORIGO · PORTA`, so the one glyph buys the whole dimension tree rather
 than a single recipe.
 
-The hour is `MORS · LVNA` — *Dead Moon*, the new moon. `MORS` was coined for the Zombie;
+The hour is `VACVVM · LVNA` — *Dead Moon*, the new moon. `MORS` was coined for the Zombie;
 pairing it with `LVNA` costs nothing and reads better than any word for "empty" would.
 
 **How the difficulty is built** — every part of it out of systems that already exist:
@@ -491,11 +491,11 @@ pairing it with `LVNA` costs nothing and reads better than any word for "empty" 
   "rite": "epigraphy:opus",
   "altar": "epigraphy:blackstone_altar",
   "inscription": {
-    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
-    "offering": "epigraphy:chaos_ingot",       // CHAOS    · METALLUM
-    "hour":     "epigraphy:dead_moon",         // MORS     · LUNA
-    "subject":  "epigraphy:crying_obsidian",   // TENEBRAE · LAPIS
-    "issue":    "epigraphy:black_gate"         // TENEBRAE · REGNUM · PORTA
+    "vessel":   "epigraphy:blackstone_altar",  // SAXVM   · TENEBRAE
+    "offering": "epigraphy:chaos_ingot",       // CHAOS    · FERRVM
+    "hour":     "epigraphy:dead_moon",         // MORS     · LVNA
+    "subject":  "epigraphy:crying_obsidian",   // TENEBRAE · SAXVM
+    "issue":    "epigraphy:black_gate"         // TENEBRAE · ORIGO · PORTA
   },
   "pedestals": [ { "item": "epigraphy:chaos_ingot", "count": 4 } ],
   "input": { "item": "minecraft:crying_obsidian", "count": 1 },
@@ -514,7 +514,7 @@ pairing it with `LVNA` costs nothing and reads better than any word for "empty" 
 ```
 
 ```
-ALTARE·TENEBRAE  CHAOS·METALLUM  MORS·LUNA   TENEBRAE·LAPIS  →  TENEBRAE·REGNUM·PORTA
+TENEBRAE·SAXVM  CHAOS·FERRVM  MORS·LVNA   TENEBRAE·SAXVM  →  TENEBRAE·ORIGO·PORTA
 Blackstone Altar   Chaos Ingot    Dead Moon   Crying Obsidian     The Black Gate
 ```
 
@@ -528,8 +528,8 @@ their base, loses it.
 the recipe the backlash system was designed for (D3) — "research first or pay for it",
 with the largest possible bill.
 
-**New glyphs: `PORTA`.** New rune words: `MORS · LVNA`, `TENEBRAE · LAPIS`,
-`TENEBRAE · REGNVM · PORTA`.
+**New glyphs: `PORTA`.** New rune words: `VACVVM · LVNA`, `TENEBRAE · SAXVM`,
+`TENEBRAE · PORTA`.
 
 ---
 

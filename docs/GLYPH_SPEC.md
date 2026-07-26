@@ -19,17 +19,17 @@ Given the same `lemma` it must always produce byte-identical art.
 pixels** and holds two. Rather than shrink the forms into illegibility, the third
 letter was dropped and **word length moved into the foot**.
 
-Uniqueness survives: `VITA` (4 letters), `VIRGA` (5) and `VIGILIA` (7) all abbreviate
-to `VI` and remain three different tiles because their feet differ. Two glyphs collide
-only if they share their first two letters **and** their length — see §8, which treats
-that as a *language* bug rather than an art bug.
+Uniqueness survives: the mark is two letters plus a length tally, so `SOL` and `SORDES`
+share `SL`/`SR` territory and still read apart because their feet differ. Two glyphs
+collide only if they agree on **both marked letters and their length** — see §8, which
+treats that as a *language* bug rather than an art bug.
 
 Two other things had to go to make 16 × 16 work, and both were improvements:
 
 | Dropped | Why it was affordable |
 |---|---|
 | The frame | cost a quarter of the usable area and never carried identity |
-| Disconnected marks (pips, split bars, posts) | continuity rules them out anyway |
+| The third letter zone | word length moved to the foot, which costs one row instead of six |
 
 ### Continuity and mirror symmetry are no longer rules
 
@@ -42,11 +42,11 @@ drawn in separate pieces, and at this size detached marks read cleanly.
 ## 1. Anatomy
 
 ```
-        VIRGA -> "VI"          blank tile
+        OSSA -> "OS"          blank tile
       ╱▔▔▔▔▔▔▔▔▔▔╲          ╱▔▔▔▔▔▔▔▔▔▔╲
-     ╱   ╱▔▔╲     ╲ ← V    ╱            ╲
+     ╱   ╱▔▔╲     ╲ ← O    ╱            ╲
      │   ╲__╱      │       │             │   bare stone —
-     │   ╱▔▔╲      │ ← I   │             │   unknown glyph,
+     │   ╱▔▔╲      │ ← S   │             │   unknown glyph,
      │   ╲__╱      │       │             │   empty codex slot,
      ╲ ▁▁▁▁▁▁▁▁▁  ╱ ←foot  ╲            ╱   uninscribed tablet
       ╲▁▁▁▁▁▁▁▁▁▁╱          ╲▁▁▁▁▁▁▁▁▁▁╱
@@ -55,7 +55,7 @@ drawn in separate pieces, and at this size detached marks read cleanly.
 | Layer | Encodes | Drawn as |
 |---|---|---|
 | **Form 1** (rows 2–7) | the lemma's **first** letter | one of 21 figures, §2 |
-| **Form 2** (rows 7–12) | the lemma's **second** letter | one of 21 figures (sharing row 7) |
+| **Form 2** (rows 7–12) | the lemma's **third** letter (§3.0) | one of 21 figures (sharing row 7) |
 | **Foot** (row 13) | the word's **length** | a tally bar, §3 |
 | **Pigment** | nothing on its own — reinforcement | groove inlay, §6 |
 | **Stone** | nothing — material only | octagon, gradient + grain, §5 |
@@ -102,8 +102,8 @@ and never a one-row offset.
 the post* against *floor under the post*, *two bars* against *three*, *strokes* against
 *stones*. That is the whole test.
 
-All forms live in `x = 4..11` so both stack slots clear the 3 px margin, and no bottom
-row fills `x = 6..9` completely, so the tally plinth (§3.2) can never be swallowed.
+All forms live in `x = 4..11`, which does two jobs at once: both stack slots clear the
+3 px margin, and columns 3 and 12 stay permanently free for the tally's serif (§3.2).
 
 ### 2.1 Twenty-one, because that is the alphabet
 
@@ -195,7 +195,7 @@ Two further instrument bugs are worth remembering, because each one wasted a rev
 Two words sharing a mark differ **only by the foot tally**, which is two pixels. So the
 mark rule is not cosmetic — it is what decides whether the lexicon is legible.
 
-Latin clusters hard on prefixes. Measured over the 56-rune lexicon:
+Latin clusters hard on prefixes. Measured over the 52-rune lexicon:
 
 | Rule | Colliding clusters | Words affected |
 |---|---|---|
@@ -214,13 +214,13 @@ The five clusters that remained were fixed where the docs say to fix them — **
 lexicon, with a synonym** (§2.1). Every one of the five replacements is better Latin than
 what it replaced:
 
-| Was | Collided with | Now | |
+| Was | Collided with | At | Now |
 |---|---|---|---|
-| `TVRBA` | `TERRA` | `GREX` | flock, herd, throng |
-| `VETVS` | `VITA` | `SENEX` | old, hoary |
-| `MVRVM` | `MORS` | `VALLVM` | rampart, wall |
-| `PVRVM` | `PORTA` | `CANDIDVM` | shining, unmixed, pure |
-| `AMICVS` | `ACIES` | `MITIS` | gentle, tame |
+| `TVRBA` | `TERRA` | 0 px | `GREX` |
+| `PVRVM` | `PORTA` | 0 px | `CANDIDVM` |
+| `SANVM` | `SENEX` | 0 px | `TOTVM` |
+| `VETVS` | `VITA` | 6 px | `SENEX` |
+| `MVRVM` | `MORS` | 6 px | `VALLVM` |
 
 **The tightest word pair is now 14 px, up from 2.**
 
@@ -239,30 +239,39 @@ which reads back as **`letters = 2 + (width − 1) + 3 × serif`**. Six distingu
 lengths out of a bar that never exceeds three half-widths — and that ceiling is exactly
 what holds the widest foot **3 px clear** of the octagon's bottom chamfer (§5.1).
 
-Six sounds thin and isn't: the forms do the heavy lifting, and the full 49-lemma lexicon
-still renders 49 distinct tiles. Lengths of 8 or more all read as "three and a hand"; if
+Six sounds thin and isn't: the forms do the heavy lifting, and the full 52-rune lexicon
+renders **52 distinct tiles**. Lengths of 8 or more all read as "three and a hand"; if
 that ever collides in practice, the fix is an explicit `mark`, not a wider foot.
 
-| Lemma | Normalised | Mark | Letters | Width | Serif |
-|---|---|---|---|---|---|
-| `VITA` | VITA | `VI` | 4 | 3 | — |
-| `VIRGA` | VIRGA | `VI` | 5 | 1 | ✔ |
-| `VIGILIA` | VIGILIA | `VI` | 7 | 3 | ✔ |
-| `CAELUM` | CAELVM | `CA` | 6 | 2 | ✔ |
-| `TENEBRAE` | TENEBRAE | `TE` | 8 | 3 | ✔ |
+| Lemma | Mark | Letters | Width | Serif |
+|---|---|---|---|---|
+| `SOL` | `SL` | 3 | 2 | — |
+| `VITA` | `VT` | 4 | 3 | — |
+| `TERRA` | `TR` | 5 | 1 | ✔ |
+| `CAELVM` | `CE` | 6 | 2 | ✔ |
+| `TENEBRAE` | `TN` | 8 | 3 | ✔ |
 
-Three `VI` words, three different tiles — the foot does it.
+**In the shipping 52, no two lemmas share a mark at all** — the first-and-third rule
+(§3.0) separates every one of them on its own. The foot is therefore not what holds the
+current lexicon apart; it is the headroom that lets the lexicon *grow* without the next
+coined word landing on an existing tile. That is the right thing for it to be, and it is
+only true because the mark rule was fixed first.
 
-### 3.2 The serif is a plinth, not a tick
+### 3.2 The serif is two detached pips, not a tick on the bar
 
-The serif is a short step at **x 6–9, one row above the bar** — not a tick at the bar's
-ends.
+The serif is **one pixel at x = 3 and one at x = 12, on row 12** — clear of the bar and
+clear of every letter-form.
 
-**A tick at the ends is maskable.** A falling arm from the waist lands on x 3–4 in that
-row and swallows it whole, which silently made `VIGILIA` render identical to `VITA` — a
-tally that encodes nothing when the second letter happens to have a falling mark. Arms
-reach x=6 a row *higher* than they reach x=3, so the plinth sits where no mark can ever
-be drawn.
+**Anything touching the letter-forms is maskable, and this bit twice.** A serif on the
+bar's ends was swallowed by a falling arm, making `VIGILIA` render as `VITA`; moved
+inward, it was swallowed again, making `AES` render as `AEQVVM`. Both times the tally
+silently encoded nothing whenever the lower form happened to reach that row.
+
+The fix is structural rather than careful placement: **every form is confined to
+`x = 4..11`**, so columns 3 and 12 are permanently unreachable by any letter. That option
+only existed once forced continuity was dropped — the pips are detached, which the old
+one-continuous-figure rule forbade. `verify.js` asserts the confinement directly, so a
+future form that reaches column 3 fails the build rather than quietly eating a tally.
 
 The general lesson, worth applying to anything else that hangs off the figure: **a
 feature that shares rows with the letter-forms must be placed where their geometry cannot
@@ -380,10 +389,10 @@ nothing is lost.
 |---|---|
 | Canvas | **16 × 16**, no anti-aliasing, transparent outside the octagon |
 | Chamfer | 2 per corner (244 of 256 px opaque) |
-| Mirror axis | between columns 7 and 8 |
+| Form columns | `x = 4..11`; columns 3 and 12 reserved for the serif |
 | Form 1 | rows 2–7 · **Form 2** rows 7–12 — they **share row 7** |
 | Form bounds | x 2–13; must include (7,8) at the form's top and bottom row |
-| Foot | row 13, centred, `1 + ((len−2) mod 3)` half-widths; serif rises into row 12 |
+| Foot | row 13, centred, `1 + ((len−2) mod 3)` half-widths; serif = pips at x 3 and 12, row 12 |
 | Margin | **≥ 3 px** from every cut pixel to the nearest transparent pixel |
 | Mean ink | ~52 of 256 pixels |
 
@@ -445,7 +454,7 @@ rgb = rgb × (PIG_LUMA / luma(rgb))        // PIG_LUMA = 62, luma = Rec.709
 **Every pigment — letter, word, authored or hashed — is renormalised to one fixed relative
 luminance** (62 of 255, against stone running 110–195). No letter cuts deeper than its
 neighbour and no hue changes how strongly a groove reads. Measured across the 21 letters:
-**61.6 – 62.5**. Across the 56-rune lexicon: the same.
+**61.6 – 62.5**. Across the 52-rune lexicon: the same.
 
 A consequence worth stating: **`#88AA88` and `#AACCAA` are the same pigment.** Authors
 choose a hue and a saturation, nothing more.
@@ -488,16 +497,17 @@ The renderer and datapack loader must reject:
 - A `lemma` (or `mark`) whose first two normalised characters aren't both A–Z, or that
   contains `W`.
 - A `mark` override that isn't exactly two letters.
-- **Two glyphs that render identically.** The mark is `(letter 1, letter 2, length
-  tally)`, so two lemmas agreeing on all three *must* produce the same tile — `VELLUS`
-  and `VENTVS` do. **That is a language bug, not an art bug**, and the fix is a synonym,
-  not a renderer change: Latin offers one for nearly everything, which is why wool is
-  `LANA`. The loader renders every glyph at load, hashes the bitmap, and refuses a
+- **Two glyphs that render identically.** The mark is `(letter 1, letter 3, length
+  tally)`, so two lemmas agreeing on all three *must* produce the same tile — `TERRA`
+  and `TVRBA` do, as do `PORTA`/`PVRVM` and `SENEX`/`SANVM`. **That is a language bug,
+  not an art bug**, and the fix is a synonym, not a renderer change: Latin offers one for
+  nearly everything, which is why a throng is `GREX`. The loader renders every glyph at
+  load, hashes the bitmap, and refuses a
   duplicate; an explicit `mark` is the escape hatch when no synonym will do.
 - **Never** a malformed `pigment`. It falls back to the hash (§6) — a colour typo must
   not be able to break someone's pack.
 - A glyph whose `category` is `element` declaring a `determinative` (a grammar rule,
-  `RUNES.md` §5.2 — unrelated to art).
+  `RUNES.md` §2 — unrelated to art).
 - **Any lit pixel falling outside the octagon, or within 3 px of its edge.** Assert
   `inTile(x,y)` and `margin(x,y) ≥ 3` for every cut pixel (§5.1). Cheap, and it catches
   the class of bug where a stroke or a wide foot crowds or escapes the silhouette. Check
@@ -510,7 +520,7 @@ The renderer and datapack loader must reject:
 - **Two WORDS closer than 12 px.** Letters were held to that bar; words were held only to
   "not byte-identical", which is far too weak — two words sharing a mark differ solely by
   the foot tally. This is the check that catches a bad mark rule, and its absence is what
-  let `PVLVIS` and `PVRVM` ship two pixels apart.
+  let `PVLVIS` and `CANDIDVM` ship two pixels apart.
 
 **Adding or altering a form requires re-auditing all 23** against each other — a form
 narrowed to clear the margin must not collapse onto another — and checking the new form
@@ -571,10 +581,10 @@ function paint(bits, lemma, tier){                      // cut mask -> stone til
 `grain` and the pigment hash are **deterministic functions**, never `Math.random` — the
 renderer must produce byte-identical output.
 
-**Audited** (49-lemma working lexicon, `VELLUS` excluded as a homograph of `VENTVS`):
+**Audited** (52-rune working lexicon, `HERBA` excluded as a homograph of `VENTVS`):
 all 21 forms clearing the distinctness bar (§2.4) — **tightest pair 12 px, median ~21**,
-no shared row-extent footprint — and clearing the margin in both slots; **49/49 glyphs distinct**; **49/49 still
-distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 49 authored
+no shared row-extent footprint — and clearing the margin in both slots; **52/52 glyphs distinct**; **52/52 still
+distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 52 authored
 pigments parse and every one names a lemma that exists; nine classes of malformed
 `pigment` all fall through to the hash without throwing; every
 every glyph still a single connected component (reported, not required); **tightest

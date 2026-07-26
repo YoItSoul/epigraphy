@@ -33,10 +33,10 @@ The rule of thumb: **no GUI ever stands between you and *doing* something; a GUI
 exist only to *remember* what you've already done.**
 
 ### D0 ✅ Terminology (canonical — use everywhere)
-- **Glyph** — a single **symbol**, mapping to one Latin word (`FLAMMANS`, `CHAOS`).
+- **Glyph** — a single **symbol**, mapping to one Latin word (`IGNIS`, `CHAOS`).
   The atomic unit; **discovered** in the world.
 - **Rune word** — an **ordered sequence of 2–3 glyphs** naming exactly one concrete
-  thing (`FLAMMANS · VIRGA` → Blaze Rod); **guessed** by the player and validated.
+  thing (`IGNIS · OSSA` → Blaze Rod); **guessed** by the player and validated.
 - **Inscription** — a full ritual written in the formula (D10/D11): several rune
   words in fixed clause order.
 - **Runes** — the **whole system**: glyphs, rune words, and the grammar binding them.
@@ -104,7 +104,7 @@ carries meaning at both levels, and the pattern is learnable and followable the 
 real epigraphic formulae are:
 
 **Within a rune word** — the glyph sequence is part of the word's identity.
-`FLAMMANS · VIRGA` names a blaze rod; `VIRGA · FLAMMANS` is not the same expression
+`IGNIS · OSSA` names a blaze rod; `OSSA · IGNIS` is not the same expression
 and is not valid. Convention: **`QUALIFIER · HEAD`** — the last glyph names the kind
 of thing, earlier glyphs narrow it. A third glyph inserts another qualifier *before*
 the head, never after.
@@ -118,7 +118,7 @@ the head, never after.
 
 The Chaos Ingot inscription, literally:
 ```
-ALTARE·TENEBRAE  FLAMMANS·VIRGA  CHAOS·CAELUM  INFERNUS·METALLUM → CHAOS·METALLUM
+TENEBRAE·SAXVM  IGNIS·OSSA  CHAOS·CAELVM  INFERNVS·FERRVM → CHAOS·FERRVM
 Blackstone Altar    Blaze Rod     Thunderstorm      Netherite        Chaos Ingot
 ```
 
@@ -126,7 +126,7 @@ Consequences: the rune word registry is indexed by **ordered sequence** (exact-m
 lookup on submit); a grammatically wrong inscription is not a valid ritual; and
 position tells the player what *category* of thing an undecoded word names, which is
 what keeps guessing tractable rather than combinatorial. Full treatment in
-`RUNES.md` §4.
+`RUNES.md` §3.
 
 ### D11 🔵 The inscription frame: `OPUS` … `FIAT` (recommended, awaiting confirmation)
 Real inscriptions are readable because invariant **frame formulae** bracket the
@@ -138,7 +138,7 @@ and nowhere else:
 - **`FIAT`** ("let it be made") — opens the final clause, prefixing the result.
 
 ```
-OPUS·ALTARE·TENEBRAE  FLAMMANS·VIRGA  CHAOS·CAELUM  INFERNUS·METALLUM  FIAT·CHAOS·METALLUM
+OPUS·TENEBRAE·SAXVM  IGNIS·OSSA  CHAOS·CAELVM  INFERNVS·FERRVM  FIAT·CHAOS·FERRVM
 └──── INVOCATION ───┘ └─ OFFERING ──┘ └── HOUR ───┘ └──── SUBJECT ───┘ └── CONSECRATION ──┘
 ```
 
@@ -150,7 +150,7 @@ are learned first, and learning them teaches where inscriptions begin and where 
 result lives); it makes the codex grid unambiguous about clause boundaries; and it
 gives the mod a recognisable signature carved on every ruin — its own `V.S.L.M.`
 Costs two lexicon slots. Lean alternative is five bare clauses with no frame.
-Full treatment in `RUNES.md` §4.4. **Recommended; confirm to promote to ✅.**
+Full treatment in `RUNES.md` §3.2. **Recommended; confirm to promote to ✅.**
 
 ### D15 ✅ Glyph construction — 16 × 16, one continuous figure chiselled in stone
 **A glyph is one continuous figure** — two stacked letter-forms linking at the centre,
@@ -165,7 +165,7 @@ tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 - **No frame.** At 16 × 16 a border costs a quarter of the usable area and was never
   carrying identity; removing it is what made 16 × 16 viable.
 - **Two letters, not three.** Three six-row zones do not fit. Uniqueness survives
-  because **the foot tallies word length**: `VITA` (4), `VIRGA` (5) and `VIGILIA` (7)
+  because **the foot tallies word length**: `VITA` (4), `OSSA` (5) and `LVNA` (7)
   all abbreviate to `VI` and remain three different tiles. The bar widens one step per
   letter up to three, then its ends turn up into a serif and the width restarts, so
   `letters = 2 + (width − 1) + 3 × serif`.
@@ -180,7 +180,7 @@ tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 - **A blank tile** — bare stone, no cuts, still an octagon — serves as unknown glyph,
   empty codex slot, and uninscribed tablet.
 
-**Audited:** all 23 forms distinct; **49/49 lexicon glyphs unique, and still 49/49 with
+**Audited:** all 23 forms distinct; **52/52 lexicon glyphs unique, and still 52/52 with
 colour stripped**; tightest margin to the stone's edge 3 px; all 23 forms distinct from each
 other and clearing the margin in both slots they can occupy. The audit executes the *live*
 renderer rather than a transcription of it, so those numbers cannot drift from the art.
@@ -237,12 +237,12 @@ cut blocks.
 
 **Audited:** 21 forms, tightest pair **12 px** (was 4), median ~21, nothing below 12; mean
 ink **15 px** (was 17 — distinctness was *not* bought with density); no shared footprints;
-every form clears the 3 px margin in both slots; the 49-lemma lexicon renders 49 distinct
+every form clears the 3 px margin in both slots; the 52-rune lexicon renders 49 distinct
 tiles, and 49 distinct desaturated.
 
 **Known rough edges:** stacked word tiles are inherently busy at 16 px — two figures plus
 a tally — though far more legible now that the two forms no longer share a spine.
-`REGNVM` (R over E) stacks five horizontal bars: unique, but the least elegant composition
+`ORIGO` (R over E) stacks five horizontal bars: unique, but the least elegant composition
 in the lexicon, and a language-level quirk rather than a letterform flaw. `P` (the hammer)
 is the least self-evident single form.
 
@@ -319,7 +319,7 @@ are the same pigment.
 
 **This does not weaken D16.** Colour here is *redundant reinforcement*: a second, faster
 channel onto an identity that shape already carries in full. Desaturate the whole atlas
-and all 49 glyphs stay distinct — verified in the audit against the authored palette, not
+and all 52 glyphs stay distinct — verified in the audit against the authored palette, not
 just the hash. Two glyphs are even allowed to *share* a hue, and two implements nearly
 do; nothing breaks, because nothing was resting on it. If a future change ever makes two
 glyphs tell apart *only* by hue, that change is wrong.
@@ -349,13 +349,13 @@ of rite you're reading.
 | `OPUS` | The Work | altar + pedestals + pool | no |
 | `MERSIO` | The Steeping | throw items into a fluid | **yes, full stacks** |
 | `TACTUS` | The Touch | use item on item/block | no |
-| `VIGILIA` | The Vigil | observe the sky | no |
+| `LVNA` | The Vigil | observe the sky | no |
 
 Canonical example of a non-altar rite: *bone meal and sugar thrown into water under
 a full moon yields Blue Bone Meal* — no structure, and whole stacks at once.
 
 ```
-MERSIO·AQUA   OSSA·PULVIS, DULCIS·PULVIS   PLENUS·LUNA   FIAT·VITA·OSSA·PULVIS
+MERSIO·VNDA   OSSA·PVLVIS, DULCIS·PVLVIS   PLENVM·LVNA   FIAT·VITA·OSSA·PVLVIS
 ```
 *"The steeping of Water — bone-dust and sweet-dust — at the Full Moon — let there be
 life-bone-dust."*
@@ -379,11 +379,11 @@ block, a world condition, or an output. A ritual is described as a small set of
 such rune words, each hinting at one component.
 
 ```
-ALTARE · TENEBRAE      → Blackstone Altar   (Altar + Darkness)
-FLAMMANS · VIRGA       → Blaze Rod          (Flaming + Rod)
-CHAOS · CAELUM         → Thunderstorm       (Chaos + Heavens)
-INFERNUS · METALLUM    → Netherite          (Hell + Metal)
-CHAOS · METALLUM       → Chaos Ingot        (Chaos + Metal)
+TENEBRAE · SAXVM      → Blackstone Altar   (Altar + Darkness)
+IGNIS · OSSA       → Blaze Rod          (Flaming + Rod)
+CHAOS · CAELVM         → Thunderstorm       (Chaos + Heavens)
+INFERNVS · FERRVM    → Netherite          (Hell + Metal)
+CHAOS · FERRVM       → Chaos Ingot        (Chaos + Metal)
 ```
 
 Rune words are first-class data (`data/epigraphy/rune_words/*.json`), are what the codex
@@ -399,7 +399,7 @@ This adds a **backlash system** to the ritual engine (`RITUALS.md`, pending revi
 ### D4 ✅ Sky/constellation reading ships in v1
 The "meets the stars" pillar is present at launch. The **Observatory** multiblock
 and **Astrolabe** item let players read celestial glyphs from constellations at
-night; celestial glyphs (`CAELUM`, `NOX`, …) are gated behind sky reading. This
+night; celestial glyphs (`CAELVM`, `NOX`, …) are gated behind sky reading. This
 pulls sky work forward from the roadmap's later phase into the core loop. Being a
 no-GUI mod, the Observatory presents constellations **in-world** (projected/holo
 above the structure), not on a screen.
@@ -440,7 +440,7 @@ contiguous filled slots form one rune word, an empty slot ends it, and the words
 are read left to right as `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE`.
 
 ```
-[ALTARE][TENEBRAE][ ][FLAMMANS][VIRGA][ ][CHAOS][CAELUM][ ][INFERNUS][METALLUM][ ]…
+[SAXVM][TENEBRAE][ ][IGNIS][OSSA][ ][CHAOS][CAELVM][ ][INFERNVS][FERRVM][ ]…
 └──── VESSEL ────┘   └──── OFFERING ──┘   └──── HOUR ───┘   └──── SUBJECT ─────┘
 ```
 
@@ -452,21 +452,21 @@ the clause order is right.
 ### Q9 ✅ Resolved — the head rule
 **The head of a rune word is the last determinative-capable glyph; everything before
 it qualifies.** Scan right to left, and the first glyph that *can* be a determinative
-is the head. Element/quality glyphs (`FLAMMANS`, `TENEBRAE`, `CHAOS`, `VITA`,
-`PLENUS`) can never be determinatives, so they are skipped.
+is the head. Element/quality glyphs (`IGNIS`, `TENEBRAE`, `CHAOS`, `VITA`,
+`PLENVM`) can never be determinatives, so they are skipped.
 
 This handles both orders with a single rule and no exceptions:
-- `FLAMMANS · VIRGA` → `VIRGA` is a determinative → head. A rod.
-- `ALTARE · TENEBRAE` → `TENEBRAE` is an element, skip → `ALTARE` → head. An altar.
+- `IGNIS · OSSA` → `OSSA` is a determinative → head. A rod.
+- `TENEBRAE · SAXVM` → `TENEBRAE` is an element, skip → `SAXVM` → head. An altar.
 
 So the original example was right, and reads head-first only because the glyph after
 it could never head a word.
 
 **Supersedes the earlier "places prefix, materials suffix" formulation**, which
 described the symptom and broke on the first word containing two
-determinative-capable glyphs: `INFERNUS · METALLUM` would have been ambiguous
-between "a hellish place" and "a hell-metal". The head rule picks `METALLUM` and the
-word means a metal. Found while authoring the worked vocabulary in `RUNES.md` §3.1.1.
+determinative-capable glyphs: `INFERNVS · FERRVM` would have been ambiguous
+between "a hellish place" and "a hell-metal". The head rule picks `FERRVM` and the
+word means a metal. Found while authoring the worked vocabulary in `RUNES.md` §4.
 
 The Sumerian precedent still stands — determinatives genuinely appear on both sides
 (`DINGIR` prefixes, `KI` suffixes). The head rule adds a deterministic way to know
@@ -484,8 +484,21 @@ encoding into art is hard to undo. Revisit before Phase 3.
 D7 says wrong guesses "cost nothing but aren't confirmed." Alternatives worth
 weighing: consume a charge/ink resource per submission, add a cooldown, or feed
 failed submissions into `instability` (D3). *Leaning: free but with a short
-cooldown, so brute-forcing every glyph pair is tedious rather than optimal — see
-`RUNES.md` §3.4 on combinatorial safety.*
+cooldown, so brute-forcing every glyph pair is tedious rather than optimal.*
+
+### Q11 ❓ Does the lexicon need an axis of nourishment?
+Found by the thirty-item test (`RUNES.md` §4.7). Bread, Cake and Cooked Beef collapse
+onto their ingredients — the language can say *wrought seed* and *fire flesh* but cannot
+say **food**, because sustenance is not a property of the thing, it is a relation between
+the thing and the eater. Every other gap the test found was a mis-marked head; this one
+would have to **mint**, which is why it is a question and not a fix.
+
+The coining rule (`RUNES.md` §2) admits a new rune only if it completes an axis, so the
+candidate is a pair, not a word: `CIBVS` (*food, what sustains*) ↔ `TABES`— except
+`TABES` (*rot*) is already spoken for. A clean opposite is the whole difficulty.
+
+Not blocking: hunger is not a v1 ritual input. But it is the first honest evidence that 52
+is a floor rather than a ceiling, and it should be settled before any cooking content.
 
 ---
 

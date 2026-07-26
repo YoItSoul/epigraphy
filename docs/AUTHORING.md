@@ -34,13 +34,13 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 ```jsonc
 // data/examplemod/glyphs/pulvis.json
 {
-  "lemma": "PULVIS",              // the Latin word; what a fluent player reads
+  "lemma": "PVLVIS",              // the Latin word; what a fluent player reads
   "gloss": "Dust",                // one-word English meaning, shown once learned
   "category": "material",         // material | element | place | celestial | frame
   "rarity": "common",             // common | uncommon | rare — biases where it hides
   "sightings_to_learn": 1,        // independent sightings needed to learn it
 
-  // Determinative role (RUNES.md §4.3). Omit for plain qualifier glyphs.
+  // Determinative role (RUNES.md §3.1). Omit for plain qualifier glyphs.
   // Also selects the FRAME the glyph is drawn in (§2.1).
   "determinative": {
     "class": "material",          // material | celestial | structure
@@ -64,12 +64,12 @@ have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Forms** | `lemma` | its first two letters, each a stave carrying one mark (21 letters, `GLYPH_SPEC.md` §2) |
+| **Forms** | `lemma` | its first and third letters, each drawn as its own figure (21 letters, `GLYPH_SPEC.md` §2) |
 | **Foot** | `lemma` length | a tally bar: width 1–3, plus a serif once the word passes four letters |
 | **Pigment** | `pigment`, else `lemma` | the groove's inlay colour — your hex if you give one, otherwise hashed from the word; either way every hue cuts to the same depth |
 | **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
 
-So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
+So `"lemma": "PVLVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
 with a serifed 2-wide foot, its own colour, and no art file at all. **This is the intended
 path** — add a glyph in JSON, get usable art immediately.
 
@@ -79,15 +79,15 @@ composite, so a hand-drawn glyph must draw its own octagonal stone — and must 
 the **3 px margin** — to sit readably in a line of inscription.
 
 > **Watch the alphabet when you pick a lemma.** It is the classical 21: `U`/`W` fold to
-> `V`, `J`/`Y` to `I`, and `Z` to `S`. `PULVIS` and `PVLVIS` are the same word, and so
+> `V`, `J`/`Y` to `I`, and `Z` to `S`. `PVLVIS` and `PVLVIS` are the same word, and so
 > are `ZONA` and `SONA`.
 
-> **No two glyphs may render identically.** The mark is `(letter 1, letter 2, length
-> tally)`, so two lemmas agreeing on all three produce the same tile — `VELLUS` and
-> `VENTVS` do. **Treat that as a language bug, not an art bug:** the first fix is a
-> synonym, and Latin has one for nearly everything (which is why wool is `LANA`, not
-> `VELLUS`). Only when no synonym will do, force it with an explicit two-letter `mark`:
-> `{ "lemma": "VIRIDIS", "mark": "VR" }`.
+> **No two glyphs may render identically.** The mark is `(letter 1, letter 3, length
+> tally)`, so two lemmas agreeing on all three produce the same tile — `TERRA` and
+> `TVRBA` do, both marking `TR` at five letters. **Treat that as a language bug, not an
+> art bug:** the first fix is a synonym, and Latin has one for nearly everything (which
+> is why a throng is `GREX`, not `TVRBA`). Only when no synonym will do, force it with
+> an explicit two-letter `mark`: `{ "lemma": "TVRBA", "mark": "TB" }`.
 >
 > The loader renders every glyph at load, hashes the bitmap and refuses a duplicate, so
 > a clash fails the datapack rather than shipping two identical tiles.
@@ -119,14 +119,14 @@ the shipped grouping. Two glyphs sharing a hue is fine.
 > stripped. If two of your glyphs can only be told apart by hue, fix the *shape* (a
 > different lemma, or an explicit `mark`), not the palette.
 >
-> `determinative.class` still matters for **grammar** (`RUNES.md` §4.3.1) — it decides
+> `determinative.class` still matters for **grammar** (`RUNES.md` §3.1) — it decides
 > whether a glyph can head a rune word — and it does not affect the art today. It may
 > drive the tile silhouette in a later version (`DECISIONS.md` Q10); until then, do not
 > assume it is visible.
 
 ### Choosing a good glyph
 
-- **Broad beats specific.** `PULVIS` (Dust) is a great glyph because it can head
+- **Broad beats specific.** `PVLVIS` (Dust) is a great glyph because it can head
   *many* words — bone meal, sugar, glowstone dust, redstone. A glyph meaning
   "bone meal" specifically would be a bad glyph; that's a *rune word's* job.
 - **Decide if it's a determinative.** If it names a *category of thing*
@@ -134,8 +134,8 @@ the shipped grouping. Two glyphs sharing a hue is fine.
   head. If it names a *quality* (flaming, dark, chaotic, sweet), leave it off — it's
   a qualifier.
 - **Prefix vs suffix.** Follow the convention: **structures/places prefix**
-  (`ALTARE · …`), **materials/objects suffix** (`… · PULVIS`). Both are attested in
-  real determinative systems (`RUNES.md` §4.3).
+  (`SAXVM · …`), **materials/objects suffix** (`… · PVLVIS`). Both are attested in
+  real determinative systems (`RUNES.md` §3.1).
 - **Rarity drives discovery.** `rare` glyphs appear in dangerous structures and boss
   loot, and gate later-tier content.
 
@@ -164,7 +164,7 @@ A rune word is an **ordered** 2–3 glyph sequence naming exactly one concrete t
 1. **2 or 3 glyphs.** Never 1, never 4.
 2. **Contains at least one determinative.** The **head** is the *last*
    determinative-capable glyph in the word; everything before it qualifies
-   (`RUNES.md` §4.3.1). A word made only of element/quality glyphs has no head and
+   (`RUNES.md` §3.1). A word made only of element/quality glyphs has no head and
    fails validation.
 3. **Ordered sequences must be globally unique.** No two rune words may share the
    same glyph sequence, in any namespace. This is what makes codex submission
@@ -173,14 +173,14 @@ A rune word is an **ordered** 2–3 glyph sequence naming exactly one concrete t
 ### Why rule 3 will bite you
 
 With a small lexicon, collisions arrive fast. Authoring the v1 examples, three
-different stones all wanted `TENEBRAE · LAPIS`, and had to be distinguished:
+different stones all wanted `TENEBRAE · SAXVM`, and had to be distinguished:
 
 | Word | Names | Note |
 |---|---|---|
-| `TENEBRAE · LAPIS` | Deepslate | "dark stone" — got there first |
-| `INFERNUS · LAPIS` | Netherrack | "hell's stone" |
-| `NOX · LAPIS` | Echo Shard | "night stone" |
-| `INFERNUS · GEMMA` | Nether Quartz | moved off `· LAPIS` once Netherrack needed it |
+| `TENEBRAE · SAXVM` | Deepslate | "dark stone" — got there first |
+| `INFERNVS · SAXVM` | Netherrack | "hell's stone" |
+| `NOX · SAXVM` | Echo Shard | "night stone" |
+| `INFERNVS · GEMMA` | Nether Quartz | moved off `· SAXVM` once Netherrack needed it |
 
 **Practical guidance:** budget roughly **one new glyph per handful of new rune
 words**, and choose recipe ingredients partly for whether they're *nameable*. If an
@@ -190,8 +190,8 @@ or coin a new qualifier glyph.
 ### Teaching through shared determinatives
 
 The best rune words are designed in **families**. When bone meal and sugar are
-`OSSA · PULVIS` and `DULCIS · PULVIS`, a player who decodes either one infers
-*"… · PULVIS names a powder"* and can guess the other. Deliberately reusing
+`OSSA · PVLVIS` and `GERMEN · PVLVIS`, a player who decodes either one infers
+*"… · PVLVIS names a powder"* and can guess the other. Deliberately reusing
 determinatives across a recipe's ingredients is the single most effective teaching
 tool in the mod — it turns one decode into a rule.
 
@@ -214,7 +214,7 @@ Seeing the opening glyph tells a player what kind of rite they're reading.
 | **`OPUS`** | *The Work* | Altar multiblock + pedestals + pool | No — one output |
 | **`MERSIO`** | *The Steeping* | Throw items into a fluid in-world | **Yes — full stacks** |
 | **`TACTUS`** | *The Touch* | Use one item on another item/block | No |
-| **`VIGILIA`** | *The Vigil* | Observe the sky through an Observatory | No |
+| **`LVNA`** | *The Vigil* | Observe the sky through an Observatory | No |
 
 ### Defining one
 
@@ -266,11 +266,11 @@ different resolutions.
   "rite": "epigraphy:mersio",
 
   "inscription": {
-    "invocation":   ["epigraphy:water"],                    // MERSIO · AQUA
-    "offering":     ["epigraphy:bone_meal",                 // OSSA   · PULVIS
-                     "epigraphy:sugar"],                    // DULCIS · PULVIS
-    "hour":         ["epigraphy:full_moon"],                // PLENUS · LUNA
-    "consecration": ["epigraphy:blue_bone_meal"]            // FIAT · VITA·OSSA·PULVIS
+    "invocation":   ["epigraphy:water"],                    // MERSIO · VNDA
+    "offering":     ["epigraphy:bone_meal",                 // OSSA   · PVLVIS
+                     "epigraphy:sugar"],                    // DULCIS · PVLVIS
+    "hour":         ["epigraphy:full_moon"],                // PLENVM · LVNA
+    "consecration": ["epigraphy:blue_bone_meal"]            // FIAT · VITA·OSSA·PVLVIS
   },
 
   "fluid": "minecraft:water",
@@ -292,14 +292,14 @@ different resolutions.
 
 Read aloud:
 
-> **MERSIO·AQUA — OSSA·PULVIS, DULCIS·PULVIS — PLENUS·LUNA — FIAT·VITA·OSSA·PULVIS**
+> **MERSIO·VNDA — OSSA·PVLVIS, DULCIS·PVLVIS — PLENVM·LVNA — FIAT·VITA·OSSA·PVLVIS**
 >
 > *"The steeping of Water — bone-dust and sweet-dust — at the Full Moon — let there
 > be life-bone-dust."*
 
-Note the teaching design: **both offerings share the `PULVIS` determinative**, and
+Note the teaching design: **both offerings share the `PVLVIS` determinative**, and
 the result is the subject word with `VITA` (Life) prefixed onto it. A player who
-decodes `OSSA · PULVIS` gets a strong running start on the other two.
+decodes `OSSA · PVLVIS` gets a strong running start on the other two.
 
 ### 5.2 An `OPUS` rite — the Chaos Ingot
 
@@ -312,11 +312,11 @@ Altar rites use the full five-clause formula. Same schema, different rite type:
   "rite": "epigraphy:opus",
 
   "inscription": {
-    "invocation":   ["epigraphy:blackstone_altar"],  // OPUS · ALTARE·TENEBRAE
-    "offering":     ["epigraphy:blaze_rod"],         // FLAMMANS · VIRGA
-    "hour":         ["epigraphy:thunderstorm"],      // CHAOS · CAELUM
-    "subject":      ["epigraphy:netherite"],         // INFERNUS · METALLUM
-    "consecration": ["epigraphy:chaos_ingot"]        // FIAT · CHAOS·METALLUM
+    "invocation":   ["epigraphy:blackstone_altar"],  // OPUS · TENEBRAE·SAXVM
+    "offering":     ["epigraphy:blaze_rod"],         // IGNIS · OSSA
+    "hour":         ["epigraphy:thunderstorm"],      // CHAOS · CAELVM
+    "subject":      ["epigraphy:netherite"],         // INFERNVS · FERRVM
+    "consecration": ["epigraphy:chaos_ingot"]        // FIAT · CHAOS·FERRVM
   },
 
   "altar": "epigraphy:blackstone_altar",
@@ -344,11 +344,11 @@ Altar rites use the full five-clause formula. Same schema, different rite type:
   "rite": "epigraphy:tactus",
 
   "inscription": {
-    "invocation":   ["epigraphy:flame"],        // TACTUS · FLAMMANS
-    "subject":      ["epigraphy:iron"],         // TERRA  · METALLUM
+    "invocation":   ["epigraphy:flame"],        // TACTUS · IGNIS
+    "subject":      ["epigraphy:iron"],         // TERRA  · FERRVM
     "hour":         ["epigraphy:deep_night"],   // TENEBRAE · NOX
     "locus":        ["epigraphy:the_depths"],   // TENEBRAE · TERRA
-    "consecration": ["epigraphy:ember_ingot"]   // FIAT · FLAMMANS·METALLUM
+    "consecration": ["epigraphy:ember_ingot"]   // FIAT · IGNIS·FERRVM
   },
 
   "used_item":   { "item": "minecraft:torch" },
@@ -434,16 +434,16 @@ Run the game with the datapack loaded; failures are reported at load, not at use
 - Missing `lemma`, `gloss`, or `category`. (`texture` is optional — art generates.)
 - `determinative.position` not `prefix` or `suffix`.
 - A `determinative` block on a glyph whose `category` is `element` — quality glyphs
-  can never be heads (`RUNES.md` §5.2).
+  can never be heads (`RUNES.md` §2).
 - A `lemma` that isn't A–Z, which the monogram generator can't render.
 
 **Rune words**
 - Fewer than 2 or more than 3 glyphs.
 - A glyph id that doesn't resolve.
 - **No determinative-capable glyph** in the sequence — the word has no head
-  (`RUNES.md` §4.3.1).
+  (`RUNES.md` §3.1).
 - A `means.type` that contradicts the head's determinative class (a word headed by
-  `UNDA` must name a `fluid`, one headed by `LUNA` a `condition`, and so on).
+  `VNDA` must name a `fluid`, one headed by `LVNA` a `condition`, and so on).
 - **Duplicate ordered sequence** with any existing rune word (the common one).
 
 **Rite types**
