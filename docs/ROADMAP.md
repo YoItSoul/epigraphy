@@ -49,7 +49,7 @@ com.epigraphy
 ├─ art/                           // procedural glyph rendering (D14)
 │   ├─ FormRenderer               //   lemma -> two linked forms + tally foot (16x16)
 │   ├─ StoneTile                  //   octagon, height-field lighting, grain; blank tile
-│   ├─ Pigment                    //   lemma -> hashed hue, renormalised to one luma
+│   ├─ Pigment                    //   authored hex, else lemma hash; one fixed luma
 │   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
 ├─ doc/                           // in-game documentation model, populated from knowledge
 ├─ client/                        // in-world renderers (readable carvings, sky projection,
@@ -103,7 +103,8 @@ starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §3); build t
 
 Also here: the **procedural glyph renderer** (D14/D15/D17/D18/D19) — two linked
 letter-forms from `lemma`, a tally foot, chiselled into an octagonal 16x16 stone tile
-and inlaid with a name-hashed pigment, atlased, with `texture` as an override. Worth doing early: every later phase (carvings, tablets, codex, in-world
+and inlaid with an authored pigment (name-hashed fallback), atlased, with `texture` as
+an override. Worth doing early: every later phase (carvings, tablets, codex, in-world
 inscriptions) renders glyphs, and generated art means no phase is ever blocked
 waiting on an artist. `/epigraphy runes` debug command lists loaded glyphs and dumps
 the atlas for eyeballing.
@@ -188,8 +189,8 @@ Resolved since the first draft:
     (D14/D15/D17).** Generated from data, every glyph its own shape; pictographs
     rejected for undercutting decipherment. Silhouette is universal — side count is
     deliberately not tied to word length.
-13. ✅ **Depth from one light; pigment hashed from the name (D18).** Colour is redundant
-    reinforcement only, and the atlas is audited desaturated to prove it.
+13. ✅ **Depth from one light; pigment authored, hashed as fallback (D18).** Colour is
+    redundant reinforcement only, and the atlas is audited desaturated to prove it.
 14. ✅ **Knowledge tier is depth of cut, not tint (D19).** Uncut, shallow and unfilled,
     deep and inlaid.
 

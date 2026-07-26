@@ -49,6 +49,8 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
   "description": "That which is ground down, and so made ready."
 
+  // "pigment": "#b0a48c",                  // OPTIONAL — see §2.1. Omit and the
+  //                                        // colour is hashed from the lemma.
   // "texture": "examplemod:glyph/pulvis"   // OPTIONAL — see §2.1. Omit and the
   //                                        // art is generated for you.
 }
@@ -64,7 +66,7 @@ already written:
 |---|---|---|
 | **Forms** | `lemma` | its first two letters, each one of 23 closed shapes, linked into one continuous figure |
 | **Foot** | `lemma` length | a tally bar: width 1–4, plus a serif once the word passes five letters |
-| **Pigment** | `lemma` | the groove's inlay colour, hashed from the word; every hue cuts to the same depth |
+| **Pigment** | `pigment`, else `lemma` | the groove's inlay colour — your hex if you give one, otherwise hashed from the word; either way every hue cuts to the same depth |
 | **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
@@ -86,12 +88,37 @@ the **2 px margin** — to sit readably in a line of inscription.
 > The loader renders every glyph at load, hashes the bitmap and refuses a duplicate, so
 > a clash fails the datapack rather than shipping two identical tiles.
 
-> **Do not encode anything in colour.** The pigment is generated for you and is
-> *redundant reinforcement only* — the atlas is audited desaturated, and every glyph
-> must still be distinct with colour stripped. `determinative.class` still matters for
-> **grammar** (`RUNES.md` §4.3.1) — it decides whether a glyph can head a rune word —
-> and it does not affect the art today. It may drive the tile silhouette in a later
-> version (`DECISIONS.md` Q10); until then, do not assume it is visible.
+#### `pigment` — optional, and only the hue counts
+
+Give a glyph `"pigment": "#RRGGBB"` and the groove is inlaid with that colour. Omit it
+and the colour is hashed from the lemma instead — **the fallback is not a degraded
+mode**, it is what lets you add fifty glyphs in an afternoon and get stable, per-word
+colour with no art decisions at all. Add hexes later, one at a time, for the words that
+deserve them.
+
+**Only the hue and saturation survive.** Every pigment — yours or the hash's — is
+renormalised to one fixed luminance so all grooves cut to the same depth. `#88AA88` and
+`#AACCAA` are therefore the same pigment. You pick the colour; the renderer keeps the
+depth, and that is what stops a hand-picked palette from brightening one glyph into
+prominence.
+
+**A malformed value can never fail your pack.** Wrong length, stray characters, wrong
+type, pure black — all fall through to the hash silently.
+
+**Author for family, not for contrast.** The useful thing a hand-picked palette buys is
+words that belong together *looking* like they belong together — every fire word in one
+band of orange, every implement in one band of worn metal. See `GLYPH_SPEC.md` §6.2 for
+the shipped grouping. Two glyphs sharing a hue is fine.
+
+> **Do not encode anything in colour.** The pigment is *redundant reinforcement only* —
+> the atlas is audited desaturated, and every glyph must still be distinct with colour
+> stripped. If two of your glyphs can only be told apart by hue, fix the *shape* (a
+> different lemma, or an explicit `mark`), not the palette.
+>
+> `determinative.class` still matters for **grammar** (`RUNES.md` §4.3.1) — it decides
+> whether a glyph can head a rune word — and it does not affect the art today. It may
+> drive the tile silhouette in a later version (`DECISIONS.md` Q10); until then, do not
+> assume it is visible.
 
 ### Choosing a good glyph
 

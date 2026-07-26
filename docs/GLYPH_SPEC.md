@@ -229,32 +229,81 @@ nothing is lost.
 
 ---
 
-## 6. Pigment: the name, hashed
+## 6. Pigment: authored, with the name as fallback
 
-The groove floor holds the glyph's **own colour**, a pure function of its lemma:
+The groove floor holds the glyph's own colour. **Two sources, in order:**
+
+| | Source | When |
+|---|---|---|
+| **Static** | the glyph's authored `pigment` field | whenever it is present and parses |
+| **Dynamic** | FNV-1a over the normalised lemma | missing, malformed, out of range, or pure black |
 
 ```
-k    = FNV-1a(normalise(lemma))            // 32-bit
-hue  = k mod 360
-sat  = 0.52 + ((k >> 10) mod 16)/100       // 0.52 .. 0.67
-rgb  = hsl(hue, sat, 0.42)
-rgb  = rgb × (PIG_LUMA / luma(rgb))        // PIG_LUMA = 62, luma = Rec.709
+static:   rgb = parseHex(glyph.pigment)          // "#RRGGBB", case-insensitive
+dynamic:  k   = FNV-1a(normalise(lemma))         // 32-bit
+          hue = k mod 360
+          sat = 0.52 + ((k >> 10) mod 16)/100    // 0.52 .. 0.67
+          rgb = hsl(hue, sat, 0.42)
+
+both:     rgb = rgb × (PIG_LUMA / luma(rgb))     // PIG_LUMA = 62, luma = Rec.709
 ```
 
-Nothing is stored: the same lemma is the same colour in every world, forever.
+**A bad `pigment` must never fail a datapack load.** Unparseable, wrong length, wrong
+type, absent — all fall through to the hash silently. Log it at debug and move on; the
+glyph is still perfectly usable, because the fallback is not a degraded mode.
 
-**The renormalisation is the load-bearing step.** Every pigment is scaled to *one fixed
-relative luminance* (62 of 255, against stone that runs 110–195), so a yellow groove and
-a blue groove cut exactly as deep. Hue never changes how strongly the cut reads — which
-is the trap that catches most name-hashed palettes. Measured across the lexicon the
-spread is **61.6 – 62.4**, under one percent.
+**The fallback is the point, not the safety net.** It lets a modder add fifty glyphs in
+an afternoon and get stable, per-word colour with no art decisions at all — nothing is
+stored, so the same lemma is the same colour in every world, forever. The static layer
+exists so the words that *deserve* a colour get the right one.
+
+### 6.1 Only the hue survives
+
+**Both paths are renormalised to one fixed relative luminance** (62 of 255, against
+stone running 110–195), so a yellow groove and a blue groove cut exactly as deep.
+
+**The author picks the hue; the renderer keeps the depth.** This is the load-bearing
+step, and it is what makes the static layer safe: a hand-picked palette cannot brighten
+one glyph into prominence or sink another into invisibility, which is the trap that
+catches most authored rune palettes. Measured across the lexicon the spread is
+**61.6 – 62.4**, under one percent — the same figure whether a glyph is authored or
+hashed.
+
+A consequence worth stating: **`#88AA88` and `#AACCAA` are the same pigment.** Authors
+choose a hue and a saturation, nothing more.
+
+### 6.2 Author for family, not for contrast
+
+Because luminance is normalised away and colour carries nothing (§7), the useful thing a
+hand-picked palette buys is **family relationship** — words that belong together looking
+like they belong together. The shipped lexicon is grouped:
+
+| Family | Glyphs | Band |
+|---|---|---|
+| Fire & hell | `IGNIS` `FLAMMANS` `INFERNVS` `SOL` | orange → deep red |
+| Water, flow & air | `VNDA` `AQVA` `VENTVS` | blue → pale cyan |
+| Life, wood & fleece | `VITA` `LIGNVM` `LANA` `PLVMA` | green → warm cream |
+| Night, death & dark | `NOX` `TENEBRAE` `MORS` `OSSA` | indigo → violet → bone |
+| Sky, stars & hours | `CAELVM` `STELLA` `LVNA` `AVRORA` `VIGILIA` `PLENVS` | sky → pale gold |
+| Earth, stone & dust | `TERRA` `LAPIS` `FVNDVS` `PVLVIS` `GEMMA` | brown → grey |
+| Metals | `FERRVM` `AVRVM` `METALLVM` `ADAMAS` | steel → gold → cyan |
+| Realms & powers | `REGNVM` `FINIS` `CHAOS` | violet → pale teal → magenta |
+| Creatures | `BESTIA` `DRACO` `CVSTOS` `VENENVM` | earth red → purple → acid |
+| Implements | `GLADIVS` `DOLABRA` `SECVRIS` `PALA` `FALX` `ARCVS` `HAMVS` `FORFEX` `SCVTVM` `LORICA` | one band of worn metal |
+| Ritual furniture | `ALTARE` `VIRGA` | sandstone → ochre |
+
+`IGNIS`, `FLAMMANS` and `INFERNVS` visibly rhyme, which is the same compositional logic
+the language itself runs on. **Two glyphs sharing a hue is allowed** and costs nothing —
+ten implements in one grey band does not make two tools ambiguous, because their shapes
+were already doing the work.
 
 ---
 
 ## 7. Accessibility: shape carries everything
 
 **Colour never carries anything on its own** (D16). Desaturate the whole atlas and all
-49 glyphs stay distinct — *verified in the audit, not asserted*. The pigment is
+49 glyphs stay distinct — *verified in the audit, not asserted*, and verified against the
+authored palette rather than only the hash. The pigment is
 **redundant reinforcement**: a second, faster channel onto an identity that shape
 already carries in full. That is the only footing on which colour is allowed in at all,
 and it is what keeps the system safe for colourblind players.
@@ -292,6 +341,8 @@ The renderer and datapack loader must reject:
   not a renderer change: Latin offers one for nearly everything, which is why wool is
   `LANA`. The loader renders every glyph at load, hashes the bitmap, and refuses a
   duplicate; an explicit `mark` is the escape hatch when no synonym will do.
+- **Never** a malformed `pigment`. It falls back to the hash (§6) — a colour typo must
+  not be able to break someone's pack.
 - A glyph whose `category` is `element` declaring a `determinative` (a grammar rule,
   `RUNES.md` §5.2 — unrelated to art).
 - **Any lit pixel falling outside the octagon, or within 2 px of its edge.** Assert
@@ -330,7 +381,8 @@ function render(glyph){                                 // -> 1-bit cut mask
 
 function paint(bits, lemma, tier){                      // cut mask -> stone tile
   const shallow = tier === SIGHTED;
-  const pig = shallow ? [99,95,89] : pigmentOf(lemma);  // §6
+  const pig = shallow ? [99,95,89]
+                      : pigmentOf(lemma, glyph.pigment);  // §6 — static, else hashed
   const amp = shallow ? 0.085 : 0.155;
   const H = (x,y) => !inTile(x,y) ? -1 : (bits[y*S+x] ? 0 : 1);
 
@@ -351,7 +403,9 @@ renderer must produce byte-identical output.
 
 **Audited** (49-lemma working lexicon, `VELLUS` excluded as a homograph of `VENTVS`):
 all 23 forms distinct and inside the octagon; **49/49 glyphs distinct**; **49/49 still
-distinct with colour stripped**; groove luminance 61.6–62.4 across every hue; every
+distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 49 authored
+pigments parse and every one names a lemma that exists; nine classes of malformed
+`pigment` all fall through to the hash without throwing; every
 output vertically symmetric; every glyph a **single connected component**; **tightest
 margin to the stone's edge 2 px**; blank tile 232/256 px opaque and zero cuts.
 

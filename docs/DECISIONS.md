@@ -215,20 +215,35 @@ tile's bevelled rim, the chamfered corners, the shadowed upper-left wall of ever
 and the lit lower-right wall — nothing special-cased, and a two-pixel stem falls out as
 a true V-groove.
 
-**The groove holds a pigment hashed from the lemma** — FNV-1a → hue, with a little
-saturation jitter. Nothing is stored: the same word is the same colour in every world,
-forever. Blood Magic's runes are the reference: a symbol sunk into stone whose inlay
-tells one rune from another across a room.
+**The groove holds a pigment, from one of two sources in order.** *Static* — an authored
+`pigment` hex on the glyph, chosen by hand. *Dynamic* — FNV-1a over the lemma → hue, with
+a little saturation jitter. Anything missing, malformed or out of range falls through to
+the hash **silently**; a colour typo must never be able to fail a datapack load. Blood
+Magic's runes are the reference: a symbol sunk into stone whose inlay tells one rune from
+another across a room.
 
-**Every pigment is renormalised to one fixed relative luminance** (62 of 255, against
-stone running 110–195), so a yellow groove and a blue groove cut exactly as deep. Hue
-never changes how strongly a cut reads — the trap that catches most name-hashed
-palettes. Measured across the lexicon the spread is 61.6–62.4, under one percent.
+**The fallback is the point, not the safety net.** It lets a modder add fifty glyphs in
+an afternoon and get stable, per-word colour with no art decisions at all — nothing is
+stored, so the same lemma is the same colour in every world, forever. The static layer
+exists so the words that deserve a colour get the right one. All 49 shipped glyphs are
+authored, grouped into families (`GLYPH_SPEC.md` §6.2): every fire word in one band of
+orange, every implement in one band of worn metal, so words that belong together look
+like they belong together.
+
+**Both paths are renormalised to one fixed relative luminance** (62 of 255, against stone
+running 110–195), so a yellow groove and a blue groove cut exactly as deep. **The author
+picks the hue; the renderer keeps the depth** — which is what makes the static layer
+safe, since a hand-picked palette cannot brighten one glyph into prominence or sink
+another into invisibility. Measured across the lexicon the spread is 61.6–62.4, under one
+percent, authored and hashed alike. A consequence worth stating: `#88AA88` and `#AACCAA`
+are the same pigment.
 
 **This does not weaken D16.** Colour here is *redundant reinforcement*: a second, faster
 channel onto an identity that shape already carries in full. Desaturate the whole atlas
-and all 49 glyphs stay distinct — verified in the audit, not asserted. If a future
-change ever makes two glyphs tell apart *only* by hue, that change is wrong.
+and all 49 glyphs stay distinct — verified in the audit against the authored palette, not
+just the hash. Two glyphs are even allowed to *share* a hue, and two implements nearly
+do; nothing breaks, because nothing was resting on it. If a future change ever makes two
+glyphs tell apart *only* by hue, that change is wrong.
 
 ### D19 ✅ Knowledge tier is depth, not tint
 This closes the gap D15 left open when the frame was removed.

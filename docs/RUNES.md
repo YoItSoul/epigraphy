@@ -669,8 +669,9 @@ Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**
 - **Chiselled, not painted.** One height field and one top-left light give the tile's
   bevelled rim, the shadowed upper-left wall of every groove and the lit lower-right
   wall (D18).
-- **The groove is inlaid** with a pigment hashed from the lemma, renormalised so every
-  hue cuts to the same depth. It is redundant reinforcement only — see §5.3.
+- **The groove is inlaid** with a pigment: an authored `pigment` hex where the glyph has
+  one, otherwise hashed from the lemma. Either way it is renormalised so every hue cuts
+  to the same depth, and it is redundant reinforcement only — see §5.3.
 - **Nothing comes within 2 px of the stone's edge**, chamfered corners included, and the
   audit fails the build if it does.
 - **A blank tile** covers unknown glyphs, empty slots and uninscribed tablets.
@@ -701,10 +702,10 @@ structure did — but only once it was kept light and continuous.**
 
 ### 5.3 Knowledge tier is depth, not tint
 
-**Colour never carries anything on its own.** The groove's pigment is hashed from the
-lemma, but every pigment is renormalised to a single luminance, so hue never changes how
-strongly a cut reads. Desaturate the whole atlas and all 49 glyphs stay distinct —
-verified in the audit. Colour is a second, faster channel onto an identity that shape
+**Colour never carries anything on its own.** The groove's pigment is authored per glyph
+(falling back to a hash of the lemma), but every pigment is renormalised to a single
+luminance, so hue never changes how strongly a cut reads. Desaturate the whole atlas and
+all 49 glyphs stay distinct — verified in the audit. Two glyphs may even share a hue. Colour is a second, faster channel onto an identity that shape
 already carries in full.
 
 | Tier | Rendered | Reads as |
