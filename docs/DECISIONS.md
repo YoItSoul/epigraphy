@@ -185,67 +185,66 @@ colour stripped**; tightest margin to the stone's edge 3 px; all 23 forms distin
 other and clearing the margin in both slots they can occupy. The audit executes the *live*
 renderer rather than a transcription of it, so those numbers cannot drift from the art.
 
-### D20 ✅ The alphabet is one stave and one mark per letter
-Every letter-form is a **stave** — a single upright, full height — carrying **exactly one
-mark**. Three questions describe a letter and nothing else does: **where** the mark sits
-(head, waist, foot), **which side** (left, right, both), and **which way** it points
-(rising, level, falling).
+### D20 ✅ 21 letters, 21 figures — no shared skeleton
+Each letter is **its own figure** — a gable, a thorn, a grate, a diamond, a coffer, a
+saltire — built from five shared carved **parts**: the stave (1 px upright), the bar
+(lintel), the diagonal, the chevron, and the stone (2 × 2 block). What varies is which
+parts a letter uses, how they join, and which side carries the weight. **Never size, and
+never a one-row offset.**
 
-**The arithmetic lands exactly on 21.** Rising at the head would leave the form, and so
-would falling at the foot, leaving 7 workable positions × 3 sides = **21** — the classical
-Latin alphabet, with nothing trimmed to fit. J, U and W are mediaeval; Y and Z were Greek
-imports Latin had spent centuries absorbing as I and S, so normalisation folds `U`/`W`→`V`,
-`J`/`Y`→`I`, `Z`→`S`.
+Every pair difference is sayable aloud: *the diamond* against *the coffer*, *roof on the
+post* against *floor under the post*, *two bars* against *three*, *strokes* against
+*stones*. That is the whole test.
 
-#### Dropping the mirror is what made it simple
-**Mirror symmetry was the expensive rule.** While every mark had to be reflected, *side
-carried no information* — so distinctness had to come from stacking more marks onto each
-letter, which is exactly how five successive alphabets grew ornate. Let a mark sit on one
-side and side becomes a third axis: 21 letters out of **one mark each**, ~17 px a form
-against 25–30 for the outlines.
+#### The rule that finally worked
+Six earlier alphabets shared one skeleton across all 21 letters, and each rebuild made
+the skeleton's decorations more elaborate. In the last of them — a full-height stave plus
+a single mark — **about 12 of 17 pixels were identical in every letter**, leaving ~4 to
+carry identity. Measured: **28 of 210 pairs differed by 4 px**; the whole alphabet spanned
+only 4–16 px. That is why they looked the same.
 
-**Which side a mark sits on is now load-bearing** — mirroring a glyph turns it into a
-different letter — so there is no `symmetrise` step in the render path. What stays
-symmetric is the *stone*: the octagonal tile and the tally foot, which is what keeps a
-line of glyphs looking like a course of cut blocks.
+> **A large fraction of each letter's pixels must be doing distinguishing work.**
 
-**Forced continuity went with it.** It did real work when a glyph was an outline, but a
-stave already spans the full height, so stacked forms meet whether or not a rule demands
-it. Every glyph still renders as a single component; the design simply no longer pays for
-it.
+Now: no mandatory shared skeleton. Shared *parts*, not a shared *frame* — which is also
+what keeps the set reading as one script rather than 21 unrelated doodles.
 
 #### Why strokes, not outlines
-Every table before the stave drew closed outlines — vessels, boxes, doubled rings — and
-each rebuild made them *more* elaborate to keep them apart.
+Several tables drew closed outlines, and pictures must be intricate to differ. Writing is
+not made of outlines; it is made of strokes. Elder Futhark, Ogham, Tifinagh and Old Turkic
+all use uprights, bars, diagonals and dots, and nothing curved — the same answer to the
+same engineering problem.
 
-> **An outline is a picture, and pictures must be intricate to differ. Writing is not
-> made of outlines; it is made of strokes.**
+#### Two instruments that were driving the design instead of judging it
+The pixel threshold was wrong **twice, in opposite directions**. At **10 px** (calibrated
+for dense outlines) every light form was excluded, which forced the heavy shapes. At
+**4 px** it rubber-stamped an alphabet where 28 pairs differed by a single arm. It now
+sits at **12 px** — about one whole carved part, the smallest reliably nameable difference
+at 16 px.
 
-Carved scripts settled this long ago under our exact constraints. Elder Futhark is an
-upright with a mark or two and nothing curved, because curves are miserable to cut; Ogham
-reduces it further still. Borrowing the structure is not a stylistic nod to runes, it is
-the answer to the same engineering problem.
+Two further instrument bugs each wasted a review: **row width could not see which side a
+mark was on** (the audit records row *extents* now), and **the contact sheet kept
+mirroring asymmetric forms** after symmetry had been dropped, so a whole visual pass was
+worthless.
 
-#### The distinctness bar, and two instruments that were wrong
-**A difference must be nameable.** Where a mark sits, which side, which way it points.
-A width is not nameable: telling a lozenge from a slightly wider lozenge needs both in
-front of you, which a reader never gets.
+> **A metric that agrees with you is worth re-deriving.**
 
-Two forms pass if they differ by ≥ **4 px** and share no **row-extent footprint**. Both
-numbers replaced instruments that were actively misleading:
+#### Dropped along the way
+**Mirror symmetry** and **forced continuity** are no longer rules — that is what lets a
+letter lean, corner, or carry its weight on one side, and lets `I` (the horns) and `M`
+(three stones) be drawn in separate pieces. Symmetry now belongs to the *stone*: the
+octagonal tile and the tally foot, which keeps a line of glyphs reading as a course of
+cut blocks.
 
-- **The 10 px bar was calibrated for dense outlines.** A mark is ~4 px, so at ten *every
-  single-mark form was excluded* — precisely what forced the heavy shapes. Sweeping the
-  design space showed the threshold itself was making the alphabet complicated.
-- **Row width could not see side.** Width was right while forms were mirrored; now two
-  forms can share every row width and be mirror images. The audit records row *extents*.
+**Audited:** 21 forms, tightest pair **12 px** (was 4), median ~21, nothing below 12; mean
+ink **15 px** (was 17 — distinctness was *not* bought with density); no shared footprints;
+every form clears the 3 px margin in both slots; the 49-lemma lexicon renders 49 distinct
+tiles, and 49 distinct desaturated.
 
-Also settled along the way: **a mark one row lower is not nameable** — an earlier stave
-attempt used six join heights and failed for the original reason in a new coat. Hence
-three places, two rows apart.
-
-**Audited:** all 21 forms pass; no shared footprints; every form clears the 3 px margin in
-both slots; the 49-lemma lexicon renders 49 distinct tiles, and 49 distinct desaturated.
+**Known rough edges:** stacked word tiles are inherently busy at 16 px — two figures plus
+a tally — though far more legible now that the two forms no longer share a spine.
+`REGNVM` (R over E) stacks five horizontal bars: unique, but the least elegant composition
+in the lexicon, and a language-level quirk rather than a letterform flaw. `P` (the hammer)
+is the least self-evident single form.
 
 ### D17 ✅ The tile is an octagon, and the silhouette is universal
 The tile is the 16 × 16 square with its **four corners chamfered by 2** — 244 of 256

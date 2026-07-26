@@ -661,11 +661,9 @@ Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**
 - **Two letter-forms stack**, and the foot hangs off the lower one. Neither mirror
   symmetry nor forced continuity is a rule any more: **which side a mark is on carries
   meaning**, and mirroring a glyph would make it a different word.
-- **One stave, one mark.** Each letter is an upright carrying a single mark: where it
-  sits (head, waist, foot), which side (left, right, both), which way it points (rising,
-  level, falling). 7 workable positions × 3 sides = **21**, the classical Latin alphabet
-  exactly; `Y` folds to `I` and `Z` to `S`, as Latin did. That is the structure carved
-  alphabets converge on, and the reason a glyph reads as writing rather than as a figure.
+- **21 letters, 21 figures.** A gable, a thorn, a grate, a diamond, a coffer, a saltire —
+  each built from five shared carved parts (stave, bar, diagonal, chevron, stone). The
+  alphabet is the **classical 21**: `Y` folds to `I` and `Z` to `S`, as Latin did.
 - **Two letters + a tally.** The forms carry the lemma's first two letters; the foot
   tallies its length — width 1–3 plus a serif for "and a hand" — which is what keeps
   `VITA`, `VIRGA` and `VIGILIA` distinct despite sharing `VI`.
@@ -708,6 +706,7 @@ Each attempt failed for a recorded reason, and the pattern is the lesson:
 | Distinct outlines (shells, posts) | passed every metric, but every letter was an ornate figure |
 | Stave with six join heights | marks one row apart — the relative difference again |
 | Stave, three places, **mirrored** | still needed two- and three-mark letters |
+| Stave + one mark, 4 px bar | 12 of 17 px identical in every letter; 28 pairs at 4 px |
 
 **Every one of those before the stave drew outlines**, and each rebuild made them more
 elaborate in order to keep them apart. That was the wrong direction:
@@ -715,11 +714,11 @@ elaborate in order to keep them apart. That was the wrong direction:
 > **An outline is a picture, and pictures must be intricate to differ. Writing is not
 > made of outlines; it is made of strokes.**
 
-What finally held is the shape carved scripts arrived at under the same constraints — a
-**stave and a mark** (Elder Futhark, Ogham). And the thing that made it *simple* was
-**dropping the mirror**: while every mark had to be reflected, side carried no
-information, so letters had to differ by how many marks they piled on. Let a mark sit on
-one side and side becomes a third axis — 21 letters, one mark each, ~17 pixels a form.
+What finally held was giving up the shared skeleton altogether. Every earlier alphabet
+was one frame with different decorations, so most of each letter's pixels were identical
+to every other letter's — and no amount of redecorating fixes that. Now each letter is
+**its own figure**, built from five shared *parts*: stave, bar, diagonal, chevron, stone.
+Shared parts, not a shared frame, which is also what keeps them reading as one script.
 
 The distinctness rule, applied to letters exactly as to glyphs: **a difference must be
 nameable.** Where a mark sits, which side, which way it points — you can say each of

@@ -47,7 +47,7 @@ com.epigraphy
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
 ├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
 ├─ art/                           // procedural glyph rendering (D14)
-│   ├─ FormRenderer               //   lemma -> two stave-and-mark forms + tally foot
+│   ├─ FormRenderer               //   lemma -> two of the 21 figures + tally foot
 │   ├─ StoneTile                  //   octagon, height-field lighting, grain; blank tile
 │   ├─ Pigment                    //   authored hex, else lemma hash; one fixed luma
 │   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
@@ -185,9 +185,9 @@ Resolved since the first draft:
     read left to right in formula order.
 11. ✅ **Determinatives may prefix or suffix (Q9).** Structures prefix, materials
     suffix — as Sumerian prefixes `DINGIR` but suffixes `KI`.
-12. ✅ **One stave, one mark per letter (D20).** Where it sits × which side × which way =
-    7 × 3 = the classical 21. Dropping the mirror is what made it simple; symmetry and
-    forced continuity are no longer rules, and side is now load-bearing.
+12. ✅ **21 letters, 21 figures (D20).** No shared skeleton — shared *parts* instead, so
+    most of each letter's pixels do distinguishing work. Symmetry and forced continuity
+    are no longer rules; which side a stroke sits on is load-bearing.
 13. ✅ **Glyph art = one continuous figure on a 16x16 octagonal stone tile
     (D14/D15/D17).** Generated from data, every glyph its own shape; pictographs
     rejected for undercutting decipherment. Silhouette is universal — side count is

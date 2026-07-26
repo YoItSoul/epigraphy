@@ -7,8 +7,8 @@ own item resolution.
 > letters, **chiselled into an octagonal stone tile** lit from the top-left, its groove
 > inlaid with a pigment hashed from the word's own name.
 >
-> **Each letter is one stave and one mark**: where it sits, which side, which way it
-> points.
+> **Each letter is its own figure** — a gable, a thorn, a grate, a diamond, a coffer, a
+> saltire — built from five carved parts.
 
 This is the implementation contract for the renderer (`RUNES.md` §5, D14/D15/D17/D18).
 Given the same `lemma` it must always produce byte-identical art.
@@ -31,11 +31,11 @@ Two other things had to go to make 16 × 16 work, and both were improvements:
 | The frame | cost a quarter of the usable area and never carried identity |
 | Disconnected marks (pips, split bars, posts) | continuity rules them out anyway |
 
-### Continuity is no longer a rule
+### Continuity and mirror symmetry are no longer rules
 
-It did real work when a glyph was a closed outline. A stave already spans the full
-height, so stacked forms meet whether or not anything requires it — every glyph in the
-lexicon still renders as a single component, but the design no longer pays for it.
+Both did real work when a glyph was a closed outline. Dropping them is what let letters
+lean, corner, and carry weight on one side — `I` (the horns) and `M` (three stones) are
+drawn in separate pieces, and at this size detached marks read cleanly.
 
 ---
 
@@ -54,8 +54,8 @@ lexicon still renders as a single component, but the design no longer pays for i
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
-| **Form 1** (rows 2–7) | the lemma's **first** letter | a stave + one mark, §2 |
-| **Form 2** (rows 7–12) | the lemma's **second** letter | a stave + one mark (sharing row 7) |
+| **Form 1** (rows 2–7) | the lemma's **first** letter | one of 21 figures, §2 |
+| **Form 2** (rows 7–12) | the lemma's **second** letter | one of 21 figures (sharing row 7) |
 | **Foot** (row 13) | the word's **length** | a tally bar, §3 |
 | **Pigment** | nothing on its own — reinforcement | groove inlay, §6 |
 | **Stone** | nothing — material only | octagon, gradient + grain, §5 |
@@ -68,97 +68,106 @@ tablet**.
 
 ---
 
-## 2. The letter forms: one stave, one mark
+## 2. The letter forms: 21 figures
 
-**21 letters, one mark each.** Every form is a **stave** — a single upright, full height
-— carrying exactly one mark. Three questions describe it, and nothing else does:
+**21 letters, 21 figures.** Not one skeleton with variations — that was the mistake
+behind every earlier table. Each letter is built from a small shared vocabulary of
+carved parts:
 
-| Question | Answers |
+| Part | |
 |---|---|
-| **Where does it sit?** | head (row 1) · waist (row 3) · foot (row 5) |
-| **Which side?** | left · right · both |
-| **Which way does it point?** | rising · level · falling |
+| **stave** | a 1 px upright |
+| **bar** | a 1 px lintel |
+| **diagonal** | a slash |
+| **chevron** | a pair meeting at a point |
+| **stone** | a 2 × 2 block |
 
-Nothing to count. No two-mark or three-mark forms. A letter *is* those three answers.
+Heavy 2 px strokes appear as a deliberate accent in `H`, `P` and `T`. What varies is
+**which parts a letter uses**, **how they join** (meeting at a point, crossing,
+cornering, closing, floating free), and **which side carries the weight** — never size,
+and never a one-row offset.
 
-### 2.1 The arithmetic lands exactly on 21
+| Letter | Figure | | Letter | Figure | | Letter | Figure |
+|---|---|---|---|---|---|---|
+| **A** | the gable | | **H** | the arm | | **Q** | the coffer |
+| **B** | the thorn | | **I** | the horns | | **R** | the twin bars |
+| **C** | the fang, west | | **K** | roof on the post, east | | **S** | the lightning |
+| **D** | the fang, east | | **L** | floor under the post | | **T** | the tee |
+| **E** | the grate | | **M** | three stones | | **V** | the valley |
+| **F** | roof on the post, west | | **N** | the pale | | **X** | the saltire |
+| **G** | the cross | | **O** | the diamond | | | |
+| | | | **P** | the hammer | | | |
 
-Rising at the head would leave the form, and so would falling at the foot. That leaves
-**7 workable positions**:
+**Every pair difference is sayable aloud** — *the diamond* against *the coffer*, *roof on
+the post* against *floor under the post*, *two bars* against *three*, *strokes* against
+*stones*. That is the whole test.
 
-```
-head    level, falling
-waist   rising, level, falling
-foot    rising, level
-```
+All forms live in `x = 4..11` so both stack slots clear the 3 px margin, and no bottom
+row fills `x = 6..9` completely, so the tally plinth (§3.2) can never be swallowed.
 
-**7 positions × 3 sides = 21** — and 21 is the classical Latin alphabet. Nothing was
-trimmed to fit. J, U and W are mediaeval; Y and Z were Greek imports Latin had spent
-centuries absorbing as **I** and **S**, so normalisation folds them the way a Roman
-cutter would have:
+### 2.1 Twenty-one, because that is the alphabet
+
+The classical Latin alphabet has **21 letters**. J, U and W are mediaeval; Y and Z were
+Greek imports Latin had spent centuries absorbing as **I** and **S** already.
 
 ```
 normalise: uppercase · U→V · W→V · J→I · Y→I · Z→S · strip non-letters
 ```
 
-| Letter | Form | | Letter | Form | | Letter | Form |
-|---|---|---|---|---|---|---|---|
-| **A** | head level left | | **H** | waist rising right | | **P** | waist falling both |
-| **B** | head level right | | **I** | waist rising both | | **Q** | foot rising left |
-| **C** | head level both | | **K** | waist level left | | **R** | foot rising right |
-| **D** | head falling left | | **L** | waist level right | | **S** | foot rising both |
-| **E** | head falling right | | **M** | waist level both | | **T** | foot level left |
-| **F** | head falling both | | **N** | waist falling left | | **V** | foot level right |
-| **G** | waist rising left | | **O** | waist falling right | | **X** | foot level both |
+**The form table is frozen at v1.** Changing one invalidates every glyph using it.
 
-**The form table is frozen at v1.** Changing one invalidates every glyph using that
-letter.
+### 2.2 The rule that finally worked: invert the shared fraction
 
-### 2.2 Dropping the mirror is what made it simple
+Every earlier alphabet shared one skeleton across all 21 letters. In the last one — a
+full-height stave plus a single mark — **about 12 of 17 pixels were identical in every
+letter**, leaving ~4 to carry identity. Measured: **28 of 210 pairs differed by 4 px**,
+and the whole alphabet spanned only 4–16 px.
 
-**Mirror symmetry was the expensive rule.** While every mark had to be reflected, *side
-carried no information* — so distinctness had to come from stacking more marks onto each
-letter, and that is exactly how every earlier alphabet grew ornate. Let a mark sit on one
-side and side becomes a third axis; 21 letters then fall out of **one mark each**, at
-about **17 pixels** a form against 25–30 for the outlines.
+> **A large fraction of each letter's pixels must be doing distinguishing work.**
 
-**Forced continuity went with it.** It did real work when a glyph was an outline, but a
-stave already spans the full height, so stacked forms meet whether or not a rule demands
-it. In practice every glyph still renders as a single component — it simply is no longer
-a constraint the design has to pay for.
+So: no mandatory shared skeleton. Each letter is its own figure, drawn from shared
+*parts* rather than a shared *frame* — which is also what makes the set read as one
+script instead of 21 unrelated doodles.
 
 ### 2.3 Why strokes, not outlines
 
-Every table before the stave drew **closed outlines** — vessels, boxes, doubled rings —
-and each rebuild made them *more* elaborate to keep them apart. Wrong direction.
+Several tables drew **closed outlines** — vessels, boxes, doubled rings — and each
+rebuild made them *more* elaborate to keep them apart. Wrong direction.
 
 > **An outline is a picture, and pictures must be intricate to differ. Writing is not
 > made of outlines; it is made of strokes.**
 
 Carved scripts settled this long ago under exactly our constraints — hard material, small
-size, must be unmistakable. **Elder Futhark** is an upright with a mark or two and
-nothing curved, because curves are miserable to cut. **Ogham** reduces it further still.
-Borrowing the structure is not a stylistic nod to runes; it is the answer to the same
-engineering problem.
+size, must be unmistakable. **Elder Futhark**, **Ogham**, **Tifinagh** and **Old Turkic**
+all use uprights, bars, diagonals and dots, and nothing curved, because curves are
+miserable to cut.
 
 ### 2.4 The distinctness bar
 
-**A difference must be nameable.** Where the mark sits, which side, which way it points.
-A *width* is not nameable: telling a lozenge from a slightly wider lozenge needs both in
-front of you, which is exactly what a reader never gets.
+**A difference must be nameable.** A width is not nameable: telling a lozenge from a
+slightly wider lozenge needs both in front of you, which is exactly what a reader never
+gets.
 
-Two forms pass if they differ by at least **4 px** and do not share a **row-extent
-footprint**. Two notes on why those are the right instruments:
+Two forms pass if they differ by at least **12 px** — about one whole carved part — and
+do not share a **row-extent footprint**.
 
-- **4 px, not 10.** The old bar was calibrated for dense outlines. A mark is only about
-  four pixels, so at ten *every single-mark form was excluded* — which is precisely what
-  forced the heavy shapes. Sweeping the design space showed the threshold itself was
-  making the alphabet complicated. Side alone is a 4 px change, and a lopsided figure
-  against a balanced one is about as visible as a difference gets.
-- **Extents, not widths.** Row *width* was the right measure while every form was
-  mirrored. Now that a mark can sit on one side, two forms can share every row width and
-  be mirror images of each other — a real and highly visible difference. So the audit
-  records where each row starts and ends.
+**The threshold has been wrong twice, in both directions, and both times it drove the
+design rather than judging it:**
+
+| Bar | What it did |
+|---|---|
+| **10 px** | calibrated for dense outlines; excluded *every* light form, which forced heavy shapes |
+| **4 px** | rubber-stamped an alphabet where 28 of 210 pairs differed by a single arm |
+| **12 px** | one whole part — the smallest reliably nameable difference at 16 px |
+
+Two further instrument bugs are worth remembering, because each one wasted a review:
+
+- **Row width could not see side.** Width was right while forms were mirrored; once a
+  mark could sit on one side, two forms could share every row width and be mirror images.
+  The audit records row **extents**.
+- **The contact sheet kept mirroring asymmetric forms** after symmetry had been dropped,
+  so a whole visual review was worthless. **A metric that agrees with you is worth
+  re-deriving.**
 
 ### 2.5 What the earlier tables got wrong
 
@@ -166,9 +175,10 @@ footprint**. Two notes on why those are the right instruments:
 |---|---|
 | lozenges at three widths | one shape, three sizes — a relative difference |
 | one outline + interior marks | four letters shared an identical silhouette |
-| distinct outlines (shells and posts) | passed every metric, but every letter was an ornate figure |
-| stave, 6 join heights, 10 px bar | heights one row apart; the bar excluded every light form |
-| stave, 3 places, mirrored | still needed 2- and 3-mark letters, because side carried nothing |
+| distinct outlines (shells and posts) | passed every metric; every letter an ornate figure |
+| stave, 6 join heights, 10 px bar | heights one row apart; bar excluded every light form |
+| stave, 3 places, mirrored | needed 2- and 3-mark letters, because side carried nothing |
+| stave + one mark, 4 px bar | 12 of 17 px identical in every letter; 28 pairs at 4 px |
 
 ---
 
@@ -468,7 +478,7 @@ The renderer and datapack loader must reject:
   the top slot is the tight one, and a form that only ever renders in the bottom slot
   during testing will hide the violation.
 
-- **Two forms failing the distinctness bar** (§2.4): fewer than 4 differing pixels, or a
+- **Two forms failing the distinctness bar** (§2.4): fewer than 12 differing pixels, or a
   shared row-extent footprint.
 
 **Adding or altering a form requires re-auditing all 23** against each other — a form
@@ -489,18 +499,14 @@ const CHAMFER = 2;
 const inTile = (x,y) => x>=0 && y>=0 && x<S && y<S &&
                         Math.min(x,S-1-x) + Math.min(y,S-1-y) >= CHAMFER;
 
-// A form is one stave and one mark (§2). Per-row reach comes from the margin.
-const XMIN = [9,9,4,3,2,2,2,2,2,2,2,2,3,4,9,9], XMAX = XMIN.map(v => 15-v);
+// Each form is its own figure (§2), drawn from shared parts. All live in x = 4..11.
+const stone = (b,x,y) => { px(b,x,y); px(b,x+1,y); px(b,x,y+1); px(b,x+1,y+1); };
 
-// r: 1 head · 3 waist · 5 foot      d: -2 rising · 0 level · +2 falling
-const rune = (r,d,side) => (b,y) => {
-  line(b,7,y,7,y+5); line(b,8,y,8,y+5);                       // the stave
-  const gy = y+r+d;
-  if (side !== "R") line(b, 7, y+r, Math.max( 3, XMIN[gy]), gy);
-  if (side !== "L") line(b, 8, y+r, Math.min(12, XMAX[gy]), gy);
-};
-
-const FORMS = [ rune(1,0,"L"), rune(1,0,"R"), rune(1,0,"B"), /* … 21 in all, §2 */ ];
+const FORMS = [
+  (b,y) => { line(b,4,y+5,7,y); line(b,8,y,11,y+5); },                    // A the gable
+  (b,y) => { line(b,4,y,4,y+5); line(b,4,y+1,9,y+3); line(b,9,y+3,4,y+4); }, // B the thorn
+  /* … 21 in all, §2 */
+];
 
 function render(glyph){                                 // -> 1-bit cut mask
   const b = new Uint8Array(S*S), m = mark(glyph);
@@ -535,8 +541,8 @@ function paint(bits, lemma, tier){                      // cut mask -> stone til
 renderer must produce byte-identical output.
 
 **Audited** (49-lemma working lexicon, `VELLUS` excluded as a homograph of `VENTVS`):
-all 21 forms clearing the distinctness bar (§2.4) — no shared row-extent footprint — and
-clearing the margin in both slots they can occupy; **49/49 glyphs distinct**; **49/49 still
+all 21 forms clearing the distinctness bar (§2.4) — **tightest pair 12 px, median ~21**,
+no shared row-extent footprint — and clearing the margin in both slots; **49/49 glyphs distinct**; **49/49 still
 distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 49 authored
 pigments parse and every one names a lemma that exists; nine classes of malformed
 `pigment` all fall through to the hash without throwing; every
