@@ -56,8 +56,8 @@ something validated and patched afterwards.
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
-| **Form 1** (rows 2–7) | the lemma's **first** letter | one of 23 closed shapes |
-| **Form 2** (rows 7–12) | the lemma's **second** letter | one of 23 closed shapes (sharing row 7) |
+| **Form 1** (rows 2–7) | the lemma's **first** letter | one of 23 forms, §2 |
+| **Form 2** (rows 7–12) | the lemma's **second** letter | one of 23 forms (sharing row 7) |
 | **Foot** (row 13) | the word's **length** | a tally bar, §3 |
 | **Pigment** | nothing on its own — reinforcement | groove inlay, §6 |
 | **Stone** | nothing — material only | octagon, gradient + grain, §5 |
@@ -72,24 +72,99 @@ tablet**.
 
 ## 2. The letter forms
 
-23 letters, 23 **closed shapes**. Classical Latin has no J, U or W, so lemmas normalise
-to the orthography they would have been carved in (`PULVIS` → `PVLVIS`).
+23 letters, 23 forms, drawn **two different ways on purpose**:
 
-| | | | | |
-|---|---|---|---|---|
-| **A** shaft | **B** lozenge | **C** wide lozenge | **D** narrow lozenge | **E** box |
-| **F** lozenge + bar | **G** triangle | **H** wedge | **I** twin lozenge | **K** lozenge + shaft |
-| **L** shaft + bar | **M** shaft + two bars | **N** horns | **O** roots | **P** flask |
-| **Q** flask + bar | **R** barrel | **S** kite | **T** stem + skirt | **V** cap + stem |
-| **X** nested lozenge | **Y** box + bar | **Z** double chevron | | |
+- a **shell** is a closed outline — the figure is a vessel;
+- a **post** is an open upright with bars hung off it — the figure is a mast.
+
+The two read completely differently even at 16 px, and that split is most of what
+keeps the alphabet apart. Classical Latin has no J, U or W, so lemmas normalise to the
+orthography they would have been carved in (`PULVIS` → `PVLVIS`).
+
+| Letter | Form | Kind |
+|---|---|---|
+| **A** | post | post |
+| **B** | diamond | shell |
+| **C** | hourglass | shell |
+| **D** | spindle | shell |
+| **E** | box | shell |
+| **F** | doubled bell | shell, doubled |
+| **G** | triangle | shell |
+| **H** | wedge | shell |
+| **I** | twin lobes | shell |
+| **K** | doubled triangle | shell, doubled |
+| **L** | post + mid bar | post |
+| **M** | post + two bars | post |
+| **N** | post + splayed head | post |
+| **O** | drop | shell |
+| **P** | flask | shell |
+| **Q** | anvil | shell |
+| **R** | barrel | shell |
+| **S** | kite | shell |
+| **T** | post + three bars | post |
+| **V** | cup on a stem | shell |
+| **X** | doubled diamond | shell, doubled |
+| **Y** | doubled box | shell, doubled |
+| **Z** | bowtie | shell |
 
 **The form table is frozen at v1.** Changing one invalidates every glyph using that
 letter.
 
 Every form spans **six rows** and **must include the centre columns at its top and
 bottom row** — that contract is what makes any two link into one continuous figure.
-Forms are chosen for mutual contrast: a kite, a barrel, a flask and a double chevron
-share no silhouette.
+
+### 2.1 A shell is six half-widths
+
+A shell is written as six half-widths `k` (0 = the bare centre pair, 5 = full width),
+drawn as a left-edge polyline plus a top and bottom bar; `symmetrise` supplies the
+right. Per-row ceilings come straight off the 3 px margin (§5.1):
+
+```
+KMAX = [3, 4, 5, 5, 5, 4]
+```
+
+**Clamp inside the drawing routine, not in each profile.** A new form must not be able
+to breach the margin by forgetting a limit. Note also that a steep jump between adjacent
+rows bleeds sideways — a line from `k=1` to `k=5` lights intermediate columns on both
+rows — so the *drawn* profile is not always the `k` array, and the audit measures the
+drawn pixels rather than trusting the numbers.
+
+### 2.2 The confusability bar
+
+**Letters are held to the same standard as glyphs.** Two forms pass only if:
+
+1. they differ by at least **10 pixels**, and
+2. they do not share a **normalised silhouette** (the row-width profile with scale
+   divided out).
+
+Ten pixels is the threshold because it is about one full bar or one doubled outline —
+something you can **name**. This is the whole point of the rule:
+
+> A width difference is not nameable. Telling a lozenge from a slightly wider lozenge
+> requires both in front of you, and a reader never gets that.
+
+**Doubled forms double the outline rather than adding a bar inside it.** A crossbar
+changes a handful of pixels and leaves the silhouette untouched; a second ring changes
+the figure's whole weight. The inner ring is inset one row top and bottom and two columns
+each side, and its top bar sits directly under the outer one at the centre pair, so the
+two rings remain a **single connected component**. Each doubled form is also given an
+outer profile that no plain shell uses, so it differs in silhouette as well as in weight.
+
+### 2.3 Three earlier tables failed this bar
+
+| Table | How it failed |
+|---|---|
+| lozenges at three widths (`B` `C` `D`) | one shape, three sizes — a relative difference |
+| one outline + interior marks (`B` `F` `K` `X`) | **identical silhouette**; `B`/`R` overlapped 0.89 |
+| shells only, no posts | everything was a vessel; a third of the alphabet read as a lozenge |
+
+The rebuild replaced **width variation** with **construction variation**: where the mass
+sits, shell versus post, single versus doubled outline.
+
+**Known and accepted:** six rows by twelve columns is a squat canvas, so the shells still
+share a wide, flat family look even when they are provably distinct. The next lever, if
+that ever matters more than it does now, is fewer shells and more posts — the posts are
+the forms that read at a glance.
 
 ---
 
@@ -373,6 +448,9 @@ The renderer and datapack loader must reject:
   the top slot is the tight one, and a form that only ever renders in the bottom slot
   during testing will hide the violation.
 
+- **Two forms failing the confusability bar** (§2.2): fewer than 10 differing pixels, or
+  a shared normalised silhouette.
+
 **Adding or altering a form requires re-auditing all 23** against each other — a form
 narrowed to clear the margin must not collapse onto another — and checking the new form
 includes its centre contacts at top and bottom row.
@@ -427,7 +505,8 @@ function paint(bits, lemma, tier){                      // cut mask -> stone til
 renderer must produce byte-identical output.
 
 **Audited** (49-lemma working lexicon, `VELLUS` excluded as a homograph of `VENTVS`):
-all 23 forms distinct and inside the octagon; **49/49 glyphs distinct**; **49/49 still
+all 23 forms clearing the confusability bar (§2.2) — tightest pair 10 px, no shared
+silhouette — and clearing the margin in both slots they can occupy; **49/49 glyphs distinct**; **49/49 still
 distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 49 authored
 pigments parse and every one names a lemma that exists; nine classes of malformed
 `pigment` all fall through to the hash without throwing; every

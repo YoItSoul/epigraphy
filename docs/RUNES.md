@@ -686,7 +686,7 @@ pictographic and abstracted within a few centuries — that drift is what turned
 into **writing**. Pictography stays on tablet frames, block textures and structure
 motifs, never on glyphs.
 
-### 5.2 What five iterations taught
+### 5.2 What the iterations taught
 
 Each attempt failed for a recorded reason, and the pattern is the lesson:
 
@@ -697,9 +697,18 @@ Each attempt failed for a recorded reason, and the pattern is the lesson:
 | Two bold marks | `VIRGA`/`VITA`/`VIGILIA` rendered identically |
 | Three marks by width × thickness | still one shared skeleton |
 | Heavy structural strokes | distinct but muddy, and notches escaped the border |
+| Lozenges at three widths | one shape at three sizes — a *relative* difference |
+| One outline + interior marks | four letters shared an identical silhouette |
 
 **Varying parameters of a shared skeleton never produced distinct symbols; varying
 structure did — but only once it was kept light and continuous.**
+
+The rule that finally held, and which now applies to letters exactly as it does to
+glyphs: **a difference must be nameable.** A bar, a doubled outline, a post instead of a
+vessel — you can say what is there. A width is not nameable: telling a lozenge from a
+slightly wider lozenge needs both in front of you, and a reader never gets that. Both the
+letter-forms and the finished glyphs are audited against that bar
+(`GLYPH_SPEC.md` §2.2).
 
 ### 5.3 Knowledge tier is depth, not tint
 

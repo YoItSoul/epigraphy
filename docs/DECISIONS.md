@@ -186,6 +186,41 @@ component**; tightest margin to the stone's edge 3 px; all 23 forms distinct fro
 other and clearing the margin in both slots they can occupy. The audit executes the *live*
 renderer rather than a transcription of it, so those numbers cannot drift from the art.
 
+### D20 ✅ Letters are held to the same distinctness bar as glyphs
+Two letter-forms pass only if they **differ by at least 10 pixels** *and* **do not share
+a normalised silhouette**. Ten pixels is about one full bar or one doubled outline —
+something you can **name**.
+
+That is the whole rule, and it is why three earlier tables were wrong:
+
+> **A difference must be nameable.** A bar, a doubled outline, a post instead of a
+> vessel — you can say what is there. A width is not nameable: telling a lozenge from a
+> slightly wider lozenge needs both in front of you, and a reader never gets that.
+
+The table that failed hardest had `B F K X` sharing **one identical outline**,
+distinguished only by a thin mark inside it, and `B`/`R` overlapping 89% — a third of the
+alphabet was a lozenge at some width. The rebuild replaced *width variation* with
+*construction variation*:
+
+- **shell vs post.** A shell is a closed outline (a vessel); a post is an open upright
+  with bars hung off it (a mast). The two read completely differently at 16 px, and that
+  split does most of the work.
+- **where the mass sits** — top-heavy, bottom-heavy, waisted, twin-lobed.
+- **single vs doubled outline.** Doubled forms double the *outline*, never add a bar
+  inside it: a crossbar changes a handful of pixels and leaves the silhouette untouched,
+  which is exactly how the old table fooled itself. Each doubled form also takes an outer
+  profile no plain shell uses, so it differs in silhouette as well as weight.
+
+Per-row half-width ceilings are **clamped inside the drawing routine**, not trusted to
+each profile, so a new form cannot breach the 3 px margin by forgetting a limit.
+
+**Accepted limitation:** six rows by twelve columns is a squat canvas, so the shells still
+share a wide, flat family look even where they are provably distinct. The next lever, if
+it ever matters more than it does now, is fewer shells and more posts.
+
+**Audited:** all 23 forms pass; tightest pair 10 px; no two share a silhouette; every form
+clears the margin in both slots it can occupy.
+
 ### D17 ✅ The tile is an octagon, and the silhouette is universal
 The tile is the 16 × 16 square with its **four corners chamfered by 2** — 244 of 256
 pixels, transparent outside. **The margin chose the depth, not taste:** a deeper octagon
