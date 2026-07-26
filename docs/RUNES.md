@@ -59,134 +59,97 @@ Fields:
 
 ---
 
-## 2. Starter lexicon
+## 2. The lexicon: 28 axes, 56 runes
 
-The v1 vocabulary. Every glyph here can be sighted, translated, and used in at
-least one ritual. Categories are colour-coded wherever glyphs render (in-world
-carvings, tablet tooltips, the in-game documentation).
+**Every rune has an opposite.** The lexicon is not a list of words — it is a list of
+**axes**, each one a dimension of the world, each with two opposed poles. `CAELVM` has no
+meaning that doesn't imply `INFERNVS`; `VITA` implies `MORS`.
 
-### Materials — `METALLUM`, and kin
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:metallum` | METALLUM | Metal | common | any ingot/metal input |
-| `epigraphy:lapis`    | LAPIS    | Stone | common | stone, blackstone, deepslate |
-| `epigraphy:virga`    | VIRGA    | Rod   | uncommon | rod/stick-shaped catalysts (blaze rod) |
+That has three consequences worth stating before the table:
 
-### Elements
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:flammans` | FLAMMANS | Flaming | uncommon | fire/heat; blaze, lava, fire aspect |
-| `epigraphy:tenebrae` | TENEBRAE | Darkness | uncommon | night, low light, the deep dark |
-| `epigraphy:chaos`    | CHAOS    | Chaos | rare | transformation, instability, remaking |
+1. **The axis is itself a concept.** `PLENVM`/`VACVVM` is *fullness*; `NOVVM`/`VETVS` is
+   *age*. A player who learns one pole has half-learned the other, which makes the
+   language cheaper to teach than its size suggests.
+2. **Description replaces naming.** There is no rune for "stairs". A thing is located by
+   naming its poles — which is why 56 runes can describe far more than 56 things.
+3. **Coining is constrained.** A new rune is only admissible if it completes an axis. That
+   is the discipline that stops the lexicon sprawling.
 
-### Places & realms
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:altare`   | ALTARE   | Altar | common | prefix (structure) | the ritual structure itself |
-| `epigraphy:infernus` | INFERNUS | Hell  | rare | prefix (structure) | infernal things; qualifies nether matter |
-| `epigraphy:regnum`   | REGNUM   | Realm | uncommon | suffix (realm) | heads every dimension word |
-| `epigraphy:finis`    | FINIS    | End   | rare | — | qualifier: ending, outermost, the void |
+A pole marked **\*** may **head** a rune word (it names a kind of thing). The rest are
+qualifiers only. Head rule unchanged: the head is the last determinative-capable glyph.
 
-### Celestial
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:caelum`   | CAELUM   | Heavens | uncommon | sky access, storms, day |
-| `epigraphy:nox`      | NOX      | Night | common | requires darkness/night to read the sky |
+### The World
+| | | | |
+|---|---|---|---|
+| `CAELVM`\* | heavens, sky, the above | `INFERNVS`\* | hells, the fire below |
+| `ORIGO`\* | source, home, the middle | `FINIS`\* | end, edge, the beyond |
+| `LVX` | light | `TENEBRAE` | darkness |
+| `ORDO` | order, law, pattern | `CHAOS` | ruin, the unmade |
+| `SOL`\* | sun, the day | `LVNA`\* | moon, the night |
 
-### Thresholds
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:porta` | PORTA | Gate | rare | suffix (threshold) | heads every portal word: `[somewhere] · REGNVM · PORTA` |
+### The Elements
+| | | | |
+|---|---|---|---|
+| `IGNIS`\* | fire, heat | `GELV`\* | ice, cold |
+| `VNDA`\* | flow, liquid | `SAXVM`\* | stone, solid |
+| `VENTVS`\* | air, wind, breath | `TERRA`\* | earth, ground |
+| `PLENVM` | full, dense | `VACVVM` | void, empty |
 
-`PORTA` is the **only glyph minted** for Starmetal, Coralium and the Black Gate combined.
-It is deliberately a *head*, so it prices the whole dimension tree rather than one recipe:
-the second portal and the tenth cost no new vocabulary at all.
+### The Living
+| | | | |
+|---|---|---|---|
+| `VITA` | living | `MORS` | dead |
+| `GERMEN`\* | seed, sprout, growth | `TABES`\* | rot, decay, blight |
+| `CARO`\* | flesh | `OSSA`\* | bone |
+| `HERBA`\* | green, leaf | `LIGNVM`\* | wood, timber |
+| `HOMO`\* | folk, the upright kind | `BESTIA`\* | beast |
 
-### Materials, continued — powders & organics
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:pulvis` | PULVIS | Dust | common | suffix (powder) | bone meal, sugar, glowstone dust, redstone |
-| `epigraphy:ossa`   | OSSA   | Bone | common | — | bones, undead materials |
-| `epigraphy:dulcis` | DULCIS | Sweet | common | — | sugar, honey, sweet things |
-| `epigraphy:terra`  | TERRA  | Earth | common | suffix (earthen) | dirt, iron, mundane ground |
+### Matter
+| | | | |
+|---|---|---|---|
+| `FERRVM`\* | iron, the working metal | `AVRVM`\* | gold, the precious metal |
+| `AES`\* | copper, the metal that ages | `ADAMAS`\* | diamond, which cannot be marred |
+| `GEMMA`\* | gem, crystal | `PVLVIS`\* | dust, powder |
+| `PVRVM` | refined, pure | `SORDES` | raw, dross, ore |
 
-### Fluids
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:unda`   | UNDA   | Flow | common | suffix (fluid) | heads every liquid: water, lava, starlight |
+### Making
+| | | | |
+|---|---|---|---|
+| `OPVS` | wrought by hand | `NATVM` | natural, found so |
+| `NOVVM` | new, fresh | `VETVS` | old, aged, weathered |
+| `TOTVM` | whole, uncut | `FRACTVM` | cut, broken, worked |
+| `TEGMEN` | sealed, covered, waxed | `NVDVM` | bare, exposed |
 
-### Objects & gems
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:gladius` | GLADIUS | Blade | uncommon | suffix (blade) | swords, axes, edged tools |
-| `epigraphy:gemma`   | GEMMA   | Gem   | uncommon | suffix (gem) | quartz, pearls, crystalline drops |
+### Form
+| | | | |
+|---|---|---|---|
+| `PORTA`\* | gate, a way through | `MVRVM`\* | wall, barrier, hold |
+| `VAS`\* | vessel, hollow | `MOLES`\* | mass, solid block |
+| `GRADVS`\* | step, stair | `AEQVVM`\* | flat, level |
+| `ACIES`\* | edge, blade | `SCVTVM`\* | guard, shield |
 
-### Elements, continued
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:vita`   | VITA   | Life | uncommon | growth, healing, fertility |
-| `epigraphy:fundus` | FUNDUS | Foundation | uncommon | qualifier: the bottom, the root, bedrock |
+### Will
+| | | | |
+|---|---|---|---|
+| `HOSTIS` | hostile, foe | `AMICVS` | tame, friend |
+| `VNICVM` | one, single | `TVRBA`\* | throng, swarm, many |
 
-### Celestial, continued
-| id | lemma | gloss | rarity | notes |
-|----|-------|-------|--------|-------|
-| `epigraphy:luna`   | LUNA   | Moon | uncommon | suffix determinative for lunar states |
-| `epigraphy:plenus` | PLENUS | Full | common | qualifier: full moon, brimming, complete |
+### 2.1 Four words are second choices
 
-### Creatures
-| id | lemma | gloss | rarity | determinative | notes |
-|----|-------|-------|--------|---------------|-------|
-| `epigraphy:bestia` | BESTIA | Beast | common | suffix (creature) | heads almost every mob word |
-| `epigraphy:draco`  | DRACO  | Dragon | rare | suffix (creature) | boss head — reads as a warning, not another beast |
-| `epigraphy:custos` | CUSTOS | Warden | rare | suffix (creature) | boss head for guardians |
+`TOTVM`, `AMICVS`, `AEQVVM` and `VNICVM` are not the obvious Latin. The obvious words —
+`SANVM`, `SOCIVS`, `PLANVM`, `VNVM` — each **render identically** to a rune already in the
+lexicon, because the mark is (letter 1, letter 2, length tally):
 
-### Tool heads — implements
-| id | lemma | gloss | determinative | names |
-|----|-------|-------|---------------|-------|
-| `epigraphy:gladius` | GLADIUS | Blade | suffix (material) | swords |
-| `epigraphy:dolabra` | DOLABRA | Pick | suffix (material) | pickaxes |
-| `epigraphy:securis` | SECURIS | Axe | suffix (material) | axes |
-| `epigraphy:pala`    | PALA    | Spade | suffix (material) | shovels |
-| `epigraphy:falx`    | FALX    | Sickle | suffix (material) | hoes |
-| `epigraphy:arcus`   | ARCUS   | Bow | suffix (material) | bows, crossbows |
-| `epigraphy:scutum`  | SCUTUM  | Shield | suffix (material) | shields |
-| `epigraphy:lorica`  | LORICA  | Mail | suffix (material) | armour pieces |
-| `epigraphy:hamus`   | HAMUS   | Hook | suffix (material) | fishing rods |
-| `epigraphy:forfex`  | FORFEX  | Shears | suffix (material) | shears |
+| Wanted | Collides with | Shipped instead |
+|---|---|---|
+| `SANVM` | `SAXVM` | `TOTVM` |
+| `SOCIVS` | `SORDES` | `AMICVS` |
+| `PLANVM` | `PLENVM` | `AEQVVM` |
+| `VNVM` | `VNDA` | `VNICVM` |
 
-### Tool materials & organics
-| id | lemma | gloss | mark | notes |
-|----|-------|-------|------|-------|
-| `epigraphy:lignum` | LIGNUM | Wood | `LI` | |
-| `epigraphy:ferrum` | FERRUM | Iron | `FE` | |
-| `epigraphy:adamas` | ADAMAS | Diamond | `AD` | |
-| `epigraphy:aurum`  | AURUM  | Gold | `AV` | classical `AVRVM` |
-| `epigraphy:lana`   | LANA   | Wool | **`LN`** | **mark override** — `LA` was taken by `LAPIS` |
-| `epigraphy:pluma`  | PLUMA  | Feather | `PL` | |
-| `epigraphy:mors`     | MORS     | Death | `MO` | element — qualifier only |
-| `epigraphy:venenum`  | VENENUM  | Venom | `VE` | element — qualifier only |
-
-### Frame — invocations & closing formula (§4.4)
-These never appear inside an ordinary rune word — they are clause markers only.
-
-| id | lemma | gloss | role |
-|----|-------|-------|------|
-| `epigraphy:opus`    | OPUS    | The Work | invocation — **altar rite** |
-| `epigraphy:mersio`  | MERSIO  | The Steeping | invocation — **items into fluid** (batched) |
-| `epigraphy:tactus`  | TACTUS  | The Touch | invocation — **item used on item** |
-| `epigraphy:vigilia` | VIGILIA | The Vigil | invocation — **sky observation** |
-| `epigraphy:fiat`    | FIAT    | Let it be made | closes every inscription, prefixing the result |
-
-> The **invocation glyph declares the rite type**, exactly as `D.M.` opens a Roman
-> funerary text and `I.O.M.` a votive one — you know what kind of inscription you're
-> reading from its first sign. `FIAT` closes them all, so every inscription has a
-> recognisable shape regardless of type. Because frame glyphs appear on *every*
-> inscription, players learn them first — which is the point: the invariant frame
-> teaches you where the variable parts are.
-
-> The lexicon is expected to **grow alongside the recipe list** — budget roughly one
-> new glyph per handful of new rune words (`AUTHORING.md` §3). Obvious room to grow:
-> Void/`VACUUM`, Order/`ORDO`, Blood/`SANGUIS`, Wind/`VENTUS`.
+**A homograph is a language bug, and the fix is a synonym — never the art.** Latin has one
+for nearly everything, which is what makes that rule affordable. The audit renders all 56
+at load and refuses a duplicate.
 
 ---
 
@@ -412,27 +375,63 @@ just another beast. That matters when the word is a warning carved on a wall.
 
 ---
 
-### 3.5 Three commissions, and what they cost
+### 3.5 Nine tests
 
-| Word | Glyphs | Reading | New glyphs |
-|---|---|---|---|
-| **Starmetal** | `STELLA · METALLVM` | *Star-Metal* | — |
-| **Liquid Starlight** | `STELLA · VNDA` | *Star-Flow* | — |
-| **Glowstone Dust** | `STELLA · PVLVIS` | *Star-Dust* | — |
-| **Night Sky** | `NOX · CAELVM` | *Night-Sky* (a condition) | — |
-| **Coralium** | `FVNDVS · VENENVM · GEMMA` | *Deep-Venom-Gem* | — |
-| **Lapis Lazuli** | `TERRA · GEMMA` | *Earth-Gem* | — |
-| **Dead Moon** | `MORS · LVNA` | *Dead Moon* — the new moon | — |
-| **Crying Obsidian** | `TENEBRAE · LAPIS` | *Dark-Stone* | — |
-| **The Black Gate** | `TENEBRAE · REGNVM · PORTA` | *Dark-Realm-Gate* | `PORTA` |
+Everything below is built from the 56. **Nothing was minted to make any of it work** —
+which is the only real test of an axis language: if the axes are the right ones, the words
+are already there.
 
-**Nine words for one glyph.** That ratio is the point of the language, and it comes from
-reuse rather than restraint: `STELLA` and `METALLVM` were already there, so *Starmetal*
-costs nothing and is legible on sight to anyone who has decoded *Netherite*. `FVNDVS` was
-coined for *near bedrock* and now carries the abyss. `MORS` came from the Zombie and now
-names the new moon.
+| Thing | Rune word | Reads |
+|---|---|---|
+| **Enderman** | `FINIS · HOMO` | End-Folk |
+| **Piglin** | `INFERNVS · HOMO` | Hell-Folk |
+| **Illager** | `HOSTIS · HOMO` | Foe-Folk |
+| **Villager** | `AMICVS · HOMO` | Friend-Folk |
+| **Bee Nest** | `TVRBA · VAS` | Throng-Vessel |
+| **Beehive** | `OPVS · TVRBA · VAS` | Wrought Throng-Vessel |
+| **Iron Ore** | `SAXVM · FERRVM` | Stone-Iron |
+| **Raw Iron** | `SORDES · FERRVM` | Dross-Iron |
+| **Iron Ingot** | `PVRVM · FERRVM` | Pure-Iron |
+| **Nether Fortress** | `INFERNVS · MVRVM` | Hell-Hold |
+| **End City** | `FINIS · TVRBA · MVRVM` | End Throng-Hold |
+| **Chorus Fruit** | `FINIS · GERMEN` | End-Seed |
+| **Popped Chorus Fruit** | `IGNIS · FINIS · GERMEN` | Fire End-Seed |
 
-Recipes: `RITUALS.md` §5.4–5.6.
+Four things the axes do that a flat word-list can't:
+
+- **Opposites come free.** Illager and Villager are the *same word* with the poles
+  swapped. So are the three iron states, and the bee nest against the beehive.
+- **Silence is meaningful.** The Enderman is `FINIS · HOMO` and carries **no** temper
+  pole — neither `HOSTIS` nor `AMICVS` — because it is neither until you look at it. An
+  unmarked axis is a statement.
+- **Heads travel.** `HOMO` heads the Enderman, the Piglin, the Illager and the Villager;
+  only the qualifier changes. Decode one and you have most of four.
+- **Compounds are literal.** A city *is* a throng's wall, so End City is
+  `FINIS · TVRBA · MVRVM` and needs no word for "city".
+
+### 3.6 The one that isn't a word
+
+**Weathered Waxed Cut Copper Stairs** carries five facts — sealed, aged, copper, cut,
+stepped. A rune word holds three. So it **is not a rune word**; it is a phrase of two:
+
+```
+TEGMEN · VETVS · AES        FRACTVM · GRADVS
+   Sealed-Aged-Copper           Cut-Step
+```
+
+**This is correct, not a shortfall.** "Weathered waxed cut copper stairs" is not a word in
+English either — it is a noun with four stacked modifiers, and the runes reproduce that
+structure exactly. The 2–3 glyph limit is what forces the language to distinguish *naming*
+from *describing*, and a language that could name that in one word would be a language
+where nothing was a word.
+
+The whole oxidation ladder falls out of two axes, with no vocabulary added:
+
+| | bare | waxed |
+|---|---|---|
+| **fresh** | `NOVVM · AES` | `TEGMEN · NOVVM · AES` |
+| **weathered** | `VETVS · AES` | `TEGMEN · VETVS · AES` |
+
 
 ## 4. Grammar: the inscription formula (D10)
 

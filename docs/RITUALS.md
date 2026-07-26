@@ -380,7 +380,7 @@ get you "a dark sky"; the third pins it to the **new moon**.
 
 ### 5.4 Starmetal (bulk, T2) — `MERSIO`, and free of new glyphs
 
-`STELLA · METALLVM` — *Star-Metal*. **Both glyphs already existed**, which is the whole
+`CAELVM · FERRVM` — *Sky-Iron*, which is what meteoric iron has always been called. **Both glyphs already existed**, which is the whole
 argument for authoring in families: a player who has decoded *Netherite*
 (`INFERNVS · METALLVM`) and any star word reads this on sight, having never met it.
 
@@ -424,7 +424,7 @@ Liquid Starlight  Glowstone Dust   Night Sky     Iron        Starmetal
 
 ### 5.5 Coralium (corrupting, T2) — `MERSIO` in still water
 
-`FVNDVS · VENENVM · GEMMA` — *Deep-Venom-Gem*. Three glyphs, all of them already in the
+`TABES · GEMMA` — *Rot-Gem*. Three glyphs, all of them already in the
 lexicon. `FVNDVS` was minted for *near bedrock* (`FVNDVS · TERRA`); here it carries the
 abyss, which is the same word doing a second job.
 
@@ -466,7 +466,7 @@ mind losing — a spatial decision the other rites never ask for.
 
 ### 5.6 The Black Gate (flagship, T3) — `OPUS`, and the only new glyph
 
-`TENEBRAE · REGNVM · PORTA` — *Dark-Realm-Gate*. **`PORTA` (gate) is the only glyph minted
+`TENEBRAE · PORTA` — *Dark Gate*. **`PORTA` (gate) is the only glyph minted
 for all three commissions**, and it is a *head*: every portal to come is
 `[somewhere] · REGNVM · PORTA`, so the one glyph buys the whole dimension tree rather
 than a single recipe.
