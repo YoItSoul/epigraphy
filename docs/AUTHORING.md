@@ -58,13 +58,13 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
-Glyphs are drawn as **two linked forms + a tally foot, chiselled into an octagonal
-16 × 16 stone tile** (`GLYPH_SPEC.md`), and every layer derives from fields you have
-already written:
+Glyphs are drawn as **two stave-and-mark forms + a tally foot, chiselled into an
+octagonal 16 × 16 stone tile** (`GLYPH_SPEC.md`), and every layer derives from fields you
+have already written:
 
 | Layer | Derived from | Result |
 |---|---|---|
-| **Forms** | `lemma` | its first two letters, each one of 23 closed shapes, linked into one continuous figure |
+| **Forms** | `lemma` | its first two letters, each a stave carrying one mark (21 letters, `GLYPH_SPEC.md` §2) |
 | **Foot** | `lemma` length | a tally bar: width 1–3, plus a serif once the word passes four letters |
 | **Pigment** | `pigment`, else `lemma` | the groove's inlay colour — your hex if you give one, otherwise hashed from the word; either way every hue cuts to the same depth |
 | **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
@@ -77,6 +77,10 @@ Supply `texture` only to override generation for a glyph worth hand-drawing (a
 boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
 composite, so a hand-drawn glyph must draw its own octagonal stone — and must respect
 the **3 px margin** — to sit readably in a line of inscription.
+
+> **Watch the alphabet when you pick a lemma.** It is the classical 21: `U`/`W` fold to
+> `V`, `J`/`Y` to `I`, and `Z` to `S`. `PULVIS` and `PVLVIS` are the same word, and so
+> are `ZONA` and `SONA`.
 
 > **No two glyphs may render identically.** The mark is `(letter 1, letter 2, length
 > tally)`, so two lemmas agreeing on all three produce the same tile — `VELLUS` and

@@ -47,7 +47,7 @@ com.epigraphy
 ├─ block/  · item/  · fluid/      // concrete registry objects & block-entities
 ├─ world/                         // GlyphCarvingBlock(+BE), feature, constellation/sky logic
 ├─ art/                           // procedural glyph rendering (D14)
-│   ├─ FormRenderer               //   lemma -> two linked forms + tally foot (16x16)
+│   ├─ FormRenderer               //   lemma -> two stave-and-mark forms + tally foot
 │   ├─ StoneTile                  //   octagon, height-field lighting, grain; blank tile
 │   ├─ Pigment                    //   authored hex, else lemma hash; one fixed luma
 │   └─ GlyphAtlas                 //   composite + cache; `texture` override wins
@@ -185,13 +185,16 @@ Resolved since the first draft:
     read left to right in formula order.
 11. ✅ **Determinatives may prefix or suffix (Q9).** Structures prefix, materials
     suffix — as Sumerian prefixes `DINGIR` but suffixes `KI`.
-12. ✅ **Glyph art = one continuous figure on a 16x16 octagonal stone tile
+12. ✅ **One stave, one mark per letter (D20).** Where it sits × which side × which way =
+    7 × 3 = the classical 21. Dropping the mirror is what made it simple; symmetry and
+    forced continuity are no longer rules, and side is now load-bearing.
+13. ✅ **Glyph art = one continuous figure on a 16x16 octagonal stone tile
     (D14/D15/D17).** Generated from data, every glyph its own shape; pictographs
     rejected for undercutting decipherment. Silhouette is universal — side count is
     deliberately not tied to word length.
-13. ✅ **Depth from one light; pigment authored, hashed as fallback (D18).** Colour is
+14. ✅ **Depth from one light; pigment authored, hashed as fallback (D18).** Colour is
     redundant reinforcement only, and the atlas is audited desaturated to prove it.
-14. ✅ **Knowledge tier is depth of cut, not tint (D19).** Uncut, shallow and unfilled,
+15. ✅ **Knowledge tier is depth of cut, not tint (D19).** Uncut, shallow and unfilled,
     deep and inlaid.
 
 Still open (don't block early phases):

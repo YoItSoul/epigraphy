@@ -181,45 +181,71 @@ tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
   empty codex slot, and uninscribed tablet.
 
 **Audited:** all 23 forms distinct; **49/49 lexicon glyphs unique, and still 49/49 with
-colour stripped**; every output vertically symmetric; every glyph a **single connected
-component**; tightest margin to the stone's edge 3 px; all 23 forms distinct from each
+colour stripped**; tightest margin to the stone's edge 3 px; all 23 forms distinct from each
 other and clearing the margin in both slots they can occupy. The audit executes the *live*
 renderer rather than a transcription of it, so those numbers cannot drift from the art.
 
-### D20 ✅ Letters are held to the same distinctness bar as glyphs
-Two letter-forms pass only if they **differ by at least 10 pixels** *and* **do not share
-a normalised silhouette**. Ten pixels is about one full bar or one doubled outline —
-something you can **name**.
+### D20 ✅ The alphabet is one stave and one mark per letter
+Every letter-form is a **stave** — a single upright, full height — carrying **exactly one
+mark**. Three questions describe a letter and nothing else does: **where** the mark sits
+(head, waist, foot), **which side** (left, right, both), and **which way** it points
+(rising, level, falling).
 
-That is the whole rule, and it is why three earlier tables were wrong:
+**The arithmetic lands exactly on 21.** Rising at the head would leave the form, and so
+would falling at the foot, leaving 7 workable positions × 3 sides = **21** — the classical
+Latin alphabet, with nothing trimmed to fit. J, U and W are mediaeval; Y and Z were Greek
+imports Latin had spent centuries absorbing as I and S, so normalisation folds `U`/`W`→`V`,
+`J`/`Y`→`I`, `Z`→`S`.
 
-> **A difference must be nameable.** A bar, a doubled outline, a post instead of a
-> vessel — you can say what is there. A width is not nameable: telling a lozenge from a
-> slightly wider lozenge needs both in front of you, and a reader never gets that.
+#### Dropping the mirror is what made it simple
+**Mirror symmetry was the expensive rule.** While every mark had to be reflected, *side
+carried no information* — so distinctness had to come from stacking more marks onto each
+letter, which is exactly how five successive alphabets grew ornate. Let a mark sit on one
+side and side becomes a third axis: 21 letters out of **one mark each**, ~17 px a form
+against 25–30 for the outlines.
 
-The table that failed hardest had `B F K X` sharing **one identical outline**,
-distinguished only by a thin mark inside it, and `B`/`R` overlapping 89% — a third of the
-alphabet was a lozenge at some width. The rebuild replaced *width variation* with
-*construction variation*:
+**Which side a mark sits on is now load-bearing** — mirroring a glyph turns it into a
+different letter — so there is no `symmetrise` step in the render path. What stays
+symmetric is the *stone*: the octagonal tile and the tally foot, which is what keeps a
+line of glyphs looking like a course of cut blocks.
 
-- **shell vs post.** A shell is a closed outline (a vessel); a post is an open upright
-  with bars hung off it (a mast). The two read completely differently at 16 px, and that
-  split does most of the work.
-- **where the mass sits** — top-heavy, bottom-heavy, waisted, twin-lobed.
-- **single vs doubled outline.** Doubled forms double the *outline*, never add a bar
-  inside it: a crossbar changes a handful of pixels and leaves the silhouette untouched,
-  which is exactly how the old table fooled itself. Each doubled form also takes an outer
-  profile no plain shell uses, so it differs in silhouette as well as weight.
+**Forced continuity went with it.** It did real work when a glyph was an outline, but a
+stave already spans the full height, so stacked forms meet whether or not a rule demands
+it. Every glyph still renders as a single component; the design simply no longer pays for
+it.
 
-Per-row half-width ceilings are **clamped inside the drawing routine**, not trusted to
-each profile, so a new form cannot breach the 3 px margin by forgetting a limit.
+#### Why strokes, not outlines
+Every table before the stave drew closed outlines — vessels, boxes, doubled rings — and
+each rebuild made them *more* elaborate to keep them apart.
 
-**Accepted limitation:** six rows by twelve columns is a squat canvas, so the shells still
-share a wide, flat family look even where they are provably distinct. The next lever, if
-it ever matters more than it does now, is fewer shells and more posts.
+> **An outline is a picture, and pictures must be intricate to differ. Writing is not
+> made of outlines; it is made of strokes.**
 
-**Audited:** all 23 forms pass; tightest pair 10 px; no two share a silhouette; every form
-clears the margin in both slots it can occupy.
+Carved scripts settled this long ago under our exact constraints. Elder Futhark is an
+upright with a mark or two and nothing curved, because curves are miserable to cut; Ogham
+reduces it further still. Borrowing the structure is not a stylistic nod to runes, it is
+the answer to the same engineering problem.
+
+#### The distinctness bar, and two instruments that were wrong
+**A difference must be nameable.** Where a mark sits, which side, which way it points.
+A width is not nameable: telling a lozenge from a slightly wider lozenge needs both in
+front of you, which a reader never gets.
+
+Two forms pass if they differ by ≥ **4 px** and share no **row-extent footprint**. Both
+numbers replaced instruments that were actively misleading:
+
+- **The 10 px bar was calibrated for dense outlines.** A mark is ~4 px, so at ten *every
+  single-mark form was excluded* — precisely what forced the heavy shapes. Sweeping the
+  design space showed the threshold itself was making the alphabet complicated.
+- **Row width could not see side.** Width was right while forms were mirrored; now two
+  forms can share every row width and be mirror images. The audit records row *extents*.
+
+Also settled along the way: **a mark one row lower is not nameable** — an earlier stave
+attempt used six join heights and failed for the original reason in a new coat. Hence
+three places, two rows apart.
+
+**Audited:** all 21 forms pass; no shared footprints; every form clears the 3 px margin in
+both slots; the 49-lemma lexicon renders 49 distinct tiles, and 49 distinct desaturated.
 
 ### D17 ✅ The tile is an octagon, and the silhouette is universal
 The tile is the 16 × 16 square with its **four corners chamfered by 2** — 244 of 256

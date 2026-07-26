@@ -658,8 +658,14 @@ Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**
       = word length
 ```
 
-- **One continuous figure.** Two letter-forms stack and link at the centre; the foot
-  hangs off the lower one. Nothing floats — the whole glyph is a single unbroken shape.
+- **Two letter-forms stack**, and the foot hangs off the lower one. Neither mirror
+  symmetry nor forced continuity is a rule any more: **which side a mark is on carries
+  meaning**, and mirroring a glyph would make it a different word.
+- **One stave, one mark.** Each letter is an upright carrying a single mark: where it
+  sits (head, waist, foot), which side (left, right, both), which way it points (rising,
+  level, falling). 7 workable positions × 3 sides = **21**, the classical Latin alphabet
+  exactly; `Y` folds to `I` and `Z` to `S`, as Latin did. That is the structure carved
+  alphabets converge on, and the reason a glyph reads as writing rather than as a figure.
 - **Two letters + a tally.** The forms carry the lemma's first two letters; the foot
   tallies its length — width 1–3 plus a serif for "and a hand" — which is what keeps
   `VITA`, `VIRGA` and `VIGILIA` distinct despite sharing `VI`.
@@ -699,16 +705,26 @@ Each attempt failed for a recorded reason, and the pattern is the lesson:
 | Heavy structural strokes | distinct but muddy, and notches escaped the border |
 | Lozenges at three widths | one shape at three sizes — a *relative* difference |
 | One outline + interior marks | four letters shared an identical silhouette |
+| Distinct outlines (shells, posts) | passed every metric, but every letter was an ornate figure |
+| Stave with six join heights | marks one row apart — the relative difference again |
+| Stave, three places, **mirrored** | still needed two- and three-mark letters |
 
-**Varying parameters of a shared skeleton never produced distinct symbols; varying
-structure did — but only once it was kept light and continuous.**
+**Every one of those before the stave drew outlines**, and each rebuild made them more
+elaborate in order to keep them apart. That was the wrong direction:
 
-The rule that finally held, and which now applies to letters exactly as it does to
-glyphs: **a difference must be nameable.** A bar, a doubled outline, a post instead of a
-vessel — you can say what is there. A width is not nameable: telling a lozenge from a
-slightly wider lozenge needs both in front of you, and a reader never gets that. Both the
-letter-forms and the finished glyphs are audited against that bar
-(`GLYPH_SPEC.md` §2.2).
+> **An outline is a picture, and pictures must be intricate to differ. Writing is not
+> made of outlines; it is made of strokes.**
+
+What finally held is the shape carved scripts arrived at under the same constraints — a
+**stave and a mark** (Elder Futhark, Ogham). And the thing that made it *simple* was
+**dropping the mirror**: while every mark had to be reflected, side carried no
+information, so letters had to differ by how many marks they piled on. Let a mark sit on
+one side and side becomes a third axis — 21 letters, one mark each, ~17 pixels a form.
+
+The distinctness rule, applied to letters exactly as to glyphs: **a difference must be
+nameable.** Where a mark sits, which side, which way it points — you can say each of
+those out loud. A width is not nameable: telling a lozenge from a slightly wider lozenge
+needs both in front of you, and a reader never gets that.
 
 ### 5.3 Knowledge tier is depth, not tint
 

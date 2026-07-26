@@ -3,13 +3,12 @@
 The deterministic rule that turns a Latin lemma into a **16 × 16** symbol — Minecraft's
 own item resolution.
 
-> **A glyph is one continuous figure**: two stacked letter-forms that link at the
-> centre, standing on a foot that tallies the word's letters. It is **chiselled into an
-> octagonal stone tile** lit from the top-left, and the groove is inlaid with a pigment
-> hashed from the word's own name.
-
-**No frame, no floating marks, no disconnected pieces.** The whole symbol is a single
-unbroken shape — something you could cut with one chisel.
+> **A glyph is two stacked letter-forms** standing on a foot that tallies the word's
+> letters, **chiselled into an octagonal stone tile** lit from the top-left, its groove
+> inlaid with a pigment hashed from the word's own name.
+>
+> **Each letter is one stave and one mark**: where it sits, which side, which way it
+> points.
 
 This is the implementation contract for the renderer (`RUNES.md` §5, D14/D15/D17/D18).
 Given the same `lemma` it must always produce byte-identical art.
@@ -32,12 +31,11 @@ Two other things had to go to make 16 × 16 work, and both were improvements:
 | The frame | cost a quarter of the usable area and never carried identity |
 | Disconnected marks (pips, split bars, posts) | continuity rules them out anyway |
 
-### Why continuity is structural, not checked
+### Continuity is no longer a rule
 
-**Every letter-form touches the centre column at its top and bottom row.** Stack two
-and they link automatically; the foot hangs off the lower one. The geometry cannot
-produce a loose piece, so continuity is a property of the construction rather than
-something validated and patched afterwards.
+It did real work when a glyph was a closed outline. A stave already spans the full
+height, so stacked forms meet whether or not anything requires it — every glyph in the
+lexicon still renders as a single component, but the design no longer pays for it.
 
 ---
 
@@ -56,8 +54,8 @@ something validated and patched afterwards.
 
 | Layer | Encodes | Drawn as |
 |---|---|---|
-| **Form 1** (rows 2–7) | the lemma's **first** letter | one of 23 forms, §2 |
-| **Form 2** (rows 7–12) | the lemma's **second** letter | one of 23 forms (sharing row 7) |
+| **Form 1** (rows 2–7) | the lemma's **first** letter | a stave + one mark, §2 |
+| **Form 2** (rows 7–12) | the lemma's **second** letter | a stave + one mark (sharing row 7) |
 | **Foot** (row 13) | the word's **length** | a tally bar, §3 |
 | **Pigment** | nothing on its own — reinforcement | groove inlay, §6 |
 | **Stone** | nothing — material only | octagon, gradient + grain, §5 |
@@ -70,107 +68,114 @@ tablet**.
 
 ---
 
-## 2. The letter forms
+## 2. The letter forms: one stave, one mark
 
-23 letters, 23 forms, drawn **two different ways on purpose**:
+**21 letters, one mark each.** Every form is a **stave** — a single upright, full height
+— carrying exactly one mark. Three questions describe it, and nothing else does:
 
-- a **shell** is a closed outline — the figure is a vessel;
-- a **post** is an open upright with bars hung off it — the figure is a mast.
+| Question | Answers |
+|---|---|
+| **Where does it sit?** | head (row 1) · waist (row 3) · foot (row 5) |
+| **Which side?** | left · right · both |
+| **Which way does it point?** | rising · level · falling |
 
-The two read completely differently even at 16 px, and that split is most of what
-keeps the alphabet apart. Classical Latin has no J, U or W, so lemmas normalise to the
-orthography they would have been carved in (`PULVIS` → `PVLVIS`).
+Nothing to count. No two-mark or three-mark forms. A letter *is* those three answers.
 
-| Letter | Form | Kind |
-|---|---|---|
-| **A** | post | post |
-| **B** | diamond | shell |
-| **C** | hourglass | shell |
-| **D** | spindle | shell |
-| **E** | box | shell |
-| **F** | doubled bell | shell, doubled |
-| **G** | triangle | shell |
-| **H** | wedge | shell |
-| **I** | twin lobes | shell |
-| **K** | doubled triangle | shell, doubled |
-| **L** | post + mid bar | post |
-| **M** | post + two bars | post |
-| **N** | post + splayed head | post |
-| **O** | drop | shell |
-| **P** | flask | shell |
-| **Q** | anvil | shell |
-| **R** | barrel | shell |
-| **S** | kite | shell |
-| **T** | post + three bars | post |
-| **V** | cup on a stem | shell |
-| **X** | doubled diamond | shell, doubled |
-| **Y** | doubled box | shell, doubled |
-| **Z** | bowtie | shell |
+### 2.1 The arithmetic lands exactly on 21
+
+Rising at the head would leave the form, and so would falling at the foot. That leaves
+**7 workable positions**:
+
+```
+head    level, falling
+waist   rising, level, falling
+foot    rising, level
+```
+
+**7 positions × 3 sides = 21** — and 21 is the classical Latin alphabet. Nothing was
+trimmed to fit. J, U and W are mediaeval; Y and Z were Greek imports Latin had spent
+centuries absorbing as **I** and **S**, so normalisation folds them the way a Roman
+cutter would have:
+
+```
+normalise: uppercase · U→V · W→V · J→I · Y→I · Z→S · strip non-letters
+```
+
+| Letter | Form | | Letter | Form | | Letter | Form |
+|---|---|---|---|---|---|---|---|
+| **A** | head level left | | **H** | waist rising right | | **P** | waist falling both |
+| **B** | head level right | | **I** | waist rising both | | **Q** | foot rising left |
+| **C** | head level both | | **K** | waist level left | | **R** | foot rising right |
+| **D** | head falling left | | **L** | waist level right | | **S** | foot rising both |
+| **E** | head falling right | | **M** | waist level both | | **T** | foot level left |
+| **F** | head falling both | | **N** | waist falling left | | **V** | foot level right |
+| **G** | waist rising left | | **O** | waist falling right | | **X** | foot level both |
 
 **The form table is frozen at v1.** Changing one invalidates every glyph using that
 letter.
 
-Every form spans **six rows** and **must include the centre columns at its top and
-bottom row** — that contract is what makes any two link into one continuous figure.
+### 2.2 Dropping the mirror is what made it simple
 
-### 2.1 A shell is six half-widths
+**Mirror symmetry was the expensive rule.** While every mark had to be reflected, *side
+carried no information* — so distinctness had to come from stacking more marks onto each
+letter, and that is exactly how every earlier alphabet grew ornate. Let a mark sit on one
+side and side becomes a third axis; 21 letters then fall out of **one mark each**, at
+about **17 pixels** a form against 25–30 for the outlines.
 
-A shell is written as six half-widths `k` (0 = the bare centre pair, 5 = full width),
-drawn as a left-edge polyline plus a top and bottom bar; `symmetrise` supplies the
-right. Per-row ceilings come straight off the 3 px margin (§5.1):
+**Forced continuity went with it.** It did real work when a glyph was an outline, but a
+stave already spans the full height, so stacked forms meet whether or not a rule demands
+it. In practice every glyph still renders as a single component — it simply is no longer
+a constraint the design has to pay for.
 
-```
-KMAX = [3, 4, 5, 5, 5, 4]
-```
+### 2.3 Why strokes, not outlines
 
-**Clamp inside the drawing routine, not in each profile.** A new form must not be able
-to breach the margin by forgetting a limit. Note also that a steep jump between adjacent
-rows bleeds sideways — a line from `k=1` to `k=5` lights intermediate columns on both
-rows — so the *drawn* profile is not always the `k` array, and the audit measures the
-drawn pixels rather than trusting the numbers.
+Every table before the stave drew **closed outlines** — vessels, boxes, doubled rings —
+and each rebuild made them *more* elaborate to keep them apart. Wrong direction.
 
-### 2.2 The confusability bar
+> **An outline is a picture, and pictures must be intricate to differ. Writing is not
+> made of outlines; it is made of strokes.**
 
-**Letters are held to the same standard as glyphs.** Two forms pass only if:
+Carved scripts settled this long ago under exactly our constraints — hard material, small
+size, must be unmistakable. **Elder Futhark** is an upright with a mark or two and
+nothing curved, because curves are miserable to cut. **Ogham** reduces it further still.
+Borrowing the structure is not a stylistic nod to runes; it is the answer to the same
+engineering problem.
 
-1. they differ by at least **10 pixels**, and
-2. they do not share a **normalised silhouette** (the row-width profile with scale
-   divided out).
+### 2.4 The distinctness bar
 
-Ten pixels is the threshold because it is about one full bar or one doubled outline —
-something you can **name**. This is the whole point of the rule:
+**A difference must be nameable.** Where the mark sits, which side, which way it points.
+A *width* is not nameable: telling a lozenge from a slightly wider lozenge needs both in
+front of you, which is exactly what a reader never gets.
 
-> A width difference is not nameable. Telling a lozenge from a slightly wider lozenge
-> requires both in front of you, and a reader never gets that.
+Two forms pass if they differ by at least **4 px** and do not share a **row-extent
+footprint**. Two notes on why those are the right instruments:
 
-**Doubled forms double the outline rather than adding a bar inside it.** A crossbar
-changes a handful of pixels and leaves the silhouette untouched; a second ring changes
-the figure's whole weight. The inner ring is inset one row top and bottom and two columns
-each side, and its top bar sits directly under the outer one at the centre pair, so the
-two rings remain a **single connected component**. Each doubled form is also given an
-outer profile that no plain shell uses, so it differs in silhouette as well as in weight.
+- **4 px, not 10.** The old bar was calibrated for dense outlines. A mark is only about
+  four pixels, so at ten *every single-mark form was excluded* — which is precisely what
+  forced the heavy shapes. Sweeping the design space showed the threshold itself was
+  making the alphabet complicated. Side alone is a 4 px change, and a lopsided figure
+  against a balanced one is about as visible as a difference gets.
+- **Extents, not widths.** Row *width* was the right measure while every form was
+  mirrored. Now that a mark can sit on one side, two forms can share every row width and
+  be mirror images of each other — a real and highly visible difference. So the audit
+  records where each row starts and ends.
 
-### 2.3 Three earlier tables failed this bar
+### 2.5 What the earlier tables got wrong
 
 | Table | How it failed |
 |---|---|
-| lozenges at three widths (`B` `C` `D`) | one shape, three sizes — a relative difference |
-| one outline + interior marks (`B` `F` `K` `X`) | **identical silhouette**; `B`/`R` overlapped 0.89 |
-| shells only, no posts | everything was a vessel; a third of the alphabet read as a lozenge |
-
-The rebuild replaced **width variation** with **construction variation**: where the mass
-sits, shell versus post, single versus doubled outline.
-
-**Known and accepted:** six rows by twelve columns is a squat canvas, so the shells still
-share a wide, flat family look even when they are provably distinct. The next lever, if
-that ever matters more than it does now, is fewer shells and more posts — the posts are
-the forms that read at a glance.
+| lozenges at three widths | one shape, three sizes — a relative difference |
+| one outline + interior marks | four letters shared an identical silhouette |
+| distinct outlines (shells and posts) | passed every metric, but every letter was an ornate figure |
+| stave, 6 join heights, 10 px bar | heights one row apart; the bar excluded every light form |
+| stave, 3 places, mirrored | still needed 2- and 3-mark letters, because side carried nothing |
 
 ---
 
 ## 3. The mark, and the tally foot
 
-1. **Normalise** the lemma — uppercase, `U`→`V`, `J`→`I`, strip non-letters.
+1. **Normalise** the lemma — uppercase, `U`/`W`→`V`, `J`/`Y`→`I`, `Z`→`S`, strip
+   non-letters (§2.1).
 2. Take the **first two letters**; each selects a form.
 3. Count the whole normalised word and **tally** it into the foot.
 4. An explicit `mark` overrides step 2 if two words collide (§8).
@@ -204,21 +209,36 @@ that ever collides in practice, the fix is an explicit `mark`, not a wider foot.
 
 Three `VI` words, three different tiles — the foot does it.
 
+### 3.2 The serif is a plinth, not a tick
+
+The serif is a short step at **x 6–9, one row above the bar** — not a tick at the bar's
+ends.
+
+**A tick at the ends is maskable.** A falling arm from the waist lands on x 3–4 in that
+row and swallows it whole, which silently made `VIGILIA` render identical to `VITA` — a
+tally that encodes nothing when the second letter happens to have a falling mark. Arms
+reach x=6 a row *higher* than they reach x=3, so the plinth sits where no mark can ever
+be drawn.
+
+The general lesson, worth applying to anything else that hangs off the figure: **a
+feature that shares rows with the letter-forms must be placed where their geometry cannot
+reach, not merely where it usually doesn't.**
+
 ---
 
-## 4. Symmetry
+## 4. Symmetry — dropped
 
-Every glyph is **bilaterally symmetric about its vertical centre axis**, which sits
-between pixel columns 7 and 8. The octagonal tile is symmetric about the same axis.
+**Glyphs are no longer mirrored.** The axis is gone, and its removal is what made the
+alphabet simple (§2.2): while every mark had to be reflected, side carried no
+information, so letters had to differ by *quantity* of marks instead.
 
-Symmetry is structural, not something to hand-check: the finished bitmap is passed
-through a `symmetrise` step that ORs every column with its mirror. **A glyph therefore
-cannot come out asymmetric by accident**, and stroke coordinates need not be
-mirror-exact.
+What remains symmetric is the **stone**, not the writing — the octagonal tile and the
+tally foot are both symmetric about the vertical centre, which is what keeps a line of
+glyphs looking like a course of cut blocks rather than a ransom note.
 
-Left–right rather than top–bottom because mirror symmetry about a vertical axis is
-what reads as *writing* — runes, alchemical sigils, heraldic charges, maker's marks.
-Top–bottom symmetry reads as a playing card.
+There is no `symmetrise` step in the render path any more. A form draws exactly the
+pixels it means, and **which side a mark is on is load-bearing** — mirroring a glyph
+turns it into a different letter.
 
 ---
 
@@ -448,8 +468,8 @@ The renderer and datapack loader must reject:
   the top slot is the tight one, and a form that only ever renders in the bottom slot
   during testing will hide the violation.
 
-- **Two forms failing the confusability bar** (§2.2): fewer than 10 differing pixels, or
-  a shared normalised silhouette.
+- **Two forms failing the distinctness bar** (§2.4): fewer than 4 differing pixels, or a
+  shared row-extent footprint.
 
 **Adding or altering a form requires re-auditing all 23** against each other — a form
 narrowed to clear the margin must not collapse onto another — and checking the new form
@@ -460,26 +480,36 @@ includes its centre contacts at top and bottom row.
 ## 9. Reference implementation
 
 ```js
-const S = 16, ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";   // frozen at v1
-const normalise = s => s.toUpperCase().replace(/U/g,"V").replace(/J/g,"I").replace(/[^A-Z]/g,"");
+const S = 16, ALPHABET = "ABCDEFGHIKLMNOPQRSTVX";     // the classical 21, frozen at v1
+const normalise = s => s.toUpperCase()
+  .replace(/[UW]/g,"V").replace(/[JY]/g,"I").replace(/Z/g,"S").replace(/[^A-Z]/g,"");
 const mark = g => (g.mark ?? normalise(g.lemma)).slice(0,2);
 
 const CHAMFER = 2;
 const inTile = (x,y) => x>=0 && y>=0 && x<S && y<S &&
                         Math.min(x,S-1-x) + Math.min(y,S-1-y) >= CHAMFER;
 
-// 23 closed forms. Each spans 6 rows and MUST include the centre columns at its
-// top and bottom row — that contract is what makes the figure continuous.
-const FORMS = [ /* shaft, lozenge, box, flask, kite, barrel, … */ ];
+// A form is one stave and one mark (§2). Per-row reach comes from the margin.
+const XMIN = [9,9,4,3,2,2,2,2,2,2,2,2,3,4,9,9], XMAX = XMIN.map(v => 15-v);
+
+// r: 1 head · 3 waist · 5 foot      d: -2 rising · 0 level · +2 falling
+const rune = (r,d,side) => (b,y) => {
+  line(b,7,y,7,y+5); line(b,8,y,8,y+5);                       // the stave
+  const gy = y+r+d;
+  if (side !== "R") line(b, 7, y+r, Math.max( 3, XMIN[gy]), gy);
+  if (side !== "L") line(b, 8, y+r, Math.min(12, XMAX[gy]), gy);
+};
+
+const FORMS = [ rune(1,0,"L"), rune(1,0,"R"), rune(1,0,"B"), /* … 21 in all, §2 */ ];
 
 function render(glyph){                                 // -> 1-bit cut mask
   const b = new Uint8Array(S*S), m = mark(glyph);
   FORMS[ALPHABET.indexOf(m[0])](b, 2);                  // rows 2..7
   FORMS[ALPHABET.indexOf(m[1])](b, 7);                  // rows 7..12 — shares row 7
   const t = clamp(normalise(glyph.lemma).length - 2, 0, 5);
-  foot(b, 13, 1 + (t % 3), /* serif */ t >= 3);         // the tally, §3.1
-  symmetrise(b);                                        // cannot come out asymmetric
-  return b;
+  foot(b, 13, 1 + (t % 3), /* serif */ t >= 3);         // the tally, §3.1 — the
+                                                        // serif is a PLINTH, §3.2
+  return b;                                             // NOT symmetrised: side means something
 }
 
 function paint(bits, lemma, tier){                      // cut mask -> stone tile
@@ -505,12 +535,12 @@ function paint(bits, lemma, tier){                      // cut mask -> stone til
 renderer must produce byte-identical output.
 
 **Audited** (49-lemma working lexicon, `VELLUS` excluded as a homograph of `VENTVS`):
-all 23 forms clearing the confusability bar (§2.2) — tightest pair 10 px, no shared
-silhouette — and clearing the margin in both slots they can occupy; **49/49 glyphs distinct**; **49/49 still
+all 21 forms clearing the distinctness bar (§2.4) — no shared row-extent footprint — and
+clearing the margin in both slots they can occupy; **49/49 glyphs distinct**; **49/49 still
 distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, authored and hashed alike; all 49 authored
 pigments parse and every one names a lemma that exists; nine classes of malformed
 `pigment` all fall through to the hash without throwing; every
-output vertically symmetric; every glyph a **single connected component**; **tightest
+every glyph still a single connected component (reported, not required); **tightest
 margin to the stone's edge 3 px**; all 23 forms distinct from each other and clearing the
 margin in both slots; blank tile 244/256 px opaque and zero cuts.
 
