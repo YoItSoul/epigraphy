@@ -281,7 +281,20 @@ tile's bevelled rim, the chamfered corners, the shadowed upper-left wall of ever
 and the lit lower-right wall — nothing special-cased, and a two-pixel stem falls out as
 a true V-groove.
 
-**The groove holds a pigment, from one of two sources in order.** *Static* — an authored
+**A glyph is inked in three layers**, each with its own pigment: the first letter's colour,
+the second letter's colour, and — on the foot — the word's. So a word is **two-toned by
+construction**, words sharing a letter share a band of colour, and the base still says
+which family the word belongs to.
+
+**Letter colour is a safer use of colour than the word-hash it replaced**, not a riskier
+one: it reinforces something the shape *already says* — which letter this is — rather than
+asserting anything new. That is exactly the redundant-reinforcement footing D16 permits.
+
+`render()` returns a **layer map** rather than a bitmask (0 uncut, 1 first letter, 2
+second, 3 foot). Non-zero still means "cut", so every consumer testing truthiness is
+unchanged while the painter can ink each layer separately.
+
+**The word's pigment comes from one of two sources in order.** *Static* — an authored
 `pigment` hex on the glyph, chosen by hand. *Dynamic* — FNV-1a over the lemma → hue, with
 a little saturation jitter. Anything missing, malformed or out of range falls through to
 the hash **silently**; a colour typo must never be able to fail a datapack load. Blood
