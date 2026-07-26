@@ -67,7 +67,7 @@ meaning that doesn't imply `INFERNVS`; `VITA` implies `MORS`.
 
 That has three consequences worth stating before the table:
 
-1. **The axis is itself a concept.** `PLENVM`/`VACVVM` is *fullness*; `NOVVM`/`VETVS` is
+1. **The axis is itself a concept.** `PLENVM`/`VACVVM` is *fullness*; `NOVVM`/`SENEX` is
    *age*. A player who learns one pole has half-learned the other, which makes the
    language cheaper to teach than its size suggests.
 2. **Description replaces naming.** There is no rune for "stairs". A thing is located by
@@ -110,20 +110,20 @@ qualifiers only. Head rule unchanged: the head is the last determinative-capable
 | `FERRVM`\* | iron, the working metal | `AVRVM`\* | gold, the precious metal |
 | `AES`\* | copper, the metal that ages | `ADAMAS`\* | diamond, which cannot be marred |
 | `GEMMA`\* | gem, crystal | `PVLVIS`\* | dust, powder |
-| `PVRVM` | refined, pure | `SORDES` | raw, dross, ore |
+| `CANDIDVM` | refined, pure | `SORDES` | raw, dross, ore |
 
 ### Making
 | | | | |
 |---|---|---|---|
 | `OPVS` | wrought by hand | `NATVM` | natural, found so |
-| `NOVVM` | new, fresh | `VETVS` | old, aged, weathered |
+| `NOVVM` | new, fresh | `SENEX` | old, aged, weathered |
 | `TOTVM` | whole, uncut | `FRACTVM` | cut, broken, worked |
 | `TEGMEN` | sealed, covered, waxed | `NVDVM` | bare, exposed |
 
 ### Form
 | | | | |
 |---|---|---|---|
-| `PORTA`\* | gate, a way through | `MVRVM`\* | wall, barrier, hold |
+| `PORTA`\* | gate, a way through | `VALLVM`\* | wall, barrier, hold |
 | `VAS`\* | vessel, hollow | `MOLES`\* | mass, solid block |
 | `GRADVS`\* | step, stair | `AEQVVM`\* | flat, level |
 | `ACIES`\* | edge, blade | `SCVTVM`\* | guard, shield |
@@ -131,19 +131,19 @@ qualifiers only. Head rule unchanged: the head is the last determinative-capable
 ### Will
 | | | | |
 |---|---|---|---|
-| `HOSTIS` | hostile, foe | `AMICVS` | tame, friend |
-| `VNICVM` | one, single | `TVRBA`\* | throng, swarm, many |
+| `HOSTIS` | hostile, foe | `MITIS` | tame, friend |
+| `VNICVM` | one, single | `GREX`\* | throng, swarm, many |
 
 ### 2.1 Four words are second choices
 
-`TOTVM`, `AMICVS`, `AEQVVM` and `VNICVM` are not the obvious Latin. The obvious words —
+`TOTVM`, `MITIS`, `AEQVVM` and `VNICVM` are not the obvious Latin. The obvious words —
 `SANVM`, `SOCIVS`, `PLANVM`, `VNVM` — each **render identically** to a rune already in the
 lexicon, because the mark is (letter 1, letter 2, length tally):
 
 | Wanted | Collides with | Shipped instead |
 |---|---|---|
 | `SANVM` | `SAXVM` | `TOTVM` |
-| `SOCIVS` | `SORDES` | `AMICVS` |
+| `SOCIVS` | `SORDES` | `MITIS` |
 | `PLANVM` | `PLENVM` | `AEQVVM` |
 | `VNVM` | `VNDA` | `VNICVM` |
 
@@ -386,14 +386,14 @@ are already there.
 | **Enderman** | `FINIS · HOMO` | End-Folk |
 | **Piglin** | `INFERNVS · HOMO` | Hell-Folk |
 | **Illager** | `HOSTIS · HOMO` | Foe-Folk |
-| **Villager** | `AMICVS · HOMO` | Friend-Folk |
-| **Bee Nest** | `TVRBA · VAS` | Throng-Vessel |
-| **Beehive** | `OPVS · TVRBA · VAS` | Wrought Throng-Vessel |
+| **Villager** | `MITIS · HOMO` | Friend-Folk |
+| **Bee Nest** | `GREX · VAS` | Throng-Vessel |
+| **Beehive** | `OPVS · GREX · VAS` | Wrought Throng-Vessel |
 | **Iron Ore** | `SAXVM · FERRVM` | Stone-Iron |
 | **Raw Iron** | `SORDES · FERRVM` | Dross-Iron |
-| **Iron Ingot** | `PVRVM · FERRVM` | Pure-Iron |
-| **Nether Fortress** | `INFERNVS · MVRVM` | Hell-Hold |
-| **End City** | `FINIS · TVRBA · MVRVM` | End Throng-Hold |
+| **Iron Ingot** | `CANDIDVM · FERRVM` | Pure-Iron |
+| **Nether Fortress** | `INFERNVS · VALLVM` | Hell-Hold |
+| **End City** | `FINIS · GREX · VALLVM` | End Throng-Hold |
 | **Chorus Fruit** | `FINIS · GERMEN` | End-Seed |
 | **Popped Chorus Fruit** | `IGNIS · FINIS · GERMEN` | Fire End-Seed |
 
@@ -402,12 +402,12 @@ Four things the axes do that a flat word-list can't:
 - **Opposites come free.** Illager and Villager are the *same word* with the poles
   swapped. So are the three iron states, and the bee nest against the beehive.
 - **Silence is meaningful.** The Enderman is `FINIS · HOMO` and carries **no** temper
-  pole — neither `HOSTIS` nor `AMICVS` — because it is neither until you look at it. An
+  pole — neither `HOSTIS` nor `MITIS` — because it is neither until you look at it. An
   unmarked axis is a statement.
 - **Heads travel.** `HOMO` heads the Enderman, the Piglin, the Illager and the Villager;
   only the qualifier changes. Decode one and you have most of four.
 - **Compounds are literal.** A city *is* a throng's wall, so End City is
-  `FINIS · TVRBA · MVRVM` and needs no word for "city".
+  `FINIS · GREX · VALLVM` and needs no word for "city".
 
 ### 3.6 The one that isn't a word
 
@@ -415,7 +415,7 @@ Four things the axes do that a flat word-list can't:
 stepped. A rune word holds three. So it **is not a rune word**; it is a phrase of two:
 
 ```
-TEGMEN · VETVS · AES        FRACTVM · GRADVS
+TEGMEN · SENEX · AES        FRACTVM · GRADVS
    Sealed-Aged-Copper           Cut-Step
 ```
 
@@ -430,7 +430,7 @@ The whole oxidation ladder falls out of two axes, with no vocabulary added:
 | | bare | waxed |
 |---|---|---|
 | **fresh** | `NOVVM · AES` | `TEGMEN · NOVVM · AES` |
-| **weathered** | `VETVS · AES` | `TEGMEN · VETVS · AES` |
+| **weathered** | `SENEX · AES` | `TEGMEN · SENEX · AES` |
 
 
 ## 4. Grammar: the inscription formula (D10)

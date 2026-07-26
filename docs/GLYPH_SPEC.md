@@ -186,9 +186,43 @@ Two further instrument bugs are worth remembering, because each one wasted a rev
 
 1. **Normalise** the lemma — uppercase, `U`/`W`→`V`, `J`/`Y`→`I`, `Z`→`S`, strip
    non-letters (§2.1).
-2. Take the **first two letters**; each selects a form.
+2. Take the **first letter and the third**; each selects a form.
 3. Count the whole normalised word and **tally** it into the foot.
-4. An explicit `mark` overrides step 2 if two words collide (§8).
+4. An explicit `mark` overrides step 2 if two words still collide (§8).
+
+### 3.0 First and *third*, not first and second
+
+Two words sharing a mark differ **only by the foot tally**, which is two pixels. So the
+mark rule is not cosmetic — it is what decides whether the lexicon is legible.
+
+Latin clusters hard on prefixes. Measured over the 56-rune lexicon:
+
+| Rule | Colliding clusters | Words affected |
+|---|---|---|
+| first + second | **13** | 28 |
+| first + last | 13 | 30 |
+| first + middle | 7 | 14 |
+| **first + third** | **5** | **10** |
+| first + hash-picked own letter | 7 | 14 |
+| both hash-picked own letters | 5 | 15 |
+
+`TENEBRAE`/`TERRA`/`TEGMEN`, `GELV`/`GERMEN`/`GEMMA`, `PVLVIS`/`CANDIDVM` — all were
+two pixels apart under first-and-second. **No hash-based rule beats first-and-third**,
+because the collisions come from shared letters generally, not just shared prefixes.
+
+The five clusters that remained were fixed where the docs say to fix them — **in the
+lexicon, with a synonym** (§2.1). Every one of the five replacements is better Latin than
+what it replaced:
+
+| Was | Collided with | Now | |
+|---|---|---|---|
+| `TVRBA` | `TERRA` | `GREX` | flock, herd, throng |
+| `VETVS` | `VITA` | `SENEX` | old, hoary |
+| `MVRVM` | `MORS` | `VALLVM` | rampart, wall |
+| `PVRVM` | `PORTA` | `CANDIDVM` | shining, unmixed, pure |
+| `AMICVS` | `ACIES` | `MITIS` | gentle, tame |
+
+**The tightest word pair is now 14 px, up from 2.**
 
 ### 3.1 The foot is a tally
 
@@ -473,6 +507,10 @@ The renderer and datapack loader must reject:
 
 - **Two forms failing the distinctness bar** (§2.4): fewer than 12 differing pixels, or a
   shared row-extent footprint.
+- **Two WORDS closer than 12 px.** Letters were held to that bar; words were held only to
+  "not byte-identical", which is far too weak — two words sharing a mark differ solely by
+  the foot tally. This is the check that catches a bad mark rule, and its absence is what
+  let `PVLVIS` and `PVRVM` ship two pixels apart.
 
 **Adding or altering a form requires re-auditing all 23** against each other — a form
 narrowed to clear the margin must not collapse onto another — and checking the new form
