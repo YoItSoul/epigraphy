@@ -65,18 +65,18 @@ already written:
 | Layer | Derived from | Result |
 |---|---|---|
 | **Forms** | `lemma` | its first two letters, each one of 23 closed shapes, linked into one continuous figure |
-| **Foot** | `lemma` length | a tally bar: width 1–4, plus a serif once the word passes five letters |
+| **Foot** | `lemma` length | a tally bar: width 1–3, plus a serif once the word passes four letters |
 | **Pigment** | `pigment`, else `lemma` | the groove's inlay colour — your hex if you give one, otherwise hashed from the word; either way every hue cuts to the same depth |
 | **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
 
 So `"lemma": "PULVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
-with a 4-wide foot, its own colour, and no art file at all. **This is the intended
+with a serifed 2-wide foot, its own colour, and no art file at all. **This is the intended
 path** — add a glyph in JSON, get usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
 boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
 composite, so a hand-drawn glyph must draw its own octagonal stone — and must respect
-the **2 px margin** — to sit readably in a line of inscription.
+the **3 px margin** — to sit readably in a line of inscription.
 
 > **No two glyphs may render identically.** The mark is `(letter 1, letter 2, length
 > tally)`, so two lemmas agreeing on all three produce the same tile — `VELLUS` and

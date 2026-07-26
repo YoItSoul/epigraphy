@@ -102,25 +102,29 @@ share no silhouette.
 
 ### 3.1 The foot is a tally
 
-The bar widens one step per letter up to four. Past four its ends **turn up into a
+The bar widens one step per letter up to three. Past three its ends **turn up into a
 serif** — the tally's hand mark — and the width starts counting again:
 
 ```
-t     = clamp(length − 2, 0, 7)
-width = 1 + (t mod 4)          // half-widths either side of the axis
-serif = t ≥ 4                  // the hand mark
+t     = clamp(length − 2, 0, 5)
+width = 1 + (t mod 3)          // half-widths either side of the axis
+serif = t ≥ 3                  // the hand mark
 ```
 
-which reads back as **`letters = 2 + (width − 1) + 4 × serif`**. Eight distinguishable
-lengths out of a bar that never exceeds four half-widths — and that ceiling is exactly
-what holds the widest foot **2 px clear** of the octagon's bottom chamfer (§5.1).
+which reads back as **`letters = 2 + (width − 1) + 3 × serif`**. Six distinguishable
+lengths out of a bar that never exceeds three half-widths — and that ceiling is exactly
+what holds the widest foot **3 px clear** of the octagon's bottom chamfer (§5.1).
+
+Six sounds thin and isn't: the forms do the heavy lifting, and the full 49-lemma lexicon
+still renders 49 distinct tiles. Lengths of 8 or more all read as "three and a hand"; if
+that ever collides in practice, the fix is an explicit `mark`, not a wider foot.
 
 | Lemma | Normalised | Mark | Letters | Width | Serif |
 |---|---|---|---|---|---|
 | `VITA` | VITA | `VI` | 4 | 3 | — |
-| `VIRGA` | VIRGA | `VI` | 5 | 4 | — |
-| `VIGILIA` | VIGILIA | `VI` | 7 | 2 | ✔ |
-| `CAELUM` | CAELVM | `CA` | 6 | 1 | ✔ |
+| `VIRGA` | VIRGA | `VI` | 5 | 1 | ✔ |
+| `VIGILIA` | VIGILIA | `VI` | 7 | 3 | ✔ |
+| `CAELUM` | CAELVM | `CA` | 6 | 2 | ✔ |
 | `TENEBRAE` | TENEBRAE | `TE` | 8 | 3 | ✔ |
 
 Three `VI` words, three different tiles — the foot does it.
@@ -147,28 +151,45 @@ Top–bottom symmetry reads as a playing card.
 
 ### 5.1 Silhouette
 
-The tile is the 16 × 16 square with its **four corners chamfered by 3**, so the
+The tile is the 16 × 16 square with its **four corners chamfered by 2**, so the
 silhouette itself reads as a cut stone rather than a sprite. Outside the octagon the
 texture is **transparent**.
 
 ```
-inTile(x,y)  ⟺  min(x, 15−x) + min(y, 15−y) ≥ 3        // 232 of 256 px
+inTile(x,y)  ⟺  min(x, 15−x) + min(y, 15−y) ≥ 2        // 244 of 256 px
 ```
 
-#### The 2 px margin
+#### The 3 px margin — the tightest constraint in the system
 
-**No part of a glyph may come within 2 px of the stone's edge**, chamfered corners
+**No part of a glyph may come within 3 px of the stone's edge**, chamfered corners
 included. It is a measured constraint, not an eyeballed one: for every cut pixel, walk
 outward in Chebyshev rings to the nearest pixel with `inTile == false`; if any is closer
-than 2, fail the build.
+than 3, fail the build.
 
-Two design facts fall straight out of it, and neither is negotiable afterwards:
+**The margin sets the chamfer, not the other way round.** A deep octagon and a 3 px
+margin eat the same corners, and the figure needs all twelve usable rows (2–13), so the
+envelope the margin leaves is what decides how deep the corners can be cut:
 
-- the tally's width ceiling is **4**, not 5 (§3.1) — a 5-wide foot puts its end pixel
-  diagonally adjacent to the bottom chamfer;
-- the two letter-forms **share row 7**. Both are already obliged to occupy the centre
+| Chamfer | Columns free at rows 2 and 13 | Verdict |
+|---|---|---|
+| 1 | 10 (x 3–12) | barely a chamfer — one pixel per corner |
+| **2** | **8 (x 4–11)** | **shipping** — deepest cut the figure still clears |
+| 3 | 6 (x 5–10) | foot limited to width 2; top form row crowded |
+| 4 | 4 (x 6–9) | nothing usable survives |
+
+Going deeper than 2 means redrawing the letter-forms shorter, which is a different and
+much larger change.
+
+Three design facts fall straight out of the margin, and none is negotiable afterwards:
+
+- **the chamfer is 2**, per the table above;
+- **the tally's width ceiling is 3** (§3.1) — a 4-wide foot lands on the row-13 limit;
+- **the two letter-forms share row 7.** Both are already obliged to occupy the centre
   columns at their top and bottom row, so sharing that row is exactly where they were
   going to link anyway. It costs nothing and buys the row the margin needs.
+
+One form was redrawn for it: **`H` (wedge)** is the only form that flares on its *first*
+row, where the envelope is tightest, so its arms pull in to x 4–11.
 
 **The silhouette is universal — it does not vary per glyph** (D17). Side count is
 deliberately *not* tied to word length: length is already in the foot, 16 px holds
@@ -219,12 +240,12 @@ nothing is lost.
 | Element | Value |
 |---|---|
 | Canvas | **16 × 16**, no anti-aliasing, transparent outside the octagon |
-| Chamfer | 3 per corner (232 of 256 px opaque) |
+| Chamfer | 2 per corner (244 of 256 px opaque) |
 | Mirror axis | between columns 7 and 8 |
 | Form 1 | rows 2–7 · **Form 2** rows 7–12 — they **share row 7** |
 | Form bounds | x 2–13; must include (7,8) at the form's top and bottom row |
-| Foot | row 13, centred, `1 + ((len−2) mod 4)` half-widths; serif rises into row 12 |
-| Margin | **≥ 2 px** from every cut pixel to the nearest transparent pixel |
+| Foot | row 13, centred, `1 + ((len−2) mod 3)` half-widths; serif rises into row 12 |
+| Margin | **≥ 3 px** from every cut pixel to the nearest transparent pixel |
 | Mean ink | ~52 of 256 pixels |
 
 ---
@@ -345,12 +366,16 @@ The renderer and datapack loader must reject:
   not be able to break someone's pack.
 - A glyph whose `category` is `element` declaring a `determinative` (a grammar rule,
   `RUNES.md` §5.2 — unrelated to art).
-- **Any lit pixel falling outside the octagon, or within 2 px of its edge.** Assert
-  `inTile(x,y)` and `margin(x,y) ≥ 2` for every cut pixel (§5.1). Cheap, and it catches
-  the class of bug where a stroke or a wide foot crowds or escapes the silhouette.
+- **Any lit pixel falling outside the octagon, or within 3 px of its edge.** Assert
+  `inTile(x,y)` and `margin(x,y) ≥ 3` for every cut pixel (§5.1). Cheap, and it catches
+  the class of bug where a stroke or a wide foot crowds or escapes the silhouette. Check
+  each **form** at both slots it can occupy (rows 2 and 7), not just finished glyphs —
+  the top slot is the tight one, and a form that only ever renders in the bottom slot
+  during testing will hide the violation.
 
-**Adding or altering a form requires re-auditing all 23** against each other, and
-checking the new form includes its centre contacts at top and bottom row.
+**Adding or altering a form requires re-auditing all 23** against each other — a form
+narrowed to clear the margin must not collapse onto another — and checking the new form
+includes its centre contacts at top and bottom row.
 
 ---
 
@@ -361,7 +386,7 @@ const S = 16, ALPHABET = "ABCDEFGHIKLMNOPQRSTVXYZ";   // frozen at v1
 const normalise = s => s.toUpperCase().replace(/U/g,"V").replace(/J/g,"I").replace(/[^A-Z]/g,"");
 const mark = g => (g.mark ?? normalise(g.lemma)).slice(0,2);
 
-const CHAMFER = 3;
+const CHAMFER = 2;
 const inTile = (x,y) => x>=0 && y>=0 && x<S && y<S &&
                         Math.min(x,S-1-x) + Math.min(y,S-1-y) >= CHAMFER;
 
@@ -373,8 +398,8 @@ function render(glyph){                                 // -> 1-bit cut mask
   const b = new Uint8Array(S*S), m = mark(glyph);
   FORMS[ALPHABET.indexOf(m[0])](b, 2);                  // rows 2..7
   FORMS[ALPHABET.indexOf(m[1])](b, 7);                  // rows 7..12 — shares row 7
-  const t = clamp(normalise(glyph.lemma).length - 2, 0, 7);
-  foot(b, 13, 1 + (t % 4), /* serif */ t >= 4);         // the tally, §3.1
+  const t = clamp(normalise(glyph.lemma).length - 2, 0, 5);
+  foot(b, 13, 1 + (t % 3), /* serif */ t >= 3);         // the tally, §3.1
   symmetrise(b);                                        // cannot come out asymmetric
   return b;
 }
@@ -407,7 +432,8 @@ distinct with colour stripped**; groove luminance 61.6–62.4 across every hue, 
 pigments parse and every one names a lemma that exists; nine classes of malformed
 `pigment` all fall through to the hash without throwing; every
 output vertically symmetric; every glyph a **single connected component**; **tightest
-margin to the stone's edge 2 px**; blank tile 232/256 px opaque and zero cuts.
+margin to the stone's edge 3 px**; all 23 forms distinct from each other and clearing the
+margin in both slots; blank tile 244/256 px opaque and zero cuts.
 
 The audit runs against the *live* renderer rather than a transcription of it — it
 extracts the algorithm from the specimen page and executes it — so the numbers above

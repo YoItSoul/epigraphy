@@ -661,9 +661,9 @@ Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**
 - **One continuous figure.** Two letter-forms stack and link at the centre; the foot
   hangs off the lower one. Nothing floats — the whole glyph is a single unbroken shape.
 - **Two letters + a tally.** The forms carry the lemma's first two letters; the foot
-  tallies its length, which is what keeps `VITA`, `VIRGA` and `VIGILIA` distinct despite
-  sharing `VI`.
-- **An octagonal tile** — corners chamfered by 3, transparent outside — so the
+  tallies its length — width 1–3 plus a serif for "and a hand" — which is what keeps
+  `VITA`, `VIRGA` and `VIGILIA` distinct despite sharing `VI`.
+- **An octagonal tile** — corners chamfered by 2, transparent outside — so the
   silhouette reads as a cut stone rather than a sprite. It is **universal**: the outline
   never varies per glyph (D17).
 - **Chiselled, not painted.** One height field and one top-left light give the tile's
@@ -672,8 +672,9 @@ Glyph art is generated, never hand-drawn, at **Minecraft's own item resolution**
 - **The groove is inlaid** with a pigment: an authored `pigment` hex where the glyph has
   one, otherwise hashed from the lemma. Either way it is renormalised so every hue cuts
   to the same depth, and it is redundant reinforcement only — see §5.3.
-- **Nothing comes within 2 px of the stone's edge**, chamfered corners included, and the
-  audit fails the build if it does.
+- **Nothing comes within 3 px of the stone's edge**, chamfered corners included, and the
+  audit fails the build if it does. It is the tightest constraint in the system — it is
+  what fixes the chamfer depth and the tally's ceiling.
 - **A blank tile** covers unknown glyphs, empty slots and uninscribed tablets.
 
 **Full construction rule: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).**

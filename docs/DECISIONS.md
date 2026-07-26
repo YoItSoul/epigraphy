@@ -167,11 +167,13 @@ tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 - **Two letters, not three.** Three six-row zones do not fit. Uniqueness survives
   because **the foot tallies word length**: `VITA` (4), `VIRGA` (5) and `VIGILIA` (7)
   all abbreviate to `VI` and remain three different tiles. The bar widens one step per
-  letter up to four, then its ends turn up into a serif and the width restarts, so
-  `letters = 2 + (width − 1) + 4 × serif`.
-- **A 2 px margin, enforced.** No part of a glyph comes within two pixels of the
-  stone's edge, chamfered corners included — measured in the audit, not eyeballed. It
-  is what sets the tally's ceiling at four and why the two letter-forms share a row.
+  letter up to three, then its ends turn up into a serif and the width restarts, so
+  `letters = 2 + (width − 1) + 3 × serif`.
+- **A 3 px margin, enforced.** No part of a glyph comes within three pixels of the
+  stone's edge, chamfered corners included — measured in the audit, not eyeballed. It is
+  **the tightest constraint in the system**: it sets the chamfer depth, sets the tally's
+  ceiling at three, and is why the two letter-forms share a row. One form was redrawn for
+  it — `H` (wedge), the only form that flares on its *first* row.
 - **Stone, lit top-left.** Gradient plus deterministic grain. **The gradient is
   material, not information** — flatten it to one grey and nothing is lost, so the
   colour rule (D16) still holds.
@@ -180,12 +182,16 @@ tile** lit from the top-left. Full spec: [`GLYPH_SPEC.md`](GLYPH_SPEC.md).
 
 **Audited:** all 23 forms distinct; **49/49 lexicon glyphs unique, and still 49/49 with
 colour stripped**; every output vertically symmetric; every glyph a **single connected
-component**; tightest margin to the stone's edge 2 px. The audit executes the *live*
+component**; tightest margin to the stone's edge 3 px; all 23 forms distinct from each
+other and clearing the margin in both slots they can occupy. The audit executes the *live*
 renderer rather than a transcription of it, so those numbers cannot drift from the art.
 
 ### D17 ✅ The tile is an octagon, and the silhouette is universal
-The tile is the 16 × 16 square with its **four corners chamfered by 3** — 232 of 256
-pixels, transparent outside. The silhouette reads as a cut stone rather than a sprite,
+The tile is the 16 × 16 square with its **four corners chamfered by 2** — 244 of 256
+pixels, transparent outside. **The margin chose the depth, not taste:** a deeper octagon
+and a 3 px margin eat the same corners, and at chamfer 3 the top and bottom rows shrink
+to six usable columns — too few for the foot. Chamfer 2 leaves eight, and is the deepest
+cut the figure still clears. Going deeper means redrawing the letter-forms shorter. The silhouette reads as a cut stone rather than a sprite,
 and its bevelled rim comes free from the same lighting rule as the grooves (D18).
 
 **The silhouette does not vary per glyph.** Tying the side count to word length was
