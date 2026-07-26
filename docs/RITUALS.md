@@ -378,6 +378,161 @@ get you "a dark sky"; the third pins it to the **new moon**.
 
 ---
 
+### 5.4 Starmetal (bulk, T2) — `MERSIO`, and free of new glyphs
+
+`STELLA · METALLVM` — *Star-Metal*. **Both glyphs already existed**, which is the whole
+argument for authoring in families: a player who has decoded *Netherite*
+(`INFERNVS · METALLVM`) and any star word reads this on sight, having never met it.
+
+`MERSIO` because Starmetal is a **bulk material**. Throw a stack of iron into liquid
+starlight under a clear night sky and the whole stack converts at once — the rite type
+exists precisely so tier-2 materials don't become 64 altar cycles.
+
+```jsonc
+// data/epigraphy/recipes/starmetal.json
+{
+  "type": "epigraphy:infusion",
+  "rite": "epigraphy:mersio",
+  "inscription": {
+    "vessel":   "epigraphy:liquid_starlight",  // STELLA · UNDA
+    "offering": "epigraphy:glowstone_dust",    // STELLA · PULVIS
+    "hour":     "epigraphy:night_sky",         // NOX    · CAELUM
+    "subject":  "epigraphy:iron",              // FERRUM
+    "issue":    "epigraphy:starmetal"          // STELLA · METALLUM
+  },
+  "fluid": "epigraphy:liquid_starlight",
+  "input": { "item": "minecraft:iron_ingot" },   // MERSIO: whole stacks
+  "conditions": [
+    { "type": "epigraphy:time",        "value": "night" },
+    { "type": "epigraphy:sky_visible", "value": true    },
+    { "type": "epigraphy:weather",     "value": "clear" }
+  ],
+  "result": { "item": "epigraphy:starmetal_ingot" },
+  "duration_ticks": 120
+}
+```
+
+```
+STELLA·UNDA      STELLA·PULVIS   NOX·CAELUM    FERRUM   →  STELLA·METALLUM
+Liquid Starlight  Glowstone Dust   Night Sky     Iron        Starmetal
+```
+
+**New glyphs: none.** New rune words: `STELLA · VNDA`, `STELLA · PVLVIS`, `NOX · CAELVM`,
+`STELLA · METALLVM` — four words, zero glyphs.
+
+---
+
+### 5.5 Coralium (corrupting, T2) — `MERSIO` in still water
+
+`FVNDVS · VENENVM · GEMMA` — *Deep-Venom-Gem*. Three glyphs, all of them already in the
+lexicon. `FVNDVS` was minted for *near bedrock* (`FVNDVS · TERRA`); here it carries the
+abyss, which is the same word doing a second job.
+
+The name states all three facts a player needs: it is **corrupting**, it is
+**crystalline**, and it comes from **the deep**.
+
+```jsonc
+// data/epigraphy/recipes/coralium.json
+{
+  "type": "epigraphy:infusion",
+  "rite": "epigraphy:mersio",
+  "inscription": {
+    "vessel":   "epigraphy:water",             // AQUA
+    "offering": "epigraphy:fermented_eye",     // VENENUM · PULVIS
+    "hour":     "epigraphy:near_bedrock",      // FUNDUS  · TERRA
+    "subject":  "epigraphy:lapis",             // TERRA   · GEMMA
+    "issue":    "epigraphy:coralium"           // FUNDUS · VENENUM · GEMMA
+  },
+  "fluid": "minecraft:water",
+  "input": { "item": "minecraft:lapis_lazuli" },
+  "conditions": [
+    { "type": "epigraphy:y_level",     "value": { "max": 0 } },
+    { "type": "epigraphy:light_level", "value": { "max": 3 } }
+  ],
+  "result": { "item": "epigraphy:coralium_gem" },
+  "duration_ticks": 160,
+  "backlash": "corruption"    // even a CORRECT cast corrupts nearby blocks — see below
+}
+```
+
+**Coralium is the one recipe whose backlash fires on success.** A correct cast still
+corrupts a small radius of blocks around the pool. That is the substance's character
+rather than a punishment, and it teaches the player to site the pool somewhere they don't
+mind losing — a spatial decision the other rites never ask for.
+
+**New glyphs: none.**
+
+---
+
+### 5.6 The Black Gate (flagship, T3) — `OPUS`, and the only new glyph
+
+`TENEBRAE · REGNVM · PORTA` — *Dark-Realm-Gate*. **`PORTA` (gate) is the only glyph minted
+for all three commissions**, and it is a *head*: every portal to come is
+`[somewhere] · REGNVM · PORTA`, so the one glyph buys the whole dimension tree rather
+than a single recipe.
+
+The hour is `MORS · LVNA` — *Dead Moon*, the new moon. `MORS` was coined for the Zombie;
+pairing it with `LVNA` costs nothing and reads better than any word for "empty" would.
+
+**How the difficulty is built** — every part of it out of systems that already exist:
+
+| Lever | What it costs the player |
+|---|---|
+| **Gated behind the flagship** | the offering is 4 × Chaos Ingot, itself the hardest existing rite |
+| **Four simultaneous conditions** | new moon **and** thunderstorm **and** below y=0 **and** light 0 |
+| **The moon is the bottleneck** | a new moon under a thunderstorm is a rare coincidence you must wait for |
+| **Highest backlash in the game** | a blind attempt here is the worst mistake available (D3) |
+| **The gate is unstable** | it collapses on a timer unless fed |
+
+```jsonc
+// data/epigraphy/recipes/black_gate.json
+{
+  "type": "epigraphy:infusion",
+  "rite": "epigraphy:opus",
+  "altar": "epigraphy:blackstone_altar",
+  "inscription": {
+    "vessel":   "epigraphy:blackstone_altar",  // ALTARE   · TENEBRAE
+    "offering": "epigraphy:chaos_ingot",       // CHAOS    · METALLUM
+    "hour":     "epigraphy:dead_moon",         // MORS     · LUNA
+    "subject":  "epigraphy:crying_obsidian",   // TENEBRAE · LAPIS
+    "issue":    "epigraphy:black_gate"         // TENEBRAE · REGNUM · PORTA
+  },
+  "pedestals": [ { "item": "epigraphy:chaos_ingot", "count": 4 } ],
+  "input": { "item": "minecraft:crying_obsidian", "count": 1 },
+  "fluid": "epigraphy:liquid_starlight",
+  "fluid_amount": 4000,
+  "conditions": [
+    { "type": "epigraphy:moon_phase",  "value": "new"     },
+    { "type": "epigraphy:weather",     "value": "thunder" },
+    { "type": "epigraphy:y_level",     "value": { "max": 0 } },
+    { "type": "epigraphy:light_level", "value": { "max": 0 } }
+  ],
+  "result": { "block": "epigraphy:black_gate" },
+  "duration_ticks": 600,
+  "instability": { "decay_ticks": 6000, "feed": "epigraphy:chaos_ingot" }
+}
+```
+
+```
+ALTARE·TENEBRAE  CHAOS·METALLUM  MORS·LUNA   TENEBRAE·LAPIS  →  TENEBRAE·REGNUM·PORTA
+Blackstone Altar   Chaos Ingot    Dead Moon   Crying Obsidian     The Black Gate
+```
+
+**Unstable, mechanically.** The gate does not persist. It decays after
+`decay_ticks` unless fed another Chaos Ingot, so holding a gate open is an ongoing cost
+rather than a one-off achievement — and a player who opens one carelessly, far from
+their base, loses it.
+
+**On a blind attempt** the backlash is the most severe the system defines: the gate opens
+*wrong*. It spawns an anomaly and corrupts the altar, which must then be rebuilt. This is
+the recipe the backlash system was designed for (D3) — "research first or pay for it",
+with the largest possible bill.
+
+**New glyphs: `PORTA`.** New rune words: `MORS · LVNA`, `TENEBRAE · LAPIS`,
+`TENEBRAE · REGNVM · PORTA`.
+
+---
+
 ## 6. Blocks, items & fluids introduced
 
 | Registry object | Type | Role |

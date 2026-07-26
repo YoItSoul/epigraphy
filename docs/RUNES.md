@@ -93,6 +93,15 @@ carvings, tablet tooltips, the in-game documentation).
 | `epigraphy:caelum`   | CAELUM   | Heavens | uncommon | sky access, storms, day |
 | `epigraphy:nox`      | NOX      | Night | common | requires darkness/night to read the sky |
 
+### Thresholds
+| id | lemma | gloss | rarity | determinative | notes |
+|----|-------|-------|--------|---------------|-------|
+| `epigraphy:porta` | PORTA | Gate | rare | suffix (threshold) | heads every portal word: `[somewhere] · REGNVM · PORTA` |
+
+`PORTA` is the **only glyph minted** for Starmetal, Coralium and the Black Gate combined.
+It is deliberately a *head*, so it prices the whole dimension tree rather than one recipe:
+the second portal and the tenth cost no new vocabulary at all.
+
 ### Materials, continued — powders & organics
 | id | lemma | gloss | rarity | determinative | notes |
 |----|-------|-------|--------|---------------|-------|
@@ -402,6 +411,28 @@ just another beast. That matters when the word is a warning carved on a wall.
 ---
 
 ---
+
+### 3.4 Three commissions, and what they cost
+
+| Word | Glyphs | Reading | New glyphs |
+|---|---|---|---|
+| **Starmetal** | `STELLA · METALLVM` | *Star-Metal* | — |
+| **Liquid Starlight** | `STELLA · VNDA` | *Star-Flow* | — |
+| **Glowstone Dust** | `STELLA · PVLVIS` | *Star-Dust* | — |
+| **Night Sky** | `NOX · CAELVM` | *Night-Sky* (a condition) | — |
+| **Coralium** | `FVNDVS · VENENVM · GEMMA` | *Deep-Venom-Gem* | — |
+| **Lapis Lazuli** | `TERRA · GEMMA` | *Earth-Gem* | — |
+| **Dead Moon** | `MORS · LVNA` | *Dead Moon* — the new moon | — |
+| **Crying Obsidian** | `TENEBRAE · LAPIS` | *Dark-Stone* | — |
+| **The Black Gate** | `TENEBRAE · REGNVM · PORTA` | *Dark-Realm-Gate* | `PORTA` |
+
+**Nine words for one glyph.** That ratio is the point of the language, and it comes from
+reuse rather than restraint: `STELLA` and `METALLVM` were already there, so *Starmetal*
+costs nothing and is legible on sight to anyone who has decoded *Netherite*. `FVNDVS` was
+coined for *near bedrock* and now carries the abyss. `MORS` came from the Zombie and now
+names the new moon.
+
+Recipes: `RITUALS.md` §5.4–5.6.
 
 ## 4. Grammar: the inscription formula (D10)
 
