@@ -1,0 +1,10 @@
+{
+  "axis": "mineral",
+  "category": "matter",
+  "description": "That which cannot be marred, and so records nothing.",
+  "gloss": "Diamond",
+  "head": true,
+  "lemma": "ADAMAS",
+  "opposite": "epigraphy:aes",
+  "rarity": "uncommon"
+}

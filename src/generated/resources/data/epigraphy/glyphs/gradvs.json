@@ -1,0 +1,9 @@
+{
+  "axis": "relief",
+  "category": "form",
+  "description": "A stair: height made climbable by being cut into pieces.",
+  "gloss": "Step",
+  "head": true,
+  "lemma": "GRADVS",
+  "opposite": "epigraphy:aeqvvm"
+}

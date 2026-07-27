@@ -1,0 +1,10 @@
+{
+  "axis": "extent",
+  "category": "world",
+  "description": "The edge, past which is the beyond.",
+  "gloss": "End",
+  "head": true,
+  "lemma": "FINIS",
+  "opposite": "epigraphy:origo",
+  "rarity": "rare"
+}

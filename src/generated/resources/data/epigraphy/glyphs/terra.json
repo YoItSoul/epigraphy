@@ -1,0 +1,9 @@
+{
+  "axis": "ground",
+  "category": "element",
+  "description": "The ground, which everything is either standing on or buried in.",
+  "gloss": "Earth",
+  "head": true,
+  "lemma": "TERRA",
+  "opposite": "epigraphy:ventvs"
+}

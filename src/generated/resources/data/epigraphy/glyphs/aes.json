@@ -1,0 +1,10 @@
+{
+  "axis": "mineral",
+  "category": "matter",
+  "description": "The metal that ages, and shows you how long it has been out.",
+  "gloss": "Copper",
+  "head": true,
+  "lemma": "AES",
+  "opposite": "epigraphy:adamas",
+  "rarity": "uncommon"
+}

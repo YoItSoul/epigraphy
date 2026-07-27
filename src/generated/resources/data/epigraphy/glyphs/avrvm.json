@@ -1,0 +1,9 @@
+{
+  "axis": "metal",
+  "category": "matter",
+  "description": "The precious metal, which is soft, and is wanted anyway.",
+  "gloss": "Gold",
+  "head": true,
+  "lemma": "AVRVM",
+  "opposite": "epigraphy:ferrvm"
+}

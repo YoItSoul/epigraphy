@@ -1,0 +1,9 @@
+{
+  "axis": "heat",
+  "category": "element",
+  "description": "Cold held still long enough to become a solid.",
+  "gloss": "Ice",
+  "head": true,
+  "lemma": "GELV",
+  "opposite": "epigraphy:ignis"
+}

@@ -1,0 +1,9 @@
+{
+  "axis": "ground",
+  "category": "element",
+  "description": "Wind, breath, the element that is only noticed while moving.",
+  "gloss": "Air",
+  "head": true,
+  "lemma": "VENTVS",
+  "opposite": "epigraphy:terra"
+}

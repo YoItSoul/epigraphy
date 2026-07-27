@@ -1,0 +1,9 @@
+{
+  "axis": "flora",
+  "category": "living",
+  "description": "Timber: the plant once it has stopped and gone hard.",
+  "gloss": "Wood",
+  "head": true,
+  "lemma": "LIGNVM",
+  "opposite": "epigraphy:herba"
+}

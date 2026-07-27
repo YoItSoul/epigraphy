@@ -1,0 +1,9 @@
+{
+  "axis": "luminary",
+  "category": "world",
+  "description": "The night's light, which is never twice the same shape.",
+  "gloss": "Moon",
+  "head": true,
+  "lemma": "LVNA",
+  "opposite": "epigraphy:sol"
+}

@@ -17,9 +17,24 @@ don't unlock progression by grinding — you unlock it by *learning to read*.
 
 *Glyphs are discovered; rune words are guessed.*
 
+## Status
+
+Doc-first, and the first code has landed. Forge 1.20.1, Java 17.
+
+```
+./gradlew runData     # writes the 52 shipped glyphs out of Lexicon.java into data/
+./gradlew runClient   # creative tab "Epigraphy: Runes"; /epigraphy runes lists what loaded
+```
+
+What works today: the 26 axes are defined in code, each of the 52 runes is registered as
+a tablet item, glyphs load and validate from `data/<ns>/glyphs/`, and `/epigraphy runes`
+reports what the loader accepted. Glyph *art* is still the blank tile — the procedural
+renderer in [`docs/GLYPH_SPEC.md`](docs/GLYPH_SPEC.md) is the other half of Phase 1.
+Build order: [`docs/ROADMAP.md`](docs/ROADMAP.md) §4.
+
 ## Design docs
 
-The design is being developed doc-first, before code. Start here:
+The design is developed doc-first. Start here:
 
 - **[docs/DECISIONS.md](docs/DECISIONS.md)** — the running decisions log: what's
   settled (terminology, no-GUI + the 20-slot codex, passive glyph learning,

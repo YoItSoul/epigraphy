@@ -36,25 +36,38 @@ A glyph is one symbol. Keep them **broad** — glyphs are meant to recombine.
 {
   "lemma": "PVLVIS",              // the Latin word; what a fluent player reads
   "gloss": "Dust",                // one-word English meaning, shown once learned
-  "category": "material",         // material | element | place | celestial | frame
-  "rarity": "common",             // common | uncommon | rare — biases where it hides
-  "sightings_to_learn": 1,        // independent sightings needed to learn it
+  "category": "matter",           // world | element | living | matter | making |
+                                  // form | will | frame — organisational only
 
-  // Determinative role (RUNES.md §3.1). Omit for plain qualifier glyphs.
-  // Also selects the FRAME the glyph is drawn in (§2.1).
-  "determinative": {
-    "class": "material",          // material | celestial | structure
-    "position": "suffix"          // suffix | prefix
-  },
+  // The ✦ mark (RUNES.md §3.1): may this glyph HEAD a rune word — that is, name a
+  // kind of thing — or only qualify one? Defaults to false.
+  "head": true,
+
+  "rarity": "common",             // common | uncommon | rare — biases where it hides
+  "sightings_to_learn": 1,        // OPTIONAL — defaults from rarity (1 / 2 / 3)
+
+  // OPTIONAL. The axis this glyph is one pole of, and the glyph at the other pole.
+  // Every rune has an opposite (RUNES.md §2); saying so is what lets the mod teach
+  // half a word for free.
+  "axis": "grain",
+  "opposite": "examplemod:gemma",
 
   "description": "That which is ground down, and so made ready."
 
+  // "mark": "PL",                          // OPTIONAL — see §2.1. Forces the two
+  //                                        // letters the tile is drawn from.
   // "pigment": "#b0a48c",                  // OPTIONAL — see §2.1. Omit and the
   //                                        // colour is hashed from the lemma.
   // "texture": "examplemod:glyph/pulvis"   // OPTIONAL — see §2.1. Omit and the
   //                                        // art is generated for you.
 }
 ```
+
+> **`head` replaced the old `determinative: { class, position }` block.** `position` went
+> when the head rule did away with per-glyph prefix/suffix marking — the head is the
+> *last* ✦ glyph in the sequence, decided by position in the word rather than by a flag
+> (`RUNES.md` §3.1, Q9). What remains is the single question of whether this glyph can be
+> a head at all, which is what `head` says.
 
 ### 2.1 Glyph art is generated — you usually write no texture
 
@@ -69,9 +82,9 @@ have already written:
 | **Pigment** | `pigment`, else `lemma` | the groove's inlay colour — your hex if you give one, otherwise hashed from the word; either way every hue cuts to the same depth |
 | **Stone** | — | octagonal 16 × 16 tile, lit top-left; the same for every glyph |
 
-So `"lemma": "PVLVIS"` + `"determinative": {"class":"material"}` yields a `PV` glyph
-with a serifed 2-wide foot, its own colour, and no art file at all. **This is the intended
-path** — add a glyph in JSON, get usable art immediately.
+So `"lemma": "PVLVIS"` alone yields a `PV` glyph with a serifed 2-wide foot, its own
+colour, and no art file at all. **This is the intended path** — add a glyph in JSON, get
+usable art immediately.
 
 Supply `texture` only to override generation for a glyph worth hand-drawing (a
 boss-tier glyph, a mod's signature symbol). A supplied texture replaces the whole
@@ -119,25 +132,50 @@ the shipped grouping. Two glyphs sharing a hue is fine.
 > stripped. If two of your glyphs can only be told apart by hue, fix the *shape* (a
 > different lemma, or an explicit `mark`), not the palette.
 >
-> `determinative.class` still matters for **grammar** (`RUNES.md` §3.1) — it decides
-> whether a glyph can head a rune word — and it does not affect the art today. It may
-> drive the tile silhouette in a later version (`DECISIONS.md` Q10); until then, do not
-> assume it is visible.
+> `head` and `category` matter for **grammar** and **grouping** respectively, and
+> neither affects the art today. `category` may drive the tile silhouette in a later
+> version (`DECISIONS.md` Q10); until then, do not assume it is visible.
+
+### 2.2 Your glyph's tablet
+
+Every glyph needs an item — a tablet is what a mob drops and what a lectern consumes
+(`DISCOVERY.md` §1.3). Items are registered at mod construction and datapacks are read
+long afterwards, so Epigraphy cannot mint one for a glyph it has never heard of. The
+answer is two shapes of the same item (D21):
+
+| | Item | Who gets it |
+|---|---|---|
+| **Bound** | `epigraphy:glyph_<name>` | the 52 shipped runes — one item each |
+| **Unbound** | `epigraphy:glyph` with `{Glyph: "<ns>:<name>"}` | **your glyph, and any other datapack's** |
+
+Nothing else in the mod distinguishes them: both carry exactly one glyph, both study the
+same way. Reference yours in loot tables and worldgen as the unbound item with NBT:
+
+```jsonc
+{ "item": "epigraphy:glyph", "nbt": { "Glyph": "examplemod:pulvis" } }
+```
+
+If you are writing a **Java mod** rather than a datapack, register your own bound items
+with `new GlyphItem(properties, yourGlyphId)` and you get the first row instead.
+
+An **uninscribed** `epigraphy:glyph` — no NBT at all — is not an error. Bare stone is one
+of the three jobs the blank tile does (`GLYPH_SPEC.md` §1.1).
 
 ### Choosing a good glyph
 
 - **Broad beats specific.** `PVLVIS` (Dust) is a great glyph because it can head
   *many* words — bone meal, sugar, glowstone dust, redstone. A glyph meaning
   "bone meal" specifically would be a bad glyph; that's a *rune word's* job.
-- **Decide if it's a determinative.** If it names a *category of thing*
-  (metal, stone, rod, powder, altar), give it a `determinative` block — it becomes a
-  head. If it names a *quality* (flaming, dark, chaotic, sweet), leave it off — it's
-  a qualifier.
-- **Prefix vs suffix.** Follow the convention: **structures/places prefix**
-  (`SAXVM · …`), **materials/objects suffix** (`… · PVLVIS`). Both are attested in
-  real determinative systems (`RUNES.md` §3.1).
+- **Decide if it can be a head.** If it names a *category of thing* (metal, stone, dust,
+  hollow, folk), set `"head": true` — it earns the ✦ and can be what a rune word is
+  *about*. If it names a *quality* (flaming, dark, chaotic, sweet), leave it off; it can
+  only qualify. Where in the word it sits is not your call — the head is the last ✦ glyph
+  in the sequence, wherever the author of that word puts it (`RUNES.md` §3.1).
+- **Coin it as half an axis.** A rune is admissible if it *completes an axis*
+  (`RUNES.md` §2), so coin the pair and name each pole's `opposite`. Learning one pole
+  half-teaches the other, which is most of what makes the language cheap to learn.
 - **Rarity drives discovery.** `rare` glyphs appear in dangerous structures and boss
-  loot, and gate later-tier content.
+  loot, and gate later-tier content. It also sets the sighting default: 1, 2 or 3.
 
 ---
 
@@ -436,18 +474,27 @@ Run the game with the datapack loaded; failures are reported at load, not at use
 
 **Glyphs**
 - Missing `lemma`, `gloss`, or `category`. (`texture` is optional — art generates.)
-- `determinative.position` not `prefix` or `suffix`.
-- A `determinative` block on a glyph whose `category` is `element` — quality glyphs
-  can never be heads (`RUNES.md` §2).
-- A `lemma` that isn't A–Z, which the monogram generator can't render.
+- An unknown `category` or `rarity`.
+- A `lemma` that normalises to fewer than two letters, or to anything outside the
+  classical 21 — the renderer has no figure to draw for it.
+- A `mark` override that isn't exactly two letters.
+- `sightings_to_learn` below 1.
+- **Two glyphs that would render identically** — same first letter, same third letter,
+  same length tally. A language bug, not an art bug; the fix is a synonym or an explicit
+  `mark` (`GLYPH_SPEC.md` §8).
+- **Never** a malformed `pigment`. It falls through to the lemma hash silently — a colour
+  typo must not be able to break someone's pack (`GLYPH_SPEC.md` §6.3).
+
+A glyph naming an `opposite` that nobody loaded is a **warning**, not a rejection: the
+axis is left with one pole, which costs the player a free half-lesson but breaks nothing.
 
 **Rune words**
-- Fewer than 2 or more than 3 glyphs.
+- Fewer than 2 glyphs. There is no upper bound (D8) — the 20-slot codex is the only
+  limit, and it applies to the whole inscription rather than to any one word.
 - A glyph id that doesn't resolve.
-- **No determinative-capable glyph** in the sequence — the word has no head
-  (`RUNES.md` §3.1).
-- A `means.type` that contradicts the head's determinative class (a word headed by
-  `VNDA` must name a `fluid`, one headed by `LVNA` a `condition`, and so on).
+- **No ✦ head-capable glyph** in the sequence — the word has no head (`RUNES.md` §3.1).
+- A `means.type` that contradicts what the head names (a word headed by `VNDA` must name
+  a `fluid`, one headed by `LVNA` a `condition`, and so on).
 - **Duplicate ordered sequence** with any existing rune word (the common one).
 
 **Rite types**
@@ -482,10 +529,10 @@ an undiscoverable glyph silently locks every rune word that uses it.
 
 ## 10. Checklist for adding new content
 
-1. **Coin the glyphs** you need — broad, and marked as determinatives if they name a
-   category. Check you actually need them; reuse beats invention. **Skip `texture`**
-   unless you're deliberately hand-drawing one — art generates from `lemma` +
-   `determinative.class` (§2.1).
+1. **Coin the glyphs** you need — broad, marked `"head": true` if they name a category,
+   and coined as a pair completing an axis. Check you actually need them; reuse beats
+   invention. **Skip `texture`** unless you're deliberately hand-drawing one — art
+   generates from `lemma` alone (§2.1).
 2. **Add them to a discovery source** (§9) so they can be found.
 3. **Write the rune words**, reusing determinatives across a recipe's ingredients so
    decoding one teaches the others.

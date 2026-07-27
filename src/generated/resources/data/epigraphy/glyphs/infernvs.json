@@ -1,0 +1,10 @@
+{
+  "axis": "heavens",
+  "category": "world",
+  "description": "The fire below, which was burning before anyone came to see it.",
+  "gloss": "Hells",
+  "head": true,
+  "lemma": "INFERNVS",
+  "opposite": "epigraphy:caelvm",
+  "rarity": "uncommon"
+}

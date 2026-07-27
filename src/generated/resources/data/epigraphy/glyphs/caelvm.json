@@ -1,0 +1,10 @@
+{
+  "axis": "heavens",
+  "category": "world",
+  "description": "The above, and everything written across it.",
+  "gloss": "Heavens",
+  "head": true,
+  "lemma": "CAELVM",
+  "opposite": "epigraphy:infernvs",
+  "rarity": "uncommon"
+}

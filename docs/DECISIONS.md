@@ -32,6 +32,37 @@ a **reference layer** is explicitly permitted purely for *looking things up*:
 The rule of thumb: **no GUI ever stands between you and *doing* something; a GUI may
 exist only to *remember* what you've already done.**
 
+### D21 ✅ One item per shipped glyph, and one NBT tablet for everyone else's
+A glyph needs an item — it is what a mob drops, what a lectern consumes, and what a
+player carries home from a ruin (`DISCOVERY.md` §1.3). But **items are registered at mod
+construction and glyphs are loaded from datapacks afterwards**, so an item cannot be
+minted for a glyph that does not exist yet. That is a hard ordering constraint in Forge,
+not a design preference, and it is what shapes the answer:
+
+- **`epigraphy:glyph_<name>` — 52 bound tablets**, one per shipped rune. Concrete registry
+  ids mean worldgen, loot tables, tags and recipes can name a tablet directly instead of
+  reaching into NBT, and each gets its own model and lang key.
+- **`epigraphy:glyph` — one unbound tablet** that reads its glyph from NBT. This is how a
+  glyph added by a datapack (D13) still gets an item, and it keeps the modding contract
+  honest: a third-party glyph is a second-class citizen in the item registry and nowhere
+  else.
+
+Both are the same `GlyphItem` class, and `glyphId(stack)` answers from the binding or the
+NBT without the rest of the mod caring which. A tablet carrying no glyph at all is not an
+error — bare stone is the **uninscribed tablet**, one of the three jobs the blank tile
+already does (`GLYPH_SPEC.md` §1.1).
+
+**The shipped lexicon therefore lives in Java** (`rune/Lexicon.java`), and
+`data/epigraphy/glyphs/*.json` is **generated from it** at `runData` rather than written
+by hand. One place a glyph is written down; 52 items and 52 files come out of it. This
+does not weaken D13 — a datapack may still override any shipped glyph, add its own, or
+replace the lot.
+
+**This does not make glyphs reagents.** D5 stands: you never lay a tablet on a pedestal.
+A tablet is *research made portable* — you study it, and the sighting goes into your
+knowledge capability. The item exists so research can be found, dropped and carried, not
+so it can be consumed by an altar.
+
 ### D0 ✅ Terminology (canonical — use everywhere)
 - **Glyph** — a single **symbol**, mapping to one Latin word (`IGNIS`, `CHAOS`).
   The atomic unit; **discovered** in the world.

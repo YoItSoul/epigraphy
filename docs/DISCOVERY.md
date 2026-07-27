@@ -197,7 +197,8 @@ what *combinations* name. That's the rune word layer:
 | `epigraphy:codex` | Item | The research instrument: submit rune words, seek mode, reference (§3) |
 | `epigraphy:charcoal_rubbing` | Item | Consumable used *on* a carving to record it (yields an inscribed rubbing) |
 | `epigraphy:lectern_of_study` | Block | Study tablets into sightings |
-| `epigraphy:inscribed_tablet` | Item | Carries a glyph id; boss/mob drop |
+| `epigraphy:glyph_<name>` | Item ×52 | **Done.** The inscribed tablet for one shipped glyph — boss/mob drop, worldgen reward (D21) |
+| `epigraphy:glyph` | Item | **Done.** The same tablet with its glyph in NBT — how a datapack glyph gets one; blank when uninscribed |
 | `epigraphy:rosetta_tablet` | Item | Instantly translates one sighted glyph |
 
 ---

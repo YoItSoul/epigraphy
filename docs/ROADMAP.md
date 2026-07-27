@@ -92,11 +92,24 @@ com.epigraphy
 
 Each phase ends at something runnable/testable, so the mod is never a big-bang.
 
-**Phase 0 — It compiles & loads.**
-Gradle + ForgeGradle, `mods.toml`, `Epigraphy.java`, empty DeferredRegisters, a
+**Phase 0 — It compiles & loads. ✅ done.**
+Gradle + ForgeGradle, `mods.toml`, `Epigraphy.java`, DeferredRegisters, a
 creative tab. Goal: `runClient` opens a world with the mod present.
 
-**Phase 1 — Runes as data, and the glyph renderer.**
+**Phase 1 — Runes as data, and the glyph renderer.** *(in progress)*
+
+Landed: the shipped lexicon in `rune/Lexicon.java` — 26 axes, 52 runes, each pole naming
+its opposite — with `data/epigraphy/glyphs/*.json` **generated from it** at `runData`
+(D21), so the items and the datapack cannot drift. `Glyph` + `GlyphManager` load and
+validate glyphs from any namespace, rejecting two that would render alike by comparing
+`(letter 1, letter 3, length tally)` before the renderer exists. One tablet item per
+shipped glyph, plus an NBT-backed one for datapack glyphs. `/epigraphy runes` lists what
+loaded and what the loader made of each glyph.
+
+Still to come in this phase: `RuneWord` + `Inscription` and their loaders, the
+ordered-sequence index, the clause-order validator, and the glyph renderer below.
+
+
 `Glyph` + `RuneWord` + `Inscription` objects and their datapack loaders; ship the
 starter lexicon (`RUNES.md` §2) and the v1 rune words (`RUNES.md` §4); build the
 **ordered-sequence** index for submit validation and the clause-order validator.
