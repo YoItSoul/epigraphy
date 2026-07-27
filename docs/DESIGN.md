@@ -20,9 +20,10 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
 
 2. **A real language, with a real grammar.** Glyphs are not abstract skill-tree
    nodes. Each is a symbol mapping to a Latin word (`SAXVM`, `TENEBRAE`,
-   `IGNIS`, `OSSA`, `CHAOS`, `CAELVM`, `INFERNVS`, `FERRVM`, …), and **2–3
-   glyphs *in order* form a rune word naming one concrete thing**: `IGNIS ·
-   OSSA` → Blaze Rod. Those words then fill a fixed **inscription formula** —
+   `IGNIS`, `OSSA`, `CHAOS`, `CAELVM`, `INFERNVS`, `FERRVM`, …), and **glyphs
+   *in order* form a rune word naming one concrete thing**: `IGNIS ·
+   OSSA` → Blaze Rod. Most words run two or three glyphs; long names are legal
+   and are paid for out of the codex's 20 slots (D8). Those words then fill a fixed **inscription formula** —
    `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` — so a ritual is one readable
    sentence. Like real epigraphy, the pattern is the point: once you know the
    formula, you can approach an inscription you've never seen and know what each
@@ -72,8 +73,8 @@ Inspired by **Astral Sorcery** (skyward discovery, altars, constellations) and
    │  │ toward unlearned                                 │ now be     │
    │  │                                                  ▼ combined   │
    │  │                                          ┌──────────────────┐ │
-   │  │                                          │ SUBMIT a 2-3     │ │
-   │  │                                          │ glyph RUNE WORD  │ │
+   │  │                                          │ SUBMIT a         │ │
+   │  │                                          │ RUNE WORD        │ │
    │  │                                          │ in the codex     │ │
    │  │                                          └──────┬───────────┘ │
    │  │                                                 │ decoded:    │

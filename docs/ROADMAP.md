@@ -33,7 +33,7 @@ com.epigraphy
 │   └─ EpiGLMs     (global loot modifiers: tablet drops)
 ├─ rune/                          // the language layer
 │   ├─ Glyph · GlyphManager       //   symbols; datapack loader for data/*/glyphs/
-│   ├─ RuneWord · RuneWordManager //   ordered 2-3 glyph sequences; data/*/rune_words/
+│   ├─ RuneWord · RuneWordManager //   ordered glyph sequences; data/*/rune_words/
 │   │                             //   + lookup by ORDERED sequence (submit validation)
 │   └─ Inscription · Clause       //   the ritual formula: VESSEL/OFFERING/HOUR/
 │                                 //   SUBJECT/ISSUE; parses & validates clause order
@@ -150,7 +150,7 @@ already fixed in Phase 3.
 ## 5. Testing strategy
 
 - **Datapack validation** — a load-time sanity pass: every rune word's glyphs exist
-  and number 2–3; **no two rune words share the same ordered glyph sequence**
+  and number two or more; **no two rune words share the same ordered glyph sequence**
   (submit must be deterministic — this bites early, see `RITUALS.md` §5.3); every
   recipe's `inscription` fills all five clauses with existing rune words, and each
   clause's `means.type` suits its slot (HOUR must be a `condition`, SUBJECT/ISSUE an
@@ -170,7 +170,7 @@ already fixed in Phase 3.
 
 Resolved since the first draft:
 
-1. ✅ **Terminology (D0).** Glyph = symbol; rune word = ordered 2–3 glyph sequence;
+1. ✅ **Terminology (D0).** Glyph = symbol; rune word = ordered glyph sequence;
    Runes = the whole system. Glyphs are discovered, rune words are guessed.
 2. ✅ **Order is meaningful; the Runes have a grammar (D10).** `QUALIFIER · HEAD`
    within a word; `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE` across an inscription.

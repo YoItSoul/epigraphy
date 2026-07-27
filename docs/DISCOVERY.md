@@ -101,7 +101,7 @@ slots** and a submit action, nothing else. No inventory, no tabs, no crafting gr
 ```
 
 ### 3.1 Submit — guess a rune word
-The player cycles slots to spell out a **rune word** of 2–3 **discovered** glyphs
+The player cycles slots to spell out a **rune word** from **discovered** glyphs
 and submits (`RUNES.md` §3.2). The codex answers whether that combination names
 something real:
 
@@ -171,7 +171,7 @@ On learning:
 Knowing glyphs is necessary but not sufficient — the player also needs to decode
 what *combinations* name. That's the rune word layer:
 
-- A ritual's hint is a set of **2–3 glyph rune words** (`RUNES.md` §3), each naming
+- A ritual's hint is a set of **rune words** (`RUNES.md` §3), each naming
   one component: its altar, a catalyst, a world condition, its output.
 - Each rune word renders per what you know — unreadable symbols, then literal glosses
   ("Flaming · Rod"), then its true referent ("Blaze Rod") once decoded in the codex.

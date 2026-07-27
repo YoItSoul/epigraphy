@@ -35,7 +35,7 @@ exist only to *remember* what you've already done.**
 ### D0 ✅ Terminology (canonical — use everywhere)
 - **Glyph** — a single **symbol**, mapping to one Latin word (`IGNIS`, `CHAOS`).
   The atomic unit; **discovered** in the world.
-- **Rune word** — an **ordered sequence of 2–3 glyphs** naming exactly one concrete
+- **Rune word** — an **ordered sequence of glyphs** (two or more) naming exactly one concrete
   thing (`IGNIS · OSSA` → Blaze Rod); **guessed** by the player and validated.
 - **Inscription** — a full ritual written in the formula (D10/D11): several rune
   words in fixed clause order.
@@ -70,23 +70,25 @@ single flat grid of **20 empty glyph slots**, and nothing else.
   separated by empty slots — and hits **submit** to test it (D7/D11).
 - No inventory, no tabs, no item slots, no crafting grid, no scrollable tree — just
   the 20 slots and a submit action. It reads as an instrument, not a UI.
-- 20 slots is sized to hold a **whole inscription** at once (five clauses of up to
-  3 glyphs, plus separators), so the player works the full puzzle in one view rather
-  than testing one word at a time. Segmentation is gap-delimited, left to right (Q8).
+- 20 slots is sized to hold a **whole inscription** at once — five clauses plus their
+  four separators, leaving 16 glyphs of content to spend across the five. The player
+  works the full puzzle in one view rather than testing one word at a time.
+  Segmentation is gap-delimited, left to right (Q8). Since D8 lifted the per-word cap,
+  **this 20 is the only length limit in the system.**
 
 ### D2 ✅ Glyph meaning is learned passively; rune word meaning is discovered actively
 Two layers, and they resolve the "active vs. passive learning" question together:
 - **Glyphs (vocabulary)** are learned **passively**: a glyph becomes readable once
   you accumulate enough *independent* sightings (`sightings_to_translate`), or via
   a Rosetta tablet. No minigame to learn a word.
-- **Rune words (meaning)** are discovered **actively**: you hypothesise a 2–3 glyph
+- **Rune words (meaning)** are discovered **actively**: you hypothesise a glyph
   combination in the hand codex and **submit** it to test whether it names a real
   thing (D7/D8). This is the mod's decode loop.
 
 ### D7 ✅ The hand codex: submit-to-test + seek mode
 A held **codex** item is the player's research instrument (interface spec: **D9**).
 Two functions:
-- **Submit / validate.** The player composes a **rune word** — 2 or 3 glyphs they
+- **Submit / validate.** The player composes a **rune word** — two or more glyphs they
   have **discovered** — and submits it. The codex answers whether that combination
   is a real, meaningful rune word, and if so what it names (D8). This is how players
   *test hypotheses* as they discover things in the world: wrong guesses cost nothing
@@ -106,8 +108,8 @@ real epigraphic formulae are:
 **Within a rune word** — the glyph sequence is part of the word's identity.
 `IGNIS · OSSA` names a blaze rod; `OSSA · IGNIS` is not the same expression
 and is not valid. Convention: **`QUALIFIER · HEAD`** — the last glyph names the kind
-of thing, earlier glyphs narrow it. A third glyph inserts another qualifier *before*
-the head, never after.
+of thing, earlier glyphs narrow it. Further glyphs insert further qualifiers *before*
+the head, never after — which is why free-length words (D8) need no extra grammar.
 
 **Across an inscription** — a ritual is a fixed clause sequence, read left to right:
 
@@ -372,11 +374,31 @@ kind* and a genuinely new *trigger mechanic* — and both are registry entries w
 *use* remains pure data. Namespaced throughout, so third-party content composes with
 `epigraphy:` content freely. Full guide: `AUTHORING.md`.
 
-### D8 ✅ Glyphs hint in rune words of 2–3 words (compositional language)
+### D8 ✅ Rune words are compositional and of free length (supersedes the 2–3 cap)
 Glyphs are never used as a single long sentence. The language is **compositional**:
-a **rune word** of **2 or 3 glyphs names exactly one concrete thing** — an item, a
-block, a world condition, or an output. A ritual is described as a small set of
-such rune words, each hinting at one component.
+a **rune word names exactly one concrete thing** — an item, a block, a world
+condition, or an output — and a ritual is described as a small set of such words,
+each hinting at one component.
+
+**A rune word may be any number of glyphs.** The earlier 2–3 cap is withdrawn. It
+was never load-bearing: the head rule (D10) defines the head by *position* — the last
+determinative-capable glyph — so it reads a word of two glyphs and a word of six
+identically, with no exceptions to add.
+
+What replaces the cap is a **budget, not a grammar rule**: the codex holds 20 glyphs
+(D9), and a full inscription is five clauses plus their separators. Spend six glyphs
+naming one thing and the other four clauses must fit in ten. Brevity is still under
+pressure — economically rather than grammatically, which is the better kind.
+
+Two consequences worth stating plainly:
+
+- **Things that needed a phrase are now single words.** Weathered Waxed Cut Copper
+  Stairs was written as two words under the cap; it is one five-glyph word now
+  (`RUNES.md` §4.5).
+- **Guessing got harder**, because the player must infer a word's *length* as well as
+  its glyphs. Gap-delimited segmentation (Q8) is what keeps that fair: an inscription
+  found in the world shows its word boundaries even when its glyphs are unreadable, so
+  length is something a player reads off the wall rather than brute-forces.
 
 ```
 TENEBRAE · SAXVM      → Blackstone Altar   (Altar + Darkness)
@@ -444,8 +466,9 @@ are read left to right as `VESSEL / OFFERING / HOUR / SUBJECT / ISSUE`.
 └──── VESSEL ────┘   └──── OFFERING ──┘   └──── HOUR ───┘   └──── SUBJECT ─────┘
 ```
 
-20 slots is sized for exactly this: five clauses of up to 3 glyphs plus separators.
-Each word is validated independently, so a player can inscribe a whole ritual and
+20 slots is sized for exactly this: five clauses plus four separators, 16 glyphs of
+content. Words are free-length (D8), so a long name is paid for out of the same
+budget. Each word is validated independently, so a player can inscribe a whole ritual and
 see which clauses land — and the inscription as a whole is only a valid ritual if
 the clause order is right.
 

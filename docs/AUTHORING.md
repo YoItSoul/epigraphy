@@ -15,7 +15,7 @@ worldgen distribution are all JSON; only genuinely new **condition kinds** and n
 | Layer | Directory | What it declares | Needs code? |
 |---|---|---|---|
 | **Glyph** | `data/<ns>/glyphs/` | one symbol + its Latin word | No |
-| **Rune word** | `data/<ns>/rune_words/` | an ordered 2–3 glyph sequence naming one thing | No |
+| **Rune word** | `data/<ns>/rune_words/` | an ordered sequence of two or more glyphs naming one thing | No |
 | **Rite type** | `data/<ns>/rite_types/` | a grammar template + how a rite is triggered | No* |
 | **Recipe** | `data/<ns>/recipes/` | one concrete rite: inscription + exact amounts | No |
 
@@ -143,7 +143,9 @@ the shipped grouping. Two glyphs sharing a hue is fine.
 
 ## 3. Coining a rune word
 
-A rune word is an **ordered** 2–3 glyph sequence naming exactly one concrete thing.
+A rune word is an **ordered** sequence of two or more glyphs naming exactly one concrete
+thing. There is no upper bound on length (D8) — the 20-slot codex is the only limit, and
+it applies to the whole inscription rather than to any one word.
 
 ```jsonc
 // data/examplemod/rune_words/bone_meal.json
@@ -161,7 +163,9 @@ A rune word is an **ordered** 2–3 glyph sequence naming exactly one concrete t
 
 ### The three hard rules
 
-1. **2 or 3 glyphs.** Never 1, never 4.
+1. **Two glyphs at minimum.** Never 1. There is no maximum, but every glyph past the
+   third is spent out of the inscription's 20-slot budget (D8/D9), so long names crowd
+   out the other four clauses. Treat three as the comfortable size, not the rule.
 2. **Contains at least one determinative.** The **head** is the *last*
    determinative-capable glyph in the word; everything before it qualifies
    (`RUNES.md` §3.1). A word made only of element/quality glyphs has no head and
@@ -179,13 +183,13 @@ different stones all wanted `TENEBRAE · SAXVM`, and had to be distinguished:
 |---|---|---|
 | `TENEBRAE · SAXVM` | Deepslate | "dark stone" — got there first |
 | `INFERNVS · SAXVM` | Netherrack | "hell's stone" |
-| `NOX · SAXVM` | Echo Shard | "night stone" |
+| `LVNA · SAXVM` | Echo Shard | "moon stone" |
 | `INFERNVS · GEMMA` | Nether Quartz | moved off `· SAXVM` once Netherrack needed it |
 
 **Practical guidance:** budget roughly **one new glyph per handful of new rune
 words**, and choose recipe ingredients partly for whether they're *nameable*. If an
-item has no natural 2–3 glyph name, that's a signal to pick a different ingredient
-or coin a new qualifier glyph.
+item needs more than three or four glyphs to name, that is a signal to pick a different
+ingredient or coin a new qualifier glyph — not a signal to write a longer word.
 
 ### Teaching through shared determinatives
 

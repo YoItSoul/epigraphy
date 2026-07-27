@@ -12,7 +12,7 @@ don't unlock progression by grinding — you unlock it by *learning to read*.
 | Term | Meaning |
 |------|---------|
 | **Glyph** | A single symbol, mapping to one Latin word (`IGNIS`, `CHAOS`). **Discovered** in the world. |
-| **Rune word** | A set of 2–3 glyphs naming one concrete thing — `IGNIS · OSSA` → Blaze Rod. **Guessed** by the player. |
+| **Rune word** | An ordered run of glyphs naming one concrete thing — `IGNIS · OSSA` → Blaze Rod. **Guessed** by the player. |
 | **Runes** | The whole system: every glyph and rune word together. |
 
 *Glyphs are discovered; rune words are guessed.*
@@ -28,7 +28,7 @@ The design is being developed doc-first, before code. Start here:
 - **[docs/DESIGN.md](docs/DESIGN.md)** — vision, pillars, the core loop, and a
   fully worked example (the Chaos Ingot).
 - **[docs/RUNES.md](docs/RUNES.md)** — the language: terminology, glyph lexicon,
-  how 2–3 glyph rune words are formed, decoded, and read.
+  how rune words are formed, decoded, and read.
 - **[docs/DISCOVERY.md](docs/DISCOVERY.md)** — how glyphs hide in worldgen and the
   sky, tablets, and the hand codex (submit + seek).
 - **[docs/RITUALS.md](docs/RITUALS.md)** — rite types (altar, steeping, touch,
@@ -48,7 +48,7 @@ The design is being developed doc-first, before code. Start here:
 
 Find a symbol carved into a ruin or written in the stars and *record* it. See it
 enough times and you *learn* the word it stands for. Then the real puzzle starts:
-a ritual is described in 2–3 glyph **rune words**, and *"Flaming · Rod"* is a clue
+a ritual is described in **rune words**, and *"Flaming · Rod"* is a clue
 you have to solve — you cycle those glyphs into your codex, hit submit, and find
 out it means **Blaze Rod**. Build a Blackstone Altar, ring it with blaze rods, and
 quench netherite in liquid starlight beneath a thunderstorm. Guess wrong and go in

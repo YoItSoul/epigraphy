@@ -14,7 +14,7 @@ read this document, and neither does a player.
 | Term | Means |
 |---|---|
 | **Glyph** | **one symbol**, one tile. `IGNIS` (*fire*) is a glyph. Glyphs are **discovered** in the world. |
-| **Rune word** | an **ordered 2–3 glyph sequence** naming one thing. `IGNIS · GERMEN` (*fire-seed*) is a rune word. Rune words are **guessed** in the codex. |
+| **Rune word** | an **ordered sequence of two or more glyphs** naming one thing. `IGNIS · GERMEN` (*fire-seed*) is a rune word. Rune words are **guessed** in the codex. |
 | **Inscription** | a full ritual, written as rune words in formula order (§3.2). |
 | **The Runes** | the whole system — glyphs, words and grammar together. |
 
@@ -245,20 +245,33 @@ hive into the natural nest, which is exactly the distinction Minecraft draws.
 | Torch | `IGNIS · LIGNVM` | Fire-Wood |
 | Chest | `OPVS · LIGNVM · VACVVM` | Wrought Wood-Hollow |
 
-### 4.5 The one that is not a word
+### 4.5 The longest word in the language
 
 **Weathered Waxed Cut Copper Stairs** carries five facts — sealed, aged, copper, cut,
-stepped. A rune word holds three. So it **is not a rune word**; it is a phrase of two:
+stepped. It is one rune word, five glyphs long:
 
 ```
-TEGMEN  ·  SENEX  ·  AES            FRACTVM  ·  GRADVS
- sealed     aged     copper            cut        step
+TEGMEN  ·  SENEX  ·  AES  ·  FRACTVM  ·  GRADVS
+ sealed     aged    copper    cut        step
+                                          └── head: the last ✦
 ```
 
-**This is correct, not a shortfall.** It is not a word in English either — it is a noun
-with four stacked modifiers, and the runes reproduce that structure exactly. The 2–3 glyph
-limit is what forces the language to distinguish **naming** from **describing**, and a
-language that could name that in one word would be one where nothing was a word.
+The head rule needs no extension to read it. `AES` (*copper*) is ✦ and could have headed
+the word, but `GRADVS` (*step*) comes after it, so the thing is a **stair** — of worked,
+waxed, weathered copper. Move `AES` to the end and the same five glyphs name a *metal*
+instead. **Position does all the work, at any length.**
+
+What the length costs is real but is a *budget*, not a grammar problem: the codex holds
+20 glyphs for a whole inscription (D8/D9), so a five-glyph name leaves 11 for the other
+four clauses. Long names are affordable, but not free — which is the pressure that keeps
+most words at two or three glyphs without a rule forbidding more.
+
+> An earlier draft capped rune words at three glyphs and argued that this was a virtue —
+> that a language which could name that in one word would be one where nothing was a
+> word. **That argument was wrong**, and it was wrong in the way design arguments usually
+> are: it defended a limit by inventing a principle for it. German, Finnish and Sanskrit
+> all name exactly this kind of thing in one compound. The head rule already handled free
+> length; the cap was never carrying it.
 
 The whole oxidation ladder falls out of two axes, with no vocabulary added:
 
@@ -272,8 +285,8 @@ The whole oxidation ladder falls out of two axes, with no vocabulary added:
 The claim being tested is a strong one: **52 runes describe anything in Minecraft.** So the
 lexicon was run against thirty things picked to spread across mobs, blocks, materials,
 tools, structures and biomes — including several chosen specifically because they looked
-hard. **Nothing was minted.** Twenty-six came out clean; four did not, and the four are
-worth more than the twenty-six.
+hard. **Nothing was minted.** Twenty-seven came out clean; three did not, and the three
+are worth more than the twenty-seven.
 
 **Creatures**
 
@@ -340,7 +353,8 @@ independent, and every combination in the game is already spelled.
 
 ### 4.7 What the test broke
 
-Four of the thirty failed, and each failure named a defect rather than a missing word.
+Three of the thirty failed outright and one collided; each named a defect rather than a
+missing word.
 
 **1. `VACVVM` could not head a word.** The Bee Nest, the Beehive and the Chest were already
 written with `VACVVM` as head (§4.3, §4.4) while the lexicon had it unmarked — those three
@@ -363,14 +377,22 @@ minted a rune; both corrected a mis-marked one.
 ingredient. This is the one gap a fix would have to *mint* for, so it is left open rather
 than papered over — see Q11.
 
-**4. `VNDA · SAXVM` is overloaded.** Prismarine, Pointed Dripstone and Clay all read
-*water-stone*. The rune words are legal and distinct from each other only by context,
-which the codex cannot accept (§5). Two of the three need a second qualifier before they
-ship — `GRADVS` (*step*, for dripstone's spike) and `NATVM` (*found so*) are the
-candidates. **A collision inside the language is a content bug, and it is caught by the
-same validator that catches identical glyphs.**
+**4. `VNDA · SAXVM` was claimed by three blocks.** Prismarine, Pointed Dripstone and Clay
+all read *water-stone*. One ordered sequence must resolve to exactly one thing (§5), so
+two of the three have to move — and since rune words are free-length (D8), moving them
+costs a qualifier rather than a rune:
 
-**The score is 26 clean, 2 bugs found and fixed, 2 open.** A test where everything passes
+| Thing | Rune word | Reads |
+|---|---|---|
+| Prismarine | `VNDA · SAXVM` | Water-Stone — got there first |
+| Pointed Dripstone | `VNDA · GRADVS · SAXVM` | Water Step-Stone |
+| Clay | `VNDA · TERRA · SAXVM` | Water Earth-Stone |
+
+**A collision inside the language is a content bug**, caught at load by the same validator
+that catches two glyphs rendering alike. It is worth counting as a failure of the test
+anyway: the lexicon did not *prevent* it, the validator did.
+
+**The score is 27 clean, 2 bugs found and fixed, 1 open.** A test where everything passes
 would have meant the test was too easy.
 
 ---

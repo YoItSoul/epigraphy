@@ -50,7 +50,7 @@ The two layers are the heart of the model and must stay distinct:
 | Layer | How it advances | Stored as |
 |---|---|---|
 | **Glyphs** (symbols) | **Discovered** — sight them in the world; learned automatically at threshold (D2) | `glyphs` map |
-| **Rune words** (ordered 2–3 glyph sequences) | **Guessed** — inscribed in the codex's 20 slots, in order, and submitted (D9/D10) | `decoded` set |
+| **Rune words** (ordered glyph sequences) | **Guessed** — inscribed in the codex's 20 slots, in order, and submitted (D9/D10) | `decoded` set |
 
 Derived tiers (not stored redundantly):
 
