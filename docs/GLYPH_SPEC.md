@@ -13,6 +13,10 @@ own item resolution.
 This is the implementation contract for the renderer (`RUNES.md` §5, D14/D15/D17/D18).
 Given the same `lemma` it must always produce byte-identical art.
 
+**A working implementation and a specimen of every rune live in
+[`specimen/`](specimen/)** — open `specimen/index.html` in a browser, and run
+`node specimen/verify.js` for the audit that this document's §8 describes.
+
 ### Why 16 × 16 forced two letters
 
 32 × 32 held three six-row letter zones comfortably. 16 × 16 has **a quarter the

@@ -1,0 +1,903 @@
+<title>Epigraphy — Glyph System</title>
+<style>
+  :root{
+    --stone:#E4DED1; --stone-2:#D8D0BF; --ink:#20242A; --ink-soft:#4E545E;
+    --ink-faint:#878D97; --rule:#C3BAA6; --patina:#2F7364; --amber:#9A6F22;
+    --panel:#EDE8DC; --shadow:rgba(32,36,42,.09);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --stone:#15181C; --stone-2:#1B1F24; --ink:#E6E2D8; --ink-soft:#A7ADB6;
+      --ink-faint:#6C737D; --rule:#333941; --patina:#5FB3A0; --amber:#D9A94F;
+      --panel:#1B1F25; --shadow:rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --stone:#15181C; --stone-2:#1B1F24; --ink:#E6E2D8; --ink-soft:#A7ADB6;
+    --ink-faint:#6C737D; --rule:#333941; --patina:#5FB3A0; --amber:#D9A94F;
+    --panel:#1B1F25; --shadow:rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --stone:#E4DED1; --stone-2:#D8D0BF; --ink:#20242A; --ink-soft:#4E545E;
+    --ink-faint:#878D97; --rule:#C3BAA6; --patina:#2F7364; --amber:#9A6F22;
+    --panel:#EDE8DC; --shadow:rgba(32,36,42,.09);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--stone);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px;line-height:1.6;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:56px 26px 90px}
+  .lede{max-width:64ch}
+
+  h1,h2,h3{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:400}
+  h1{font-size:clamp(2rem,4.4vw,3rem);line-height:1.1;margin:0 0 .5rem;
+     text-transform:uppercase;letter-spacing:.1em;text-wrap:balance}
+  .sub{color:var(--ink-soft);font-size:1.05rem;margin:0 0 10px}
+  h2{font-size:1rem;text-transform:uppercase;letter-spacing:.22em;color:var(--ink-soft);
+     margin:0 0 20px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+  h3{font-size:1.22rem;margin:0 0 4px}
+  h4{font-family:Georgia,serif;font-weight:400;font-size:1.12rem;margin:0;letter-spacing:.02em}
+  p{margin:0 0 14px}
+  section{margin-top:60px}
+  hr{border:0;border-top:1px solid var(--rule);margin:0}
+
+  .eyebrow{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.7rem;
+           letter-spacing:.2em;text-transform:uppercase;color:var(--patina);margin:0 0 14px}
+  code,.mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.85em}
+  code{background:var(--panel);padding:.12em .4em;border:1px solid var(--rule)}
+
+  .note{border-left:3px solid var(--amber);background:var(--panel);padding:18px 22px;margin:26px 0}
+  .note strong{color:var(--amber)}
+
+  canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+
+  .grid{display:grid;gap:22px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--rule);padding:22px 22px 20px;
+        display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 0 var(--shadow)}
+  .card.newg{border-left:3px solid var(--amber)}
+
+  .tiles{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+  .tile{display:flex;flex-direction:column;align-items:center;gap:6px;width:76px}
+  .cap{font-family:ui-monospace,Menlo,monospace;font-size:.56rem;letter-spacing:.07em;
+       color:var(--ink-faint);text-align:center;line-height:1.35}
+  .cap b{display:block;color:var(--ink-soft);font-weight:600;letter-spacing:.1em}
+  .tile.head .cap b{color:var(--patina)}
+  .ty{font-family:ui-monospace,Menlo,monospace;font-size:.56rem;letter-spacing:.15em;
+      text-transform:uppercase;color:var(--patina);border:1px solid currentColor;padding:.24em .5em}
+  .wh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .gloss{font-size:.88rem;color:var(--ink-soft);margin:0}
+  .gloss em{color:var(--ink);font-style:normal;font-weight:600}
+
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--rule);vertical-align:middle}
+  th{font-family:ui-monospace,Menlo,monospace;font-size:.64rem;letter-spacing:.15em;
+     text-transform:uppercase;color:var(--ink-faint);font-weight:400}
+  td.n{font-variant-numeric:tabular-nums}
+  .scroll{overflow-x:auto}
+
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:16px}
+  .entry{background:var(--panel);border:1px solid var(--rule);padding:12px 12px 10px;
+         display:flex;flex-direction:column;align-items:center;gap:4px}
+  .ename{font-family:Georgia,serif;font-size:.95rem;text-align:center;margin-top:4px}
+  .elit{font-family:ui-monospace,Menlo,monospace;font-size:.58rem;letter-spacing:.08em;
+        color:var(--ink-faint);text-align:center}
+  .strip{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+  ul{margin:0 0 14px;padding-left:1.15rem}li{margin-bottom:7px}
+  .ask{border-top:1px solid var(--rule);margin-top:60px;padding-top:26px}
+  .ask ol{padding-left:1.15rem;margin:0}.ask li{margin-bottom:12px}
+  /* the axis lexicon: pole ↔ pole, with English under each rune */
+  .axistable{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed}
+  .axistable tr{border:0}
+  .axistable td{border:0;padding:10px 4px;vertical-align:top}
+  .axistable .ax{width:calc(50% - 26px);text-align:center}
+  .axistable .ax .tile{margin:0 auto}
+  .axistable .ax .cap{display:block;margin-top:5px;text-align:center;max-width:150px;
+    margin-left:auto;margin-right:auto}
+  .axistable .axmid{width:52px;text-align:center;vertical-align:middle;
+    color:var(--dim);font-size:1.05rem;opacity:.55}
+  @media (max-width:560px){
+    .axistable,.axistable tbody,.axistable tr,.axistable td{display:block;width:auto}
+    .axistable .axmid{padding:0;transform:rotate(90deg)}
+    .axistable tr{margin-bottom:14px}
+  }
+</style>
+
+<div class="wrap">
+
+<p class="eyebrow">Epigraphy · glyph system · 16 × 16, continuous</p>
+<h1>The glyph<br>system</h1>
+<p class="sub">Every symbol below is generated live from its Latin lemma by the rule on this page.</p>
+<p class="lede">Nothing here is hand-drawn. Each glyph is <b>16 × 16 pixels</b> — Minecraft's own item
+resolution — carved into a stone tile and scaled up. What you see is exactly what ships.</p>
+<p class="lede">A glyph is <b>two stacked letter-forms</b> standing on a foot that tallies the word's letters, chiselled
+into an <b>octagonal stone tile</b> and inlaid with a pigment hashed from the word's own name.</p>
+<p class="lede">Each letter is <b>its own figure</b> — a gable, a thorn, a grate, a diamond, a coffer, a saltire —
+built from five carved parts: the <b>stave</b>, the <b>bar</b>, the <b>diagonal</b>, the <b>chevron</b> and the
+<b>stone</b>. What varies is which parts a letter uses and how they join.</p>
+
+<!-- ── anatomy ───────────────────────────────────────────────── -->
+<section>
+  <h2>Anatomy</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Rules that had to go</h3>
+      <p class="gloss"><b>The shared skeleton was the real problem.</b> While every letter was one upright with a mark
+      hung off it, roughly twelve of seventeen pixels were <em>identical in every letter</em> — only four carried
+      identity, and 28 of 210 letter pairs differed by a single arm. The fix was to invert that ratio: each letter is
+      now its own figure, not one figure with a different flourish.</p>
+      <p class="gloss"><b>Mirror symmetry had to go</b> so a letter could lean, corner, or carry its weight on one
+      side. <b>Forced continuity went too</b> — the horns and the three stones are drawn in separate pieces, and at
+      this size detached marks read cleanly.</p>
+      <p class="gloss"><b>The frame is gone too.</b> At 16 × 16 a border costs a quarter of the usable area and was
+      never carrying identity. Removing it bought the room that made 16 × 16 viable at all.</p>
+      <p class="gloss"><b>The foot tallies the letters.</b> Word length sets the foot's width and its serif —
+      countable, and it separates words sharing their first two letters.</p>
+    </div>
+    <div class="card" id="anatomy-demo">
+      <h3>Carved stone, and the blank</h3>
+      <div class="tiles" id="anat"></div>
+      <hr>
+      <p class="gloss">Each tile is an <b>octagon</b> — the 16 × 16 square with its corners chamfered by two — so the
+      silhouette reads as a cut stone rather than a sprite. Outside the octagon the texture is transparent.</p>
+      <p class="gloss">Depth comes from <b>one height field and one light</b>. Void sits at −1, the incised stroke at 0,
+      the stone surface at 1; every pixel is then compared against its three up-left and three down-right neighbours,
+      diagonals double-weighted. Higher than up-left turns into the light; higher than down-right turns away. That
+      single rule produces all of it — the bevelled rim of the tile, the chamfered corners, the shadowed wall on the
+      upper-left of every groove and the lit wall on its lower-right. Nothing is special-cased, and a two-pixel stem
+      comes out as a true V-groove: dark left wall, bright right wall.</p>
+      <p class="gloss"><b>Nothing comes within three pixels of the stone's edge</b>, chamfered corners included. That is
+      a measured constraint, not an eyeballed one: the audit takes every cut pixel, walks outward to the nearest
+      transparent pixel, and fails the build if any is closer than three. It is the tightest constraint in the whole
+      system — it sets the chamfer, sets the tally's ceiling, and is why the two letter-forms share a row.</p>
+      <p class="gloss">The fourth tile is the <b>blank glyph</b>: bare stone, no cuts. It is what an unknown glyph looks
+      like, what an empty codex slot holds, and what an uninscribed tablet shows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── construction ──────────────────────────────────────────── -->
+<section>
+  <h2>The letter forms</h2>
+  <p class="lede"><b>Twenty-one letters, twenty-one figures.</b> Not one skeleton with variations — that was the
+  mistake behind every earlier table. Each letter is built from a small shared vocabulary of carved parts: the
+  <b>stave</b> (an upright), the <b>bar</b> (a lintel), the <b>diagonal</b>, the <b>chevron</b>, and the <b>stone</b>
+  (a 2 × 2 block).</p>
+  <p class="lede">What varies is <b>which parts a letter uses</b> and <b>how they join</b> — meeting at a point,
+  crossing, cornering, closing, or floating free. Never size, and never a one-row offset: those are the differences a
+  reader can't see without both letters in front of them.</p>
+  <p class="lede">Every pair is sayable out loud. <em>The diamond</em> against <em>the coffer</em>. <em>Roof on the
+  post</em> against <em>floor under the post</em>. <em>Two bars</em> against <em>three</em>. <em>Strokes</em> against
+  <em>stones</em>.</p>
+  <p class="lede">Twenty-one is the classical Latin alphabet. J, U and W are mediaeval; Y and Z were Greek imports
+  Latin had long absorbed as I and S, so a stray <span class="mono">Y</span> folds to <span class="mono">I</span> and
+  <span class="mono">Z</span> to <span class="mono">S</span>, exactly as <span class="mono">PULVIS</span> becomes
+  <span class="mono">PVLVIS</span>.</p>
+  <div class="scroll">
+    <table id="alphabet"><tbody></tbody></table>
+  </div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Every earlier table drew outlines, and that was the mistake.</strong> Vessels,
+    boxes, doubled rings — and each rebuild made them <em>more</em> elaborate to keep them apart. Wrong direction: an
+    outline is a picture, and pictures must be intricate to differ. <b>Writing is not made of outlines. It is made of
+    strokes.</b></p>
+    <p style="margin:0 0 10px"><strong>Carved scripts settled this long ago,</strong> under exactly these constraints —
+    hard material, small size, must be unmistakable. Elder Futhark is an upright with one or two branches off it and
+    nothing curved, because curves are miserable to cut. Ogham reduces it further still. Borrowing the structure is not
+    a stylistic nod; it is the answer to the same engineering problem.</p>
+    <p style="margin:0 0 10px"><strong>The numbers, before and after.</strong> The stave alphabet had
+    <b>28 of 210 letter pairs differing by 4 pixels</b> — one arm — and the whole alphabet spanned only 4–16 px, which
+    is why it read as twenty-one variations on one letter. The figures span <b>12–34 px, with a median near 21</b> and
+    nothing at all below 12. Mean ink went <em>down</em>, 17 → 15: this was not bought with density.</p>
+    <p style="margin:0 0 10px"><strong>Watch the measuring instrument, not just the design.</strong> Every rebuild here
+    was misled by one at some point — a pixel threshold calibrated for dense outlines that silently excluded every
+    light form; a row-<em>width</em> test that couldn't see which side a mark was on; and a contact sheet still
+    mirroring asymmetric letters after symmetry had been dropped, which made a whole review worthless. A metric that
+    agrees with you is worth re-deriving.</p>
+    <p style="margin:0 0 10px"><strong>Four things fall out for free,</strong> which is how you know the abstraction
+    fits: the stave spans the full height and holds the centre top and bottom, so stacked forms link with nothing to
+    check; a mirrored branch is simply a chevron, so the symmetry axis costs nothing; arms are clamped per row, so none
+    can crowd the stone's edge; and a form is about <b>20 pixels against 24–30</b> for the outlines.</p>
+    <p style="margin:0"><strong>Two letters, not three.</strong> 16 × 16 has a quarter the pixels of 32 × 32, and
+    three six-row zones will not fit. Two do — and uniqueness survives because the <b>foot tallies word length</b>:
+    two words that share both marked letters still separate on length. In the shipping 52 no two runes share a mark
+    at all, so the foot is headroom for growth rather than what holds the lexicon apart.</p>
+    <p style="margin:0 0 10px"><strong>The foot is a tally.</strong> The bar widens one step per letter up to three;
+    past three its ends turn up into a <b>serif</b> — the hand mark — and the width starts counting again, so
+    <span class="mono">letters = 2 + (width − 1) + 3 × serif</span>. Six readable lengths out of a bar that never
+    exceeds three half-widths, which is what holds the widest foot three pixels clear of the chamfer. Six is fewer than
+    it sounds: the whole lexicon still renders 49 distinct tiles, because the forms do the heavy lifting.</p>
+    <p style="margin:0"><strong>The two forms overlap by one row.</strong> Both are already obliged to occupy the centre
+    columns at their top and bottom row, so sharing that row is exactly where they were going to link anyway — it costs
+    nothing and buys the row the margin needs.</p>
+  </div>
+</section>
+
+<!-- ── depth & pigment ───────────────────────────────────────── -->
+<section>
+  <h2>The cut, and what fills it</h2>
+  <p class="lede">Every groove is cut to the <b>same depth</b> and filled with the glyph's <b>own pigment</b> — a colour
+  hashed straight out of the lemma. Blood Magic's runes are the reference here: a symbol sunk into stone, its inlay
+  doing the work of telling one rune from another at a glance across a room.</p>
+  <div class="strip" id="pigments"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Two sources, in order.</strong> <b>Static</b> — an authored
+    <span class="mono">pigment</span> on the glyph, chosen by hand for the word it names. <b>Dynamic</b> — FNV-1a over
+    the lemma, the low bits becoming the hue. Anything missing, malformed or out of range falls through to the hash
+    <em>silently</em>: a bad hex must never be able to fail a datapack load.</p>
+    <p style="margin:0 0 10px"><strong>The fallback isn't a degraded mode.</strong> It's what lets a modder add fifty
+    glyphs in an afternoon and get stable, per-word colour with no art decisions at all — the same lemma is the same
+    colour in every world, forever, with nothing stored. The static layer exists so the words that <em>deserve</em> a
+    colour get the right one.</p>
+    <p style="margin:0 0 10px"><strong>Either way the result is renormalised to one fixed luminance</strong> (62 of 255,
+    against stone that runs 110–195). A yellow groove and a blue groove therefore cut exactly as deep. <b>The author
+    picks the hue; the renderer keeps the depth</b> — which is what stops a hand-picked palette from quietly breaking
+    the guarantee below. Measured across the lexicon the spread is 61.6 – 62.4, under one percent.</p>
+    <p style="margin:0"><strong>Colour is still carrying nothing (D16).</strong> Desaturate the whole atlas and all 49
+    glyphs stay distinct — verified, not asserted. The pigment is <em>redundant reinforcement</em>: a second, faster
+    channel onto an identity that shape already carries in full. Two glyphs are even allowed to share a hue, and two
+    tools nearly do; nothing breaks, because nothing was resting on it.</p>
+  </div>
+</section>
+
+<!-- ── palette ───────────────────────────────────────────────── -->
+<section>
+  <h2>The lexicon — 26 axes, 52 runes</h2>
+  <p class="lede">Every rune in the language, drawn by the rule above, with its opposite beside it and its English
+  under it. <b>✦ marks a rune that may head a word</b> — that names a <em>kind of thing</em> rather than qualifying
+  one. Each carries a static pigment chosen for family, not brightness: luminance is normalised away, so only the
+  hue survives.</p>
+  <div id="palette"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>The axis is itself a concept.</strong>
+    <span class="mono">PLENVM</span>/<span class="mono">VACVVM</span> is <em>fullness</em>;
+    <span class="mono">NOVVM</span>/<span class="mono">SENEX</span> is <em>age</em>. Learn one pole and you have
+    half-learned the other, which makes 52 runes far cheaper to teach than 52 words would suggest — and it is why
+    a new rune is admissible only if it <b>completes an axis</b>.</p>
+    <p style="margin:0">And because colour is redundant, a shared band costs nothing. Ten implements in one grey
+    doesn't make two tools ambiguous; their shapes were already doing the work.</p>
+  </div>
+</section>
+
+<!-- ── silhouette ────────────────────────────────────────────── -->
+<section>
+  <h2>Why an octagon, and not <em>n</em> sides per letter</h2>
+  <p class="lede">Tying the side count to word length is a tempting rule, and it is the wrong variable. Three reasons,
+  in order of how much they hurt:</p>
+  <div class="strip" id="sils"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>1 · Length is already spoken for.</strong> The foot tallies it. Spending the
+    silhouette — the single most visible feature at inventory scale — on a variable that is already encoded buys
+    nothing, while the variable that <em>isn't</em> encoded goes on wanting a channel.</p>
+    <p style="margin:0 0 10px"><strong>2 · 16 px cannot hold the alphabet of shapes.</strong> A square, an octagon and a
+    heavy-chamfer octagon are the three silhouettes that survive at this size, and you can see all three above.
+    Pentagons, heptagons and nonagons are indistinguishable mush at 16 px, and any odd-sided polygon either breaks the
+    vertical mirror axis or eats the rows the figure needs — a true hexagon points top and bottom, exactly where the
+    letter-forms and the foot live.</p>
+    <p style="margin:0 0 10px"><strong>3 · Latin lengths cluster.</strong> Nearly the whole lexicon sits at four to
+    seven letters, so most glyphs would land on the same two or three shapes regardless. The encoding would read as
+    random rather than systematic — the worst outcome for a system whose whole promise is that it is legible.</p>
+    <p style="margin:0"><strong>The variable actually worth the silhouette is grammatical class.</strong> The head rule
+    turns on which glyphs can act as determinatives, and that is what a player parses first when guessing a rune word.
+    Three or four silhouettes — thing, place, condition — would put the grammar on the outline where it can be read
+    across a wall of carvings. That is a real proposal and it is <b>not</b> in v1: one universal octagon ships first,
+    because a class encoding wants the lexicon's classes settled before it is frozen into art.</p>
+  </div>
+</section>
+
+<!-- ── worked words ──────────────────────────────────────────── -->
+<section>
+  <h2>Six words, and the two axes behind them</h2>
+  <p class="lede">The <span style="color:var(--patina)">tinted lemma</span> in each is the <b>head</b> — the last
+  determinative-capable glyph, which fixes the word's category. Amber-ruled cards introduce a new glyph.</p>
+  <div class="grid g2" id="words"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Zero new glyphs bought all six.</strong> The whole ore → dross → ingot chain
+    is one refinement axis (<span class="mono">CANDIDVM</span>/<span class="mono">SORDES</span>) pointed at a metal,
+    so it works for iron, gold, copper and anything added later with no vocabulary at all.</p>
+    <p style="margin:0"><strong>Opposites come free.</strong> Illager and Villager are the <em>same word</em> with
+    one pole swapped. That is not a saving of one glyph — it is the reason a player who decodes either one has
+    effectively decoded both.</p>
+  </div>
+</section>
+
+<!-- ── commissions ───────────────────────────────────────────── -->
+<section>
+  <h2>Nine tests</h2>
+  <p class="lede">Every one of these is built from the 52, and <b>nothing was minted to make them work</b>. That is the
+  test of an axis language: if the axes are the right ones, the words are already there.</p>
+  <div class="grid g2" id="commissions"></div>
+  <h3 style="margin:34px 0 10px">…and the longest word in the language</h3>
+  <div class="grid" id="phrase"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Heads travel.</strong> <span class="mono">HOMO</span> heads six creature
+    words, <span class="mono">VALLVM</span> heads the fortress, the city and the mansion. Decoding one gives you most
+    of the rest — which is what makes an axis lexicon cheap to learn rather than merely small.</p>
+    <p style="margin:0 0 10px"><strong>Compounds are literal.</strong> A city <em>is</em> a throng's wall, so End City
+    needs no word for "city". A hive <em>is</em> a made hollow for a swarm — and dropping
+    <span class="mono">OPVS</span> turns the hive into the natural nest, which is exactly the distinction Minecraft
+    draws.</p>
+    <p style="margin:0"><strong>Rune words are free-length.</strong> The stairs are one word of five glyphs, not a
+    phrase. The head rule is defined by <em>position</em> — the last ✦ glyph — so it reads two glyphs and six
+    identically. What limits length is a budget, not a grammar rule: the codex holds 20 glyphs for a whole
+    inscription, so a long name crowds out the other clauses.</p>
+  </div>
+</section>
+
+<!-- ── matter ────────────────────────────────────────────────── -->
+<section>
+  <h2>Blocks and materials</h2>
+  <p class="lede">The head is tinted. Note <span class="mono">ORDO · PVLVIS</span> for redstone — <b>powdered
+  law</b>. No lexicon built by listing nouns would have reached it; an axis lexicon has no other way to say it.</p>
+  <div class="gal" id="matter"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Obsidian's word is its recipe.</strong>
+    <span class="mono">IGNIS · VNDA · SAXVM</span> — fire meeting water in stone. Nothing about that was designed;
+    it is what the axes say when you point them at the block.</p>
+    <p style="margin:0"><strong>Prismarine and Dripstone show the failure mode too.</strong> Both wanted
+    <span class="mono">VNDA · SAXVM</span>. One ordered sequence must name one thing, so the dripstone takes a
+    qualifier — <span class="mono">VNDA · GRADVS · SAXVM</span>. <b>A collision inside the language is a content
+    bug</b>, caught at load by the same validator that catches two glyphs rendering alike.</p>
+  </div>
+</section>
+
+<!-- ── tools ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Made things — the tool family falls out</h2>
+  <p class="lede">There is <b>no rune for "tool", "pickaxe" or "blade"</b>. A tool names <b>what it cuts</b>, then
+  the material it is: <span class="mono">[object] · FRACTVM · [material]</span>. The material is the head, so tier
+  and type stay independent and every combination in the game is already spelled.</p>
+  <div class="gal" id="tools"></div>
+  <div class="note">
+    <p style="margin:0 0 10px">A player who decodes <span class="mono">LIGNVM · FRACTVM · FERRVM</span> (Iron Axe)
+    and <span class="mono">SAXVM · FRACTVM · ADAMAS</span> (Diamond Pickaxe) can read
+    <span class="mono">SAXVM · FRACTVM · FERRVM</span> on sight, having never seen it. <b>The entire tool tree costs
+    zero new vocabulary</b> — it is the cutting axis pointed at things that already had names.</p>
+    <p style="margin:0"><strong>A vessel is a made void.</strong> The bucket and the chest need no word for
+    "container": <span class="mono">OPVS · VACVVM</span> is one, and the qualifier says what kind. That is an axis
+    doing a noun's job, which is the whole design.</p>
+  </div>
+</section>
+
+<!-- ── mobs ──────────────────────────────────────────────────── -->
+<section>
+  <h2>Creatures — one head, many qualifiers</h2>
+  <p class="lede">Most creatures are <span class="mono">[quality] · BESTIA</span>, and the upright kinds take
+  <span class="mono">HOMO</span> instead. Every qualifier here was already in the lexicon for materials, places or
+  rituals — <b>nothing was minted for any creature</b>.</p>
+  <div class="gal" id="mobs"></div>
+  <div class="note">
+    <p style="margin:0 0 10px"><strong>Taming flips one pole and changes nothing else.</strong> A wild wolf is
+    <span class="mono">HOSTIS · BESTIA</span>, a tamed one <span class="mono">MITIS · BESTIA</span>. The language
+    says out loud what the game means by taming — and Illager/Villager is the same trick on the other head.</p>
+    <p style="margin:0"><strong>Silence is meaningful.</strong> The Enderman carries <b>no</b> temper pole — neither
+    foe nor friend — because it is neither until you look at it. An unmarked axis is a statement, which is only
+    possible in a lexicon where every rune has an opposite.</p>
+  </div>
+</section>
+
+<!-- ── tier + colour ─────────────────────────────────────────── -->
+<section>
+  <h2>Knowledge is drawn, not tinted</h2>
+  <p class="lede"><b>Colour never carries anything on its own.</b> Identity comes from the two letter-forms, length from
+  the foot tally, and what the player knows from how much of the glyph is cut at all. Desaturate the atlas and nothing
+  becomes ambiguous — the pigment is a second channel onto an identity that shape already carries in full.</p>
+  <div class="strip" id="tiers"></div>
+  <p class="gloss" style="margin-top:18px"><b>Tier is depth, not tint.</b> Unknown is uncut stone. <b>Sighted</b> is a
+  shallow, <em>unfilled</em> scratch — the whole figure is there, but the groove is weak and holds bare stone-grey
+  instead of the word's pigment: you have seen the carving and not yet taken the rubbing. <b>Learned</b> is cut to full
+  depth and inlaid.</p>
+  <p class="gloss">Because the ladder is uncut → shallow and empty → deep and filled, it is a <em>value</em> difference
+  before it is a colour one. It survives desaturation, and it reads identically to a colourblind player.</p>
+</section>
+
+<div class="ask">
+  <p class="eyebrow">Sign-off</p>
+  <ol>
+    <li><b>The octagon is universal in v1.</b> Side count doesn't track word length — that's already in the foot, and
+      16 px won't hold more than three distinguishable silhouettes anyway. The open question is whether the silhouette
+      should later encode <b>grammatical class</b> (thing / place / condition), which is the one variable worth it.</li>
+    <li><b>The margin sets the chamfer, not the other way round.</b> A 3 px margin and a deep octagon eat the same
+      corners, and the figure needs all twelve usable rows. At chamfer 3 the top and bottom rows shrink to six columns
+      — too few for the foot. Chamfer 2 leaves eight, which is the deepest cut that still clears. Going deeper means
+      redrawing the letter-forms shorter.</li>
+    <li><b>Pigment is redundant, and has to stay that way.</b> Name-hashed hue, renormalised to a single luminance so
+      every groove cuts the same depth; all 52 runes verified still distinct with colour stripped. If a future change
+      ever makes two glyphs tell apart <em>only</em> by hue, that change is wrong.</li>
+    <li><b>Homographs are a language bug, not an art bug.</b> The mark is (letter 1, letter 3, length tally), so
+      <span class="mono">TERRA</span> and <span class="mono">TVRBA</span> render identically. The datapack validator
+      must reject that at load; the fix is a synonym — which is why a throng is <span class="mono">GREX</span>.</li>
+    <li><b>Stone palette</b> — one material now, in both page themes, because the texture that ships is a single image.
+      Tune the two endpoints to match whatever the tablets end up looking like.</li>
+    <li><b>Tier 1 (Sighted) = a shallow, unfilled scratch</b> — settled, and it closes the last gap left when the frame
+      went away. The three tiers are now three depths of cut, which is a value ladder before it is a colour one.</li>
+  </ol>
+</div>
+</div>
+
+</div>
+
+
+
+<script>
+(() => {
+  "use strict";
+const S=16, ALPHABET="ABCDEFGHIKLMNOPQRSTVX";   // the classical 21 — see norm()
+const px=(b,x,y)=>{if(x>=0&&y>=0&&x<S&&y<S)b[y*S+x]=1;};
+function ln(b,x0,y0,x1,y1){let dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1,e=dx+dy;
+ for(;;){px(b,x0,y0);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}}
+function symmetrise(b){for(let y=0;y<S;y++)for(let x=0;x<8;x++){if(b[y*S+x]||b[y*S+15-x]){b[y*S+x]=1;b[y*S+15-x]=1;}}}
+/* ── the letter forms ────────────────────────────────────────────────────
+   TWENTY-ONE SKELETONS, ONE TOOLKIT.
+
+   The stave-plus-one-mark table failed because every letter SHARED twelve
+   pixels of stave and carried only four pixels of identity. Here the share
+   is inverted: letters are whole figures built from a five-piece carving
+   vocabulary — the stave (a 1px upright), the bar (a 1px lintel), the
+   diagonal, the chevron pair, and the stone (a 2x2 block) — and no two
+   letters share more than one piece in the same place. Every letter is a
+   different SKELETON, not the same skeleton with a different flourish, so
+   most of each letter's ink is doing distinguishing work.
+
+   Every difference is still nameable: "the gable" against "the valley",
+   "the diamond" against "the coffer", "roof on the post" against "floor
+   under the post", "three bars" against "two". Old Turkic and Tifinagh
+   are the models — open angular figures, dots and crossings, cut in few
+   strokes, told apart at a glance rather than by comparison.
+
+   Layout: every form lives in the columns x=4..11 over its six rows, which
+   clears the 3px chamfer margin at BOTH stack positions (rows 2-7 and
+   7-12). Bottom rows never fill x=6..9 completely, so the length-tally's
+   plinth (row 12, x=6..9) can never be swallowed by a second letter. */
+const bk=(b,x,y)=>{px(b,x,y);px(b,x+1,y);px(b,x,y+1);px(b,x+1,y+1);};  // a 2x2 "stone"
+const F=[
+ (b,y)=>{ln(b,4,y+5,7,y);ln(b,8,y,11,y+5);},                        // A  the gable: two strokes meeting at the top
+ (b,y)=>{ln(b,4,y,4,y+5);ln(b,4,y+1,9,y+3);ln(b,9,y+3,4,y+4);},     // B  the thorn: post with a closed barb at the waist
+ (b,y)=>{ln(b,11,y,4,y+2);ln(b,4,y+3,11,y+5);},                     // C  the fang, west: chevron point at the left
+ (b,y)=>{ln(b,4,y,11,y+2);ln(b,11,y+3,4,y+5);},                     // D  the fang, east: chevron point at the right
+ (b,y)=>{ln(b,5,y,10,y);ln(b,5,y+2,10,y+2);ln(b,5,y+4,10,y+4);},   // E  the grate: three bars, raised one row so its lowest bar cannot swallow the tally plinth at row 12
+ (b,y)=>{ln(b,4,y,4,y+5);ln(b,4,y,9,y);},                           // F  roof on the post, west
+ (b,y)=>{ln(b,7,y,7,y+5);ln(b,4,y+2,10,y+2);},                      // G  the cross: upright crossed at the shoulder
+ (b,y)=>{ln(b,11,y,11,y+5);ln(b,4,y+2,10,y+2);ln(b,4,y+3,10,y+3);}, // H  the arm: post at the right, heavy arm reaching west
+ (b,y)=>{bk(b,4,y+1);px(b,4,y+3);px(b,5,y+3);bk(b,10,y+1);px(b,10,y+3);px(b,11,y+3);}, // I  the horns: two tall studs at the brow
+ (b,y)=>{ln(b,11,y,11,y+5);ln(b,6,y,11,y);},                        // K  roof on the post, east
+ (b,y)=>{ln(b,4,y,4,y+5);ln(b,4,y+5,11,y+5);},                      // L  floor under the post, west
+ (b,y)=>{bk(b,7,y);bk(b,4,y+3);bk(b,10,y+3);},                      // M  three stones: one high, two low
+ (b,y)=>{ln(b,4,y,4,y+5);ln(b,11,y,11,y+5);ln(b,4,y,11,y+5);},      // N  the pale: two posts, slash between
+ (b,y)=>{ln(b,7,y,4,y+2);ln(b,4,y+3,7,y+5);ln(b,8,y,11,y+2);ln(b,11,y+3,8,y+5);}, // O  the diamond: closed lozenge
+ (b,y)=>{ln(b,7,y,7,y+3);ln(b,8,y,8,y+3);ln(b,4,y+5,11,y+5);},      // P  the hammer: heavy stem hanging over a floor
+ (b,y)=>{ln(b,6,y,9,y);ln(b,6,y+5,9,y+5);ln(b,6,y,6,y+5);ln(b,9,y,9,y+5);}, // Q  the coffer: tall closed box
+ (b,y)=>{ln(b,4,y+1,11,y+1);ln(b,4,y+4,11,y+4);},                   // R  the twin bars
+ (b,y)=>{ln(b,4,y,11,y);ln(b,11,y,4,y+5);ln(b,4,y+5,11,y+5);},      // S  the lightning: bar, slash, bar
+ (b,y)=>{ln(b,4,y,11,y);ln(b,7,y+1,7,y+5);ln(b,8,y+1,8,y+5);},      // T  the tee: lintel on a heavy stem
+ (b,y)=>{ln(b,4,y,7,y+5);ln(b,8,y+5,11,y);},                        // V  the valley: two strokes meeting at the foot
+ (b,y)=>{ln(b,4,y,11,y+5);ln(b,11,y,4,y+5);}                        // X  the saltire: two full crossing slashes
+];
+const norm=s=>s.toUpperCase()
+  .replace(/U/g,'V').replace(/W/g,'V').replace(/J/g,'I')
+  .replace(/Y/g,'I').replace(/Z/g,'S')
+  .replace(/[^A-Z]/g,'');
+// THE MARK: first letter + THIRD, not first + second.
+// Latin clusters hard on prefixes — TENEBRAE/TERRA/TEGMEN, GELV/GERMEN/GEMMA,
+// PVLVIS/PVRVM — and two words sharing a mark differ only by the foot tally, which
+// is two pixels. Measured over the 52: first-two gives 13 colliding clusters,
+// first+third gives 5, and no hash-based rule beats it (the collisions come from
+// shared letters generally, not just shared prefixes). The remaining 5 are fixed
+// where the docs say to fix them — in the lexicon, with a synonym.
+const mark=(l,o)=>{ const n=o||norm(l);
+  const v=[...n].filter(c=>ALPHABET.includes(c));
+  return v[0] + (v[2] || v[v.length-1] || v[0]); };
+function render(lemma,o){
+  // The returned array is a LAYER MAP, not a bitmask: 0 = uncut, 1 = the first
+  // letter, 2 = the second, 3 = the foot tally. Non-zero still means "cut", so
+  // every consumer that tests truthiness is unaffected — but the painter can now
+  // ink each layer in its own colour.
+  const b=new Uint8Array(S*S), m=mark(lemma,o);
+  const stamp=(fn,y,layer)=>{ const t=new Uint8Array(S*S); fn(t,y);
+    for(let i=0;i<S*S;i++) if(t[i] && !b[i]) b[i]=layer; };
+  stamp(F[ALPHABET.indexOf(m[0])],2,1);
+  stamp(F[ALPHABET.indexOf(m[1])],7,2);
+  stamp(f=>{
+    const t=Math.max(0,Math.min(5,norm(lemma).length-2));
+    const w=1+(t%3), serif=t>=3;
+    ln(f,7-w,13,8+w,13); ln(f,7,12,7,13); ln(f,8,12,8,13);
+    // Serif = detached pips at x=3 and x=12 on row 12 — the only columns no
+    // letter-form can reach, so the tally can never be swallowed (GLYPH_SPEC 3.2).
+    if(serif){ px(f,3,12); px(f,12,12); }
+  },0,3);
+  return b;
+}
+function components(b){ // connected components, 8-way
+  const seen=new Uint8Array(S*S); let c=0;
+  for(let i=0;i<S*S;i++){ if(!b[i]||seen[i])continue; c++; const st=[i]; seen[i]=1;
+    while(st.length){ const p=st.pop(), y=(p/S)|0, x=p%S;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+        const nx=x+dx, ny=y+dy; if(nx<0||ny<0||nx>=S||ny>=S)continue;
+        const q=ny*S+nx; if(b[q]&&!seen[q]){seen[q]=1;st.push(q);} } } }
+  return c;
+}
+
+  const FORM_NAMES=["the gable","the thorn","the fang, west",
+    "the fang, east","the grate","roof on the post, west",
+    "the cross","the arm","the horns",
+    "roof on the post, east","floor under the post","three stones",
+    "the pale","the diamond","the anvil",
+    "the coffer","the twin bars","the lightning",
+    "the tee","the valley","the saltire"];
+
+  /* ── the tile ───────────────────────────────────────────────
+     An OCTAGON: the 16x16 square with its four corners chamfered by 2, so the
+     silhouette itself reads as a cut stone rather than a sprite. Outside the
+     octagon the texture is transparent.
+
+     Everything is shaded from ONE height field and ONE light:
+
+        H = -1  void (outside the octagon)
+        H =  0  incised stroke
+        H =  1  stone surface
+
+     For each pixel we compare its own height against its three up-left
+     neighbours and its three down-right neighbours (diagonal double-weighted).
+     Higher than up-left  -> that face turns into the light  -> brighter.
+     Higher than down-right -> that face turns away          -> darker.
+
+     That single operator produces all of the depth at once: the bevelled edge
+     of the tile, the chamfered corners, the shadowed wall on the upper-left of
+     every groove and the lit wall on its lower-right. Nothing is special-cased. */
+  const CHAMFER = 2;
+  const inTileC = (x,y,c) => x>=0 && y>=0 && x<S && y<S &&
+                             Math.min(x,S-1-x) + Math.min(y,S-1-y) >= c;
+  const inTile  = (x,y) => inTileC(x,y,CHAMFER);
+
+  const hash = (x,y) => { let h = (x*73856093) ^ (y*19349663); h = (h ^ (h>>>13)) >>> 0; return (h % 17) - 8; };
+  const STONE = { hi:[201,195,183], lo:[112,107,99] };  // one material, both page themes
+
+  /* ── pigment ────────────────────────────────────────────────
+     The groove floor holds the glyph's own colour. Two sources, in order:
+
+       STATIC   an authored `pigment` on the glyph — thematic, chosen by hand
+       DYNAMIC  FNV-1a over the lemma -> hue — the fallback, always available
+
+     The fallback is not a degraded mode. It is what lets a modder add fifty
+     glyphs in an afternoon and get usable, stable, per-word colour with no art
+     decisions at all; the static layer exists so the words that *deserve* a
+     colour get the right one. Anything missing, malformed or out of range falls
+     back silently — a bad hex must never be able to fail a datapack load.
+
+     EITHER WAY the result is renormalised to ONE fixed relative luminance, so a
+     yellow groove and a blue groove cut exactly as deep. An author picks the
+     hue; the renderer keeps the depth. That is what stops a hand-picked palette
+     from quietly breaking the guarantee that shape carries all of the identity
+     (D16) — and it is why the atlas still audits clean desaturated. */
+  /* The authored palette. Only the HUE survives — luminance is normalised — so
+     these are chosen for family relationship, not for brightness. Words that
+     belong together are meant to look like they belong together: every fire word
+     sits in the same band of orange, every metal in the same band of grey-gold. */
+  /* The palette follows the AXES: each axis gets a hue family, and its two poles sit
+     at opposite ends of it. Opposition you can see as well as read — and legitimate
+     precisely because colour carries nothing (D16). Strip it and the words still work. */
+  const PALETTE = {
+    CAELVM:"#6db4e8", INFERNVS:"#d8452a",   ORIGO:"#d8a24a", FINIS:"#b9f0d8",
+    LVX:"#f0e2a0",    TENEBRAE:"#3a2350",   ORDO:"#8fa8d0",  CHAOS:"#d81f9a",
+    SOL:"#e0a41f",    LVNA:"#b9c4e0",
+    IGNIS:"#e2631a",  GELV:"#9fd8e8",       VNDA:"#1f7fd8",  SAXVM:"#8c8c8c",
+    VENTVS:"#cfe0e8", TERRA:"#7a5f3a",      PLENVM:"#c8a870",VACVVM:"#2b2f4a",
+    VITA:"#2fa845",   MORS:"#5a2b3a",       GERMEN:"#8fd84a",TABES:"#6a7a2a",
+    CARO:"#d87a7a",   OSSA:"#ded6c0",       HERBA:"#4aa83a", LIGNVM:"#7a5a2a",
+    HOMO:"#d8a88a",   BESTIA:"#8a5a3a",
+    FERRVM:"#b8bcc4", AVRVM:"#e0b429",      AES:"#4ad8a0",   ADAMAS:"#5fe0e0",
+    GEMMA:"#4f9ad8",  PVLVIS:"#b0a48c",     CANDIDVM:"#e8e0d0", SORDES:"#6a5a4a",
+    OPVS:"#c07a3a",   NATVM:"#7a9a5a",      NOVVM:"#e8c86a", SENEX:"#6a9a8a",
+    TOTVM:"#a8a090",  FRACTVM:"#d05a3a",    TEGMEN:"#c8b48a",NVDVM:"#9aa4b0",
+    PORTA:"#4a5a4a",  VALLVM:"#8f9298",
+    GRADVS:"#a88a5a", AEQVVM:"#90a0a8",
+    HOSTIS:"#c02a2a", MITIS:"#4ab86a",     VNICVM:"#d8d0c0",GREX:"#8a6ad8",
+  };
+
+  const PIG_LUMA = 62;
+  const fnv = s => { let h=2166136261>>>0;
+    for (let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h; };
+  function hsl2rgb(h,s,l){
+    const c=(1-Math.abs(2*l-1))*s, hp=h/60, x=c*(1-Math.abs(hp%2-1));
+    const seg=[[c,x,0],[x,c,0],[0,c,x],[0,x,c],[x,0,c],[c,0,x]][Math.floor(hp)%6];
+    const m=l-c/2; return seg.map(v=>(v+m)*255);
+  }
+  const parseHex = v => {
+    if (typeof v !== "string") return null;
+    const m = /^#?([0-9a-f]{6})$/i.exec(v.trim());
+    if (!m) return null;
+    const n = parseInt(m[1],16), rgb = [n>>16&255, n>>8&255, n&255];
+    return rgb[0]+rgb[1]+rgb[2] === 0 ? null : rgb;   // pure black carries no hue
+  };
+  const toLuma = rgb => {
+    const y = 0.2126*rgb[0]+0.7152*rgb[1]+0.0722*rgb[2];
+    const f = y>0 ? PIG_LUMA/y : 0;
+    return rgb.map(v => Math.max(0,Math.min(255, Math.round(v*f))));
+  };
+  function pigmentOf(lemma, declared){
+    const direct = parseHex(declared);
+    if (!lemma) return direct ? toLuma(direct) : null;   // a bare colour, normalised
+    const l = norm(lemma);
+    const stat = parseHex(declared !== undefined ? declared : PALETTE[l]);
+    if (stat) return toLuma(stat);
+    const k = fnv(l);                                  // fallback: the name itself
+    return toLuma(hsl2rgb(k%360, 0.52+((k>>>10)%16)/100, 0.42));
+  }
+  const pigmentSource = lemma =>
+    parseHex(PALETTE[norm(lemma||"")]) ? "static" : "dynamic";
+  const hex = rgb => "#"+rgb.map(v=>v.toString(16).padStart(2,"0")).join("");
+
+  /* Tier is DEPTH, not tint. A sighted glyph is a shallow, unfilled scratch:
+     the same figure, cut with a weaker bevel and left bare stone-grey. A learned
+     one is cut to full depth and the groove holds the word's pigment. The ladder
+     runs uncut -> shallow and empty -> deep and filled, which is a value
+     difference before it is a colour difference, so it survives desaturation. */
+  const SHALLOW = [99,95,89];
+
+  function paintStone(ctx, bits, opts){
+    const o = opts || {};
+    const c = (o.chamfer===undefined) ? CHAMFER : o.chamfer;
+    const shallow = o.tier === "sighted";
+    const pig = shallow ? SHALLOW : (pigmentOf(o.lemma) || [40,38,36]);
+    const amp = shallow ? 0.085 : 0.155;
+    const inT = (x,y) => inTileC(x,y,c);
+    const H = (x,y) => !inT(x,y) ? -1 : (bits[y*S+x] ? 0 : 1);
+    const img = ctx.createImageData(S,S);
+    for (let y=0;y<S;y++) for (let x=0;x<S;x++){
+      const i = y*S+x;
+      if (!inT(x,y)) { img.data[i*4+3]=0; continue; }      // outside the octagon
+
+      const h = H(x,y);
+      const d = 2*(h-H(x-1,y-1)) +   (h-H(x,y-1)) +   (h-H(x-1,y))
+              - 2*(h-H(x+1,y+1)) -   (h-H(x,y+1)) -   (h-H(x+1,y));
+      const f = Math.max(0.42, Math.min(1.68, 1 + amp*d));
+
+      const t = (x+y)/(2*(S-1));                          // light top-left -> dark bottom-right
+      const n = hash(x,y);                                // deterministic grain
+      const base = h===0
+        ? pig.map(v => v + n*0.5)                         // groove floor: the word's pigment
+        : [0,1,2].map(k => STONE.hi[k] + (STONE.lo[k]-STONE.hi[k])*t + n);
+
+      for (let k=0;k<3;k++)
+        img.data[i*4+k] = Math.max(0, Math.min(255, Math.round(base[k]*f)));
+      img.data[i*4+3] = 255;
+    }
+    ctx.putImageData(img,0,0);
+  }
+/*==DOM==*/
+  const themeNow = () => {
+    const attr = document.documentElement.getAttribute("data-theme");
+    if (attr) return attr;
+    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const blankBits = () => new Uint8Array(S*S);          // BLANK GLYPH — bare stone
+  const glyphBits = (l,_c,t) => (!l || t==="unknown") ? blankBits() : render(l);
+
+  function makeCanvas(l,c,scale,t){
+    const cv=document.createElement("canvas");
+    cv.width=S; cv.height=S; cv.style.width=cv.style.height=(S*scale)+"px";
+    cv.dataset.lemma=l||""; cv.dataset.cls=c||""; cv.dataset.tier=t||"learned";
+    paint(cv); return cv;
+  }
+  function paint(cv){
+    const b = cv.dataset.single
+      ? (()=>{ const bb=new Uint8Array(S*S); F[ALPHABET.indexOf(cv.dataset.lemma)](bb,5); return bb; })()
+      : glyphBits(cv.dataset.lemma, cv.dataset.cls, cv.dataset.tier);
+    const ctx = cv.getContext("2d");
+    ctx.clearRect(0,0,S,S);
+    paintStone(ctx, b, { lemma: cv.dataset.lemma, tier: cv.dataset.tier,
+                         chamfer: cv.dataset.chamfer ? +cv.dataset.chamfer : undefined });
+  }
+  const repaintAll=()=>document.querySelectorAll("canvas[data-lemma]").forEach(paint);
+
+  function tile(l,c,gloss,isHead,scale){
+    const d=document.createElement("div");
+    d.className="tile"+(isHead?" head":"");
+    d.appendChild(makeCanvas(l,c,scale||2));
+    const cap=document.createElement("span");
+    cap.className="cap"; cap.innerHTML="<b>"+(l||"—")+"</b>"+gloss;
+    d.appendChild(cap); return d;
+  }
+
+  // ── THE AXIS LEXICON — 26 axes, 52 runes, every one translated ──────────
+  const AXES=[
+    ["The World",[
+      ["CAELVM","heavens, the above","INFERNVS","hells, the fire below"],
+      ["ORIGO","source, home, the middle","FINIS","end, edge, the beyond"],
+      ["LVX","light","TENEBRAE","darkness"],
+      ["ORDO","order, law, pattern","CHAOS","ruin, the unmade"],
+      ["SOL","sun, the day","LVNA","moon, the night"]]],
+    ["The Elements",[
+      ["IGNIS","fire, heat","GELV","ice, cold"],
+      ["VNDA","flow, liquid","SAXVM","stone, solid"],
+      ["VENTVS","air, wind, breath","TERRA","earth, ground"],
+      ["PLENVM","full, dense","VACVVM","void, empty, hollow"]]],
+    ["The Living",[
+      ["VITA","living","MORS","dead"],
+      ["GERMEN","seed, sprout, growth","TABES","rot, decay, blight"],
+      ["CARO","flesh","OSSA","bone"],
+      ["HERBA","green, leaf","LIGNVM","wood, timber"],
+      ["HOMO","folk, the upright kind","BESTIA","beast"]]],
+    ["Matter",[
+      ["FERRVM","iron, the working metal","AVRVM","gold, the precious metal"],
+      ["AES","copper, the metal that ages","ADAMAS","diamond, unmarrable"],
+      ["GEMMA","gem, crystal","PVLVIS","dust, powder"],
+      ["CANDIDVM","refined, pure, shining","SORDES","raw, dross, ore"]]],
+    ["Making",[
+      ["OPVS","wrought by hand","NATVM","natural, found so"],
+      ["NOVVM","new, fresh","SENEX","old, aged, weathered"],
+      ["TOTVM","whole, uncut","FRACTVM","cut, broken, worked"],
+      ["TEGMEN","a covering — wax, hide, shell","NVDVM","bare, exposed"]]],
+    ["Form",[
+      ["PORTA","gate, a way through","VALLVM","wall, rampart, hold"],
+      ["GRADVS","step, stair","AEQVVM","flat, level"]]],
+    ["Will",[
+      ["HOSTIS","hostile, foe","MITIS","tame, gentle, friend"],
+      ["VNICVM","one, single","GREX","throng, swarm, flock"]]],
+  ];
+  const HEADS=new Set(["CAELVM","INFERNVS","ORIGO","FINIS","SOL","LVNA","IGNIS","GELV",
+    "VNDA","SAXVM","VENTVS","TERRA","VACVVM","GERMEN","TABES","CARO","OSSA","HERBA",
+    "LIGNVM","HOMO","BESTIA","FERRVM","AVRVM","AES","ADAMAS","GEMMA","PVLVIS","TEGMEN",
+    "PORTA","VALLVM","GRADVS","AEQVVM","GREX"]);
+
+  // ── the thirty-item test ────────────────────────────────────────────────
+  const CREATURES=[["Creeper",[["CHAOS",""],["HERBA",""],["BESTIA",""]],"Ruin Green-Beast"],
+    ["Blaze",[["IGNIS",""],["BESTIA",""]],"Fire-Beast"],
+    ["Ghast",[["INFERNVS",""],["VENTVS",""],["BESTIA",""]],"Hell Air-Beast"],
+    ["Slime",[["VNDA",""],["BESTIA",""]],"Flow-Beast"],
+    ["Wolf, wild",[["HOSTIS",""],["BESTIA",""]],"Foe-Beast"],
+    ["Wolf, tamed",[["MITIS",""],["BESTIA",""]],"Friend-Beast"],
+    ["Axolotl",[["VNDA",""],["MITIS",""],["BESTIA",""]],"Water Friend-Beast"],
+    ["Warden",[["TENEBRAE",""],["HOSTIS",""],["BESTIA",""]],"Dark Foe-Beast"],
+    ["Allay",[["VACVVM",""],["MITIS",""],["BESTIA",""]],"Hollow Friend-Beast"],
+    ["Glow Squid",[["LVX",""],["VNDA",""],["BESTIA",""]],"Light Water-Beast"],
+    ["Enderman",[["FINIS",""],["HOMO",""]],"End-Folk"],
+    ["Ender Dragon",[["FINIS",""],["BESTIA",""]],"End-Beast"]];
+
+  const MATTER=[["Obsidian",[["IGNIS",""],["VNDA",""],["SAXVM",""]],"Fire Water-Stone"],
+    ["Netherrack",[["INFERNVS",""],["SAXVM",""]],"Hell-Stone"],
+    ["Redstone Dust",[["ORDO",""],["PVLVIS",""]],"Order-Dust"],
+    ["Prismarine",[["VNDA",""],["SAXVM",""]],"Water-Stone"],
+    ["Pointed Dripstone",[["VNDA",""],["GRADVS",""],["SAXVM",""]],"Water Step-Stone"],
+    ["Sea Lantern",[["VNDA",""],["LVX",""],["SAXVM",""]],"Water Light-Stone"],
+    ["Amethyst Cluster",[["GREX",""],["GEMMA",""]],"Throng-Gem"],
+    ["Sculk Catalyst",[["MORS",""],["GERMEN",""]],"Death-Seed"],
+    ["Blaze Powder",[["IGNIS",""],["PVLVIS",""]],"Fire-Dust"],
+    ["Ender Pearl",[["FINIS",""],["GEMMA",""]],"End-Gem"],
+    ["Ancient Debris",[["INFERNVS",""],["SENEX",""],["FERRVM",""]],"Hell Old-Metal"],
+    ["Honeycomb",[["GREX",""],["TEGMEN",""]],"Throng-Wax"]];
+
+  const TOOLS=[["Diamond Pickaxe",[["SAXVM",""],["FRACTVM",""],["ADAMAS",""]],"Stone-Cutting Diamond"],
+    ["Iron Axe",[["LIGNVM",""],["FRACTVM",""],["FERRVM",""]],"Wood-Cutting Iron"],
+    ["Iron Shovel",[["TERRA",""],["FRACTVM",""],["FERRVM",""]],"Earth-Cutting Iron"],
+    ["Iron Sword",[["HOSTIS",""],["FRACTVM",""],["FERRVM",""]],"Foe-Cutting Iron"],
+    ["Gold Pickaxe",[["SAXVM",""],["FRACTVM",""],["AVRVM",""]],"Stone-Cutting Gold"],
+    ["Shield",[["HOSTIS",""],["TEGMEN",""]],"Foe-Covering"],
+    ["Iron Chestplate",[["TEGMEN",""],["FERRVM",""]],"Covering-Iron"],
+    ["Water Bucket",[["VNDA",""],["OPVS",""],["VACVVM",""]],"Water Wrought-Hollow"],
+    ["Chest",[["OPVS",""],["LIGNVM",""],["VACVVM",""]],"Wrought Wood-Hollow"],
+    ["Bookshelf",[["ORDO",""],["LIGNVM",""]],"Order-Wood"],
+    ["Lodestone",[["ORIGO",""],["SAXVM",""]],"Home-Stone"],
+    ["Torch",[["IGNIS",""],["LIGNVM",""]],"Fire-Wood"]];
+
+  const WORDS=[
+    ["Iron Ore","block",false,[["SAXVM","","stone",0],["FERRVM","","iron",1]],
+      "<em>Stone-Iron.</em>"],
+    ["Raw Iron","item",false,[["SORDES","","dross",0],["FERRVM","","iron",1]],
+      "<em>Dross-Iron.</em>"],
+    ["Iron Ingot","item",false,[["CANDIDVM","","pure",0],["FERRVM","","iron",1]],
+      "<em>Pure-Iron.</em> One axis pair plus one material gives the whole ore&nbsp;&rarr;&nbsp;ingot chain, for every metal, with no new vocabulary."],
+    ["Gold Ingot","item",false,[["CANDIDVM","","pure",0],["AVRVM","","gold",1]],
+      "<em>Pure-Gold.</em> The same two qualifiers, a different pole of the metal axis."],
+    ["Illager","mob",false,[["HOSTIS","","foe",0],["HOMO","","folk",1]],
+      "<em>Foe-Folk.</em>"],
+    ["Villager","mob",false,[["MITIS","","friend",0],["HOMO","","folk",1]],
+      "<em>Friend-Folk.</em> The same word as the Illager with the pole swapped &mdash; <b>opposites come free</b>."]
+  ];
+
+  const COMMISSIONS=[
+    ["Enderman","mob",false,[["FINIS","","end",0],["HOMO","","folk",1]],
+      "<em>End-Folk.</em> Left unmarked for temper &mdash; an Enderman is neither foe nor friend until you look at it. <b>An unmarked axis is a statement.</b>"],
+    ["Piglin","mob",false,[["INFERNVS","","hell",0],["HOMO","","folk",1]],
+      "<em>Hell-Folk.</em> Same head as the Enderman; only the realm changes."],
+    ["Beehive","block",false,[["OPVS","","wrought",0],["GREX","","throng",0],["VACVVM","","hollow",1]],
+      "<em>Wrought Throng-Hollow.</em> A vessel <em>is</em> a made void &mdash; so the language needs no word for one. Drop <span class='mono'>OPVS</span> and you have the bee <em>nest</em>."],
+    ["Iron Ore","block",false,[["SAXVM","","stone",0],["FERRVM","","iron",1]],
+      "<em>Stone-Iron.</em> Raw Iron is <span class='mono'>SORDES&nbsp;&middot;&nbsp;FERRVM</span>; the Ingot <span class='mono'>CANDIDVM&nbsp;&middot;&nbsp;FERRVM</span>."],
+    ["Nether Fortress","structure",false,[["INFERNVS","","hell",0],["VALLVM","","hold",1]],
+      "<em>Hell-Hold.</em>"],
+    ["End City","structure",false,[["FINIS","","end",0],["GREX","","throng",0],["VALLVM","","hold",1]],
+      "<em>End Throng-Hold.</em> A city <em>is</em> a throng's wall."],
+    ["Woodland Mansion","structure",false,[["HOSTIS","","foe",0],["HOMO","","folk",0],["VALLVM","","hold",1]],
+      "<em>Foe-Folk Hold.</em> Same head as the fortress and the city."],
+    ["Popped Chorus Fruit","item",false,[["IGNIS","","fire",0],["FINIS","","end",0],["GERMEN","","seed",1]],
+      "<em>Fire End-Seed.</em> The fruit is <span class='mono'>FINIS&nbsp;&middot;&nbsp;GERMEN</span>; fire pops it."],
+    ["Nether Portal","block",false,[["INFERNVS","","hell",0],["PORTA","","gate",1]],
+      "<em>Hell-Gate.</em>"]
+  ];
+  const PHRASE=[
+    ["Weathered Waxed Cut Copper Stairs","one word — five glyphs",true,
+      [["TEGMEN","","sealed",0],["SENEX","","aged",0],["AES","","copper",0],
+       ["FRACTVM","","cut",0],["GRADVS","","step",1]],
+      "<em>Sealed-Aged-Copper Cut-Step.</em> Five facts, one word. The head rule needs no extension to read it: <span class='mono'>AES</span> is head-capable and could have ended the word, but <span class='mono'>GRADVS</span> comes after it &mdash; so the thing is a <b>stair</b>. Move <span class='mono'>AES</span> last and the same five glyphs name a <b>metal</b>. <b>Position does all the work, at any length.</b>"]
+  ];
+  renderWords("words",WORDS);
+  renderWords("commissions",COMMISSIONS); renderWords("phrase",PHRASE);
+
+  function gallery(target,list){ const g=document.getElementById(target);
+    list.forEach(([name,glyphs,lit])=>{
+      const d=document.createElement("div"); d.className="entry";
+      const row=document.createElement("div"); row.className="tiles";
+      glyphs.forEach(([l,c],i)=>{
+        const t=document.createElement("div");
+        t.className="tile"+(i===glyphs.length-1?" head":""); t.style.width="56px";
+        t.appendChild(makeCanvas(l,c,2.2));
+        t.insertAdjacentHTML("beforeend","<span class='cap'><b>"+l+"</b></span>");
+        row.appendChild(t); });
+      d.appendChild(row);
+      d.insertAdjacentHTML("beforeend","<div class='ename'>"+name+"</div><div class='elit'>"+lit+"</div>");
+      g.appendChild(d); }); }
+  gallery("tools",TOOLS); gallery("mobs",CREATURES); gallery("matter",MATTER);
+
+  // pigment strip — five authored words, then one with no entry at all, to show
+  // the hash catching it
+  const pc=document.getElementById("pigments");
+  ["IGNIS","VNDA","CAELVM","ADAMAS","GREX","EXEMPLVM"].forEach(l=>{
+    const d=document.createElement("div"); d.className="tile"; d.style.width="112px";
+    d.appendChild(makeCanvas(l,"",5));
+    d.insertAdjacentHTML("beforeend",
+      "<span class='cap'><b>"+l+"</b><span class='mono'>"+hex(pigmentOf(l))+"</span>"+
+      pigmentSource(l)+"</span>");
+    pc.appendChild(d); });
+
+  // ── THE LEXICON: every rune, its pole, and its English ─────────────────
+  const pal=document.getElementById("palette");
+  const runeTile=(l)=>{
+    const d=document.createElement("div"); d.className="tile"+(HEADS.has(l)?" head":"");
+    d.style.width="76px"; d.appendChild(makeCanvas(l,"",2.6));
+    return d; };
+  AXES.forEach(([family,pairs])=>{
+    const h=document.createElement("h3");
+    h.innerHTML=family; h.style.cssText="font-size:.95rem;margin:26px 0 10px;letter-spacing:.04em";
+    pal.appendChild(h);
+    const tb=document.createElement("table"); tb.className="axistable";
+    pairs.forEach(([a,ga,b,gb])=>{
+      const tr=document.createElement("tr");
+      const ta=document.createElement("td"); ta.className="ax";
+      ta.appendChild(runeTile(a));
+      ta.insertAdjacentHTML("beforeend","<div class='cap'><b>"+a+(HEADS.has(a)?" ✦":"")+"</b>"+ga+"</div>");
+      const mid=document.createElement("td"); mid.className="axmid"; mid.innerHTML="↔";
+      const tbd=document.createElement("td"); tbd.className="ax";
+      tbd.appendChild(runeTile(b));
+      tbd.insertAdjacentHTML("beforeend","<div class='cap'><b>"+b+(HEADS.has(b)?" ✦":"")+"</b>"+gb+"</div>");
+      tr.append(ta,mid,tbd); tb.appendChild(tr); });
+    pal.appendChild(tb); });
+
+  // silhouette comparison — square, the shipping octagon, and a heavier chamfer
+  const sc=document.getElementById("sils");
+  [[0,"Square","every pixel used, reads as a sprite"],
+   [2,"Octagon &mdash; shipping","corners chamfered 2; the figure clears it by 3px"],
+   [4,"Heavy chamfer","corners crowd the foot and the first form row"]].forEach(([c,label,note])=>{
+    const d=document.createElement("div"); d.className="tile"; d.style.width="112px";
+    const cv=makeCanvas("TENEBRAE","",5); cv.dataset.chamfer=c; paint(cv);
+    d.appendChild(cv);
+    d.insertAdjacentHTML("beforeend","<span class='cap'><b>"+label+"</b>"+note+"</span>");
+    sc.appendChild(d); });
+
+  const tc=document.getElementById("tiers");
+  [["","unknown","Tier 0 · Unknown","uncut stone"],
+   ["ADAMAS","sighted","Tier 1 · Sighted","shallow, unfilled"],
+   ["ADAMAS","learned","Tier 2 · Learned","deep, inlaid"]].forEach(([l,t,label,note])=>{
+    const d=document.createElement("div"); d.className="tile"; d.style.width="128px";
+    d.appendChild(makeCanvas(l,"",4,t));
+    d.insertAdjacentHTML("beforeend","<span class='cap'><b>"+label+"</b>"+note+"</span>");
+    tc.appendChild(d); });
+
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",repaintAll);
+  new MutationObserver(repaintAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>

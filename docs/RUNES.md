@@ -3,6 +3,7 @@
 The language. **Every Latin word here is translated** — you never need to know Latin to
 read this document, and neither does a player.
 
+- **Every rune, drawn:** [`specimen/index.html`](specimen/) — open it in a browser
 - **How the symbols are drawn:** [`GLYPH_SPEC.md`](GLYPH_SPEC.md)
 - **How recipes use them:** [`RITUALS.md`](RITUALS.md)
 - **Why things are the way they are:** [`DECISIONS.md`](DECISIONS.md)
